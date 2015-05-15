@@ -4,6 +4,16 @@ Displays an interactive heatmap that can zoom into a selected area on the heatma
 
 >devtools::install()
 
+>d <- runif(32)
+
+>d <- matrix(d,32,1)
+
+>f <- runif(11)
+
+>f <- matrix(f,11,1)
+
+>iHeatmap(scale(mtcars),colAnnote = f,rowAnnote = d)
+
 >library(iHeatmap)
 
 >iHeatmap(scales(mtcars))
