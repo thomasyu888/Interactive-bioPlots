@@ -30,6 +30,13 @@ function heatmapdraw(selector,data) {
 
 
     var mainDat = data.matrix;
+        //Global annotations variables
+    var colAnnote = data.colMeta,
+        rowAnnote = data.rowMeta,
+        colMeta = colAnnote.data,
+        rowMeta = rowAnnote.data,
+        colHead = colAnnote.header,
+        rowHead = rowAnnote.header;
     //ALERTS!
     //If there are over 170000 data points, there are too many
     if (mainDat.data.length>170000 ) {
@@ -49,15 +56,18 @@ function heatmapdraw(selector,data) {
     yclust_width = width * 0.12;
     xaxis_height = 120;
     yaxis_width = 120;
+    xAnnote_width = colHead.length*5
+    yAnnote_height = rowHead.length*5
 
 
     var colormapBounds = {
         position: "absolute",
-        left: yclust_width,
-        top: xclust_height,
+        left: yclust_width+yAnnote_height,
+        top: xclust_height+xAnnote_width,
         width: width - yclust_width - yaxis_width,
         height: height - xclust_height - xaxis_height
     };
+
     var colDendBounds = {
         position: "absolute",
         left: colormapBounds.left,
@@ -72,6 +82,22 @@ function heatmapdraw(selector,data) {
         width: yclust_width,
         height: colormapBounds.height
     };
+    //NEED to fix these
+    var colABounds = {
+        position: "absolute",
+        top: colDendBounds.height,
+        left: colormapBounds.left,
+        width: colormapBounds.width,
+        height: xAnnote_width
+    }
+    var rowABounds = {
+        position: "absolute",
+        top: colormapBounds.top,
+        left: rowDendBounds.width,
+        width: yAnnote_height,
+        height: colormapBounds.height
+    }
+    ///
     var yaxisBounds = {
         position: "absolute",
         top: colormapBounds.top,
@@ -86,22 +112,7 @@ function heatmapdraw(selector,data) {
         width: colormapBounds.width,
         height: xaxis_height
     };
-    //NEED to fix these
-    var colABounds = {
-        position: "absolute",
-        top: colormapBounds.top + colormapBounds.height,
-        left: colormapBounds.left,
-        width: colormapBounds.width,
-        height: 10
-    }
-    var rowABounds = {
-        position: "absolute",
-        top: colormapBounds.top,
-        left: colormapBounds.left + colormapBounds.width,
-        width: 10,
-        height: colormapBounds.height
-    }
-    ///
+
     function cssify(styles) {
         return {
             position: styles.position,
@@ -138,13 +149,7 @@ function heatmapdraw(selector,data) {
 
     })();
 
-    //Global annotations variables
-    var colAnnote = data.colMeta,
-        rowAnnote = data.rowMeta,
-        colMeta = colAnnote.data,
-        rowMeta = rowAnnote.data,
-        colHead = colAnnote.header,
-        rowHead = rowAnnote.header;
+
     //Set xScale and yScale
     //var x = d3.scale.linear().range([0, width-marginleft]);
     //var y = d3.scale.linear().range([0, height-margintop]);
@@ -164,8 +169,8 @@ function heatmapdraw(selector,data) {
     var row = (data.rows ==null) ? 0 : dendrogram(el.select('svg.rowDend'), data.rows, false, rowDendBounds.width,rowDendBounds.height);
     var col = (data.cols ==null) ? 0 : dendrogram(el.select('svg.colDend'), data.cols, true, colDendBounds.width, colDendBounds.height);
     var heatmap = heatmapGrid(el.select('svg.colormap'), mainDat, colormapBounds.width,colormapBounds.height);
-    var colAnnots = (colMeta == null) ? 0 : drawAnnotate(el.select('svg.colAnnote'),colAnnote, true, colABounds.width,colHead.length*5);
-    var rowAnnots = (rowMeta == null) ? 0: drawAnnotate(el.select('svg.rowAnnote'),rowAnnote, false,rowHead.length*5,rowABounds.height);
+    var colAnnots = (colMeta == null) ? 0 : drawAnnotate(el.select('svg.colAnnote'),colAnnote, true, colABounds.width,colABounds.height);
+    var rowAnnots = (rowMeta == null) ? 0: drawAnnotate(el.select('svg.rowAnnote'),rowAnnote, false,rowABounds.width,rowABounds.height);
 	var xLabel = (mainDat.dim[0] > 100) ? 0 : axis(el.select('svg.xAxis'),data.matrix.cols,true,xaxisBounds.width,xaxis_height)
     var yLabel = (mainDat.dim[1] > 300) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, yaxis_width, yaxisBounds.height)
 
