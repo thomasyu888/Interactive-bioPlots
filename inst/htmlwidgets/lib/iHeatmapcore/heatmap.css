@@ -14,16 +14,6 @@
   user-select: none;
 }
 
-.colAnnote {
-  position: absolute;
-  left: 150px;
-  top: 200px;
-}
-.rowAnnote {
-  position: absolute;
-  left:140px;
-  top:220px;
-}
 .rootDend {
   fill: none;
   stroke: #AAA;
@@ -37,47 +27,32 @@
   stroke-width: 1px;
   shape-rendering: crispEdges;
 }
-
+.colDend {
+  position: absolute;
+  overflow: hidden;
+}
+.rowDend {
+  position: absolute;
+  overflow: hidden;
+}
 .xAxis {
   writing-mode: tb;
-  position: absolute;
-  top: 685px;
-  left: 150px;
   z-index: -10px;
 }
 
 .yAxis {
-  position: absolute;
-  top:220px;
-  left:1347px;
   z-index:-15px
 }
 
-.colDend {
-  position: absolute;
-  top: 100px;
-  left: 150px;
-}
 
-.rowDend {
-  position: absolute;
-  left: 30px;
-  top: 220px;
-}
 
 .colormap {
-  position: absolute;
-  left: 150px;
-  top: 220px;
   shape-rendering: crispEdges;
+  overflow: hidden;
   z-index:1;
 }
-.legends {
-  position: absolute;
-  top:20px;
-  left:100px;
-  font-size:10px;
-}
+
+
 .d3heatmap-tip {
   font-size: 10px;
   display:inline-block;

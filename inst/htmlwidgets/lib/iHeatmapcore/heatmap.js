@@ -1,5 +1,9 @@
 function heatmapdraw(selector,data) {
-
+    
+    var el = d3.select(selector);
+    
+    var bbox = el.node().getBoundingClientRect();
+    
     var Controller = function() {
         this._events = d3.dispatch("datapoint_hover","transform");
         this._datapoint_hover = {x: null, y: null, value: null};
@@ -24,7 +28,6 @@ function heatmapdraw(selector,data) {
         };
     }).call(Controller.prototype);
 
-    var controller = new Controller();
 
     var mainDat = data.matrix;
     //ALERTS!
@@ -34,15 +37,16 @@ function heatmapdraw(selector,data) {
         return function(){};
     }
 
-    var el = d3.select(selector);
-    var bbox = el.node().getBoundingClientRect();
+
+    
+    var controller = new Controller();
 
   // Set option defaults
 
     width = bbox.width;
     height = bbox.height;
     xclust_height = height * 0.12;
-    yclust_width = opts.width * 0.12;
+    yclust_width = width * 0.12;
     xaxis_height = 120;
     yaxis_width = 120;
 
@@ -112,7 +116,7 @@ function heatmapdraw(selector,data) {
     //var height = 600;
     //var margintop = 130;
     //var marginleft = 100;
-    //var transTime = 500;
+    var transTime = 500;
     //if there are more than 100 x values, it doesn't make sense to show the label
     //if (mainDat.dim[0] > 100) {
       //  marginleft=  0;
@@ -125,7 +129,7 @@ function heatmapdraw(selector,data) {
         var inner = el.append("div").classed("inner", true);
         //colDend is xDend, rowDend is yDend, colmap is heatmap
         var colDend = inner.append("svg").classed("colDend", true).style(cssify(colDendBounds));
-        var rowDend = inner.append("svg").classed("rowDend", true).style(cssify(rowDendBounds))
+        var rowDend = inner.append("svg").classed("rowDend", true).style(cssify(rowDendBounds));
         var colmap = inner.append("svg").classed("colormap", true).style(cssify(colormapBounds));
         var colAnnote = inner.append("svg").classed("colAnnote",true).style(cssify(colABounds));
         var rowAnnote = inner.append("svg").classed("rowAnnote",true).style(cssify(rowABounds));
@@ -157,7 +161,7 @@ function heatmapdraw(selector,data) {
     //	.range(colorbrewer.YlOrRd[9])
 
     //Creates everything for the heatmap
-    var row = (data.rows ==null) ? 0 : dendrogram(el.select('svg.rowDend'), data.rows, false, rowDendBounds.width, rowDendBounds.height);
+    var row = (data.rows ==null) ? 0 : dendrogram(el.select('svg.rowDend'), data.rows, false, rowDendBounds.width,rowDendBounds.height);
     var col = (data.cols ==null) ? 0 : dendrogram(el.select('svg.colDend'), data.cols, true, colDendBounds.width, colDendBounds.height);
     var heatmap = heatmapGrid(el.select('svg.colormap'), mainDat, colormapBounds.width,colormapBounds.height);
     var colAnnots = (colMeta == null) ? 0 : drawAnnotate(el.select('svg.colAnnote'),colAnnote, true, colABounds.width,colHead.length*5);
@@ -376,7 +380,7 @@ function heatmapdraw(selector,data) {
 
         var cluster = d3.layout.cluster()
             .separation(function(a, b) { return 1; })
-            .size([rotated ? width : height, (rotated ? height : width) - 160]);
+            .size([rotated ? width : height, (rotated ? height : width)]);
 
         var transform = "translate(1,0)";
         if (rotated) {
