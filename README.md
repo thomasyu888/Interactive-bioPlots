@@ -1,8 +1,8 @@
 # Interactive-bioPlots
 
-Displays an interactive heatmap that can zoom into a selected area on the heatmap and dendrograms.  Download the git. To run:
+Displays an interactive heatmap that can zoom into a selected area on the heatmap and dendrograms. To run:
 
->devtools::install()
+>devtools::install_github("thomasyu888/Interactive-bioPlots")
 
 >d <- runif(32)
 
