@@ -1,5 +1,5 @@
 function heatmapdraw(selector,data) {
-    
+
     var Controller = function() {
         this._events = d3.dispatch("datapoint_hover","transform");
         this._datapoint_hover = {x: null, y: null, value: null};
@@ -25,7 +25,7 @@ function heatmapdraw(selector,data) {
     }).call(Controller.prototype);
 
     var controller = new Controller();
-      
+
     var mainDat = data.matrix;
     //ALERTS!
     //If there are over 170000 data points, there are too many
@@ -37,16 +37,100 @@ function heatmapdraw(selector,data) {
     var el = d3.select(selector);
     var bbox = el.node().getBoundingClientRect();
 
-    (function() { 
+  // Set option defaults
+
+    width = bbox.width;
+    height = bbox.height;
+    xclust_height = height * 0.12;
+    yclust_width = opts.width * 0.12;
+    xaxis_height = 120;
+    yaxis_width = 120;
+
+
+    var colormapBounds = {
+        position: "absolute",
+        left: yclust_width,
+        top: xclust_height,
+        width: width - yclust_width - yaxis_width,
+        height: height - xclust_height - xaxis_height
+    };
+    var colDendBounds = {
+        position: "absolute",
+        left: colormapBounds.left,
+        top: 0,
+        width: colormapBounds.width,
+        height: xclust_height
+    };
+    var rowDendBounds = {
+        position: "absolute",
+        left: 0,
+        top: colormapBounds.top,
+        width: yclust_width,
+        height: colormapBounds.height
+    };
+    var yaxisBounds = {
+        position: "absolute",
+        top: colormapBounds.top,
+        left: colormapBounds.left + colormapBounds.width,
+        width: yaxis_width,
+        height: colormapBounds.height
+    };
+    var xaxisBounds = {
+        position: "absolute",
+        top: colormapBounds.top + colormapBounds.height,
+        left: colormapBounds.left,
+        width: colormapBounds.width,
+        height: xaxis_height
+    };
+    //NEED to fix these
+    var colABounds = {
+        position: "absolute",
+        top: colormapBounds.top + colormapBounds.height,
+        left: colormapBounds.left,
+        width: colormapBounds.width,
+        height: 10
+    }
+    var rowABounds = {
+        position: "absolute",
+        top: colormapBounds.top,
+        left: colormapBounds.left + colormapBounds.width,
+        width: 10,
+        height: colormapBounds.height
+    }
+    ///
+    function cssify(styles) {
+        return {
+            position: styles.position,
+            top: styles.top + "px",
+            left: styles.left + "px",
+            width: styles.width + "px",
+            height: styles.height + "px"
+        };
+    }
+    //Width/height of svg
+    //var width = 1300;
+    //var height = 600;
+    //var margintop = 130;
+    //var marginleft = 100;
+    //var transTime = 500;
+    //if there are more than 100 x values, it doesn't make sense to show the label
+    //if (mainDat.dim[0] > 100) {
+      //  marginleft=  0;
+    //}
+    //if (mainDat.dim[1] > 300) {
+      //  margintop = 0;
+    //}
+
+    (function() {
         var inner = el.append("div").classed("inner", true);
         //colDend is xDend, rowDend is yDend, colmap is heatmap
-        var colDend = inner.append("svg").classed("colDend", true);
-        var rowDend = inner.append("svg").classed("rowDend", true);
-        var colmap = inner.append("svg").classed("colormap", true);
-        var colAnnote = inner.append("svg").classed("colAnnote",true);
-        var rowAnnote = inner.append("svg").classed("rowAnnote",true);
-        var xAxis = inner.append("svg").classed("xAxis",true);
-        var yAxis = inner.append("svg").classed("yAxis",true)
+        var colDend = inner.append("svg").classed("colDend", true).style(cssify(colDendBounds));
+        var rowDend = inner.append("svg").classed("rowDend", true).style(cssify(rowDendBounds))
+        var colmap = inner.append("svg").classed("colormap", true).style(cssify(colormapBounds));
+        var colAnnote = inner.append("svg").classed("colAnnote",true).style(cssify(colABounds));
+        var rowAnnote = inner.append("svg").classed("rowAnnote",true).style(cssify(rowABounds));
+        var xAxis = inner.append("svg").classed("xAxis",true).style(cssify(xaxisBounds));
+        var yAxis = inner.append("svg").classed("yAxis",true).style(cssify(yaxisBounds));
 
     })();
 
@@ -57,21 +141,6 @@ function heatmapdraw(selector,data) {
         rowMeta = rowAnnote.data,
         colHead = colAnnote.header,
         rowHead = rowAnnote.header;
-    
-    //Width/height of svg
-    var width = 1300;
-    var height = 600;
-    var margintop = 130;
-    var marginleft = 100;
-    var transTime = 500;
-    //if there are more than 100 x values, it doesn't make sense to show the label
-    if (mainDat.dim[0] > 100) {
-        marginleft=  0;
-    }
-    if (mainDat.dim[1] > 300) {
-        margintop = 0;
-    }
-    
     //Set xScale and yScale
     //var x = d3.scale.linear().range([0, width-marginleft]);
     //var y = d3.scale.linear().range([0, height-margintop]);
@@ -81,34 +150,34 @@ function heatmapdraw(selector,data) {
     var color = d3.scale.linear()
     	.domain(mainDat.domain)
         .range(mainDat.colors);
-        
+
     //Color scheme needs to be fixed
     //var color = d3.scale.threshold()
     //	.domain([-6,-4,-2,-1,0,1,2,4,6])
     //	.range(colorbrewer.YlOrRd[9])
 
     //Creates everything for the heatmap
-    var row = (data.rows ==null) ? 0 : dendrogram(el.select('svg.rowDend'), data.rows, false, 250, height-margintop);
-    var col = (data.cols ==null) ? 0 : dendrogram(el.select('svg.colDend'), data.cols, true, width-marginleft, 250);
-    var heatmap = heatmapGrid(el.select('svg.colormap'), mainDat, width-marginleft,height-margintop);
-    var colAnnots = (colMeta == null) ? 0 : drawAnnotate(el.select('svg.colAnnote'),colAnnote, true, width-marginleft,colHead.length*5);
-    var rowAnnots = (rowMeta == null) ? 0: drawAnnotate(el.select('svg.rowAnnote'),rowAnnote, false,rowHead.length*5,height-margintop);
-	var xLabel = (mainDat.dim[0] > 100) ? 0 : axis(el.select('svg.xAxis'),data.matrix.cols,true,width-marginleft,150)
-    var yLabel = (mainDat.dim[1] > 300) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, 100, height-margintop)
-	
+    var row = (data.rows ==null) ? 0 : dendrogram(el.select('svg.rowDend'), data.rows, false, rowDendBounds.width, rowDendBounds.height);
+    var col = (data.cols ==null) ? 0 : dendrogram(el.select('svg.colDend'), data.cols, true, colDendBounds.width, colDendBounds.height);
+    var heatmap = heatmapGrid(el.select('svg.colormap'), mainDat, colormapBounds.width,colormapBounds.height);
+    var colAnnots = (colMeta == null) ? 0 : drawAnnotate(el.select('svg.colAnnote'),colAnnote, true, colABounds.width,colHead.length*5);
+    var rowAnnots = (rowMeta == null) ? 0: drawAnnotate(el.select('svg.rowAnnote'),rowAnnote, false,rowHead.length*5,rowABounds.height);
+	var xLabel = (mainDat.dim[0] > 100) ? 0 : axis(el.select('svg.xAxis'),data.matrix.cols,true,xaxisBounds.width,xaxis_height)
+    var yLabel = (mainDat.dim[1] > 300) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, yaxis_width, yaxisBounds.height)
+
     //heatLegend = d3.svg.legend().units("").cellWidth(80).cellHeight(10).inputScale(color).cellStepping(100);
 	//d3.select("svg").append("g").attr("transform", "translate(240,30)").attr("class", "legend").call(heatLegend);
-        
+
     //gradLegend(color,5,50)
 
     function heatmapGrid(svg, data, width, height) {
         // Check for no data
         if (data.length === 0)
             return function() {};
-     
+
         var cols = data.dim[1];
         var rows = data.dim[0];
-        
+
         var merged = data.data;
         var x = d3.scale.linear()
             .domain([0, cols])
@@ -123,7 +192,7 @@ function heatmapdraw(selector,data) {
             .html(function(d) { return d; })
             .direction("se")
             .style("position", "fixed");
-        
+
         var brush = d3.svg.brush()
             .x(x)
             .y(y)
@@ -176,8 +245,8 @@ function heatmapdraw(selector,data) {
                 }
                 return color(d);
             })
-            
-        rect.exit().remove();   
+
+        rect.exit().remove();
         rect.append("title")
             .text(function(d, i) { return (d === null) ? "NA" : d + ""; })
         rect.call(tip);
@@ -239,8 +308,8 @@ function heatmapdraw(selector,data) {
                 tip.hide().style("display","none")
                 controller.datapoint_hover(null);
             });
-            
-        
+
+
     }
 
     function axis(svg, data, rotated,width,height) {
@@ -259,13 +328,13 @@ function heatmapdraw(selector,data) {
             .outerTickSize(0)
             //.tickPadding(3)
             .tickValues(data)
-        
+
         var fontsize = Math.min(9, scale.rangeBand())
         // Create the actual axis
         var axisNodes = svg.append("g")
             .call(axis);
             axisNodes.selectAll("text")
-            .style("text-anchor", "start") 
+            .style("text-anchor", "start")
    			.style("font-size", fontsize)
 
         controller.on('transform.axis-' + (rotated ? 'x' : 'y'), function(_) {
@@ -290,7 +359,7 @@ function heatmapdraw(selector,data) {
                 .style("text-anchor", "start");
         });
 
-    
+
     }
 
 
@@ -300,15 +369,15 @@ function heatmapdraw(selector,data) {
         var y = d3.scale.linear()
             .domain([0, height])
             .range([0, height]);
-        
+
         var dscale = d3.scale.linear()
         	.domain([0, rotated ?  mainDat.dim[1] : mainDat.dim[0]])
         	.range([0, rotated ? width : height])
-        
+
         var cluster = d3.layout.cluster()
             .separation(function(a, b) { return 1; })
             .size([rotated ? width : height, (rotated ? height : width) - 160]);
-        
+
         var transform = "translate(1,0)";
         if (rotated) {
             // Flip dendrogram vertically
@@ -361,7 +430,7 @@ function heatmapdraw(selector,data) {
             .attr("height", height)
             .append("g")
             .attr("transform", transform);
-        
+
         var nodes = cluster.nodes(data),
             links = cluster.links(nodes);
 
@@ -375,7 +444,7 @@ function heatmapdraw(selector,data) {
                 target: {x: link.target.x, y: link.target.y}
             };
         });
-        
+
         var lines = dendrG.selectAll("polyline").data(links1);
         lines
             .enter().append("polyline")
@@ -399,7 +468,7 @@ function heatmapdraw(selector,data) {
             y.range([translateBy, height * scaleBy + translateBy]);
             draw(lines.transition().duration(transTime).ease("linear"));
         });
-        
+
         var brushG = svg.append("g")
             .attr('class', 'brush')
             .call(brush)
@@ -456,13 +525,13 @@ function heatmapdraw(selector,data) {
             .enter().append('text')
             .attr('x',function(d,i) { return width*i})
             .attr('y',24)
-            .text(function(d) {  
-                if (d.y%1==0) return "≤ "+d.y 
+            .text(function(d) {
+                if (d.y%1==0) return "≤ "+d.y
             })
     }
 */
     //Linear scaling for continuous values
-    function linScale(selectedDat) { 
+    function linScale(selectedDat) {
     	var max = Math.max.apply(Math,selectedDat);
         var min = Math.min.apply(Math,selectedDat);
 
@@ -477,7 +546,7 @@ function heatmapdraw(selector,data) {
         return scaling;
     }
     /*
-    function linScale(selectedDat) { 
+    function linScale(selectedDat) {
     	var max = Math.max.apply(Math,selectedDat);
         var min = Math.min.apply(Math,selectedDat);
 
@@ -487,7 +556,7 @@ function heatmapdraw(selector,data) {
 
 		horizontalLegend = d3.svg.legend().units("").cellWidth(50).cellHeight(10).inputScale(scaling).cellStepping(100);
 		d3.select("svg").append("g").attr("transform", "translate(113,30)").attr("class", "legend").call(horizontalLegend);
-        
+
         return scaling;
     }
     */
@@ -538,7 +607,7 @@ function heatmapdraw(selector,data) {
         controller.on('transform.annotation-' + (rotated ? 'x' : 'y'), function(_) {
             if (rotated) {
                 x.range([_.translate[0], width * _.scale[0] + _.translate[0]])
-            } else { 
+            } else {
                 y.range([_.translate[1], height * _.scale[1] + _.translate[1]])
             }
 
@@ -546,27 +615,27 @@ function heatmapdraw(selector,data) {
         });
 
         //gradLegend(lin,20,20)
-		    //catLegend(scaling)   
+		    //catLegend(scaling)
 
    // verticalLegend = d3.svg.legend().cellPadding(5).orientation("vertical")
     //	.units("Annotation").cellWidth(25).cellHeight(18)
     //	.inputScale(scaling).cellStepping(10);
 
   	//d3.select("svg").append("g").attr("transform", "translate(10,30)").attr("class", "legend").call(verticalLegend);
- 
+
   var dispatcher = d3.dispatch('hover', 'click');
-  
+
   controller.on("datapoint_hover", function(_) {
     dispatcher.hover({data: _});
   });
-  
+
   return {
     on: function(type, listener) {
       dispatcher.on(type, listener);
       return this;
     }
   };
- 
+
     };
 };
 

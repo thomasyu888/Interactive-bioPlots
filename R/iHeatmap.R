@@ -6,7 +6,7 @@
 #' @import htmlwidgets
 #'
 #' @export
-#'  
+#'
 NULL
 
 `%||%` <- function(a, b) {
@@ -17,16 +17,16 @@ NULL
 }
 
 iHeatmap <- function(mainData,
-                     theme = NULL,
-                     width = NULL, 
-                     height = NULL, 
                      colAnnote=NULL,
                      rowAnnote=NULL,
+                     theme = NULL,
+                     width = NULL,
+                     height = NULL,
                      ClustM = "complete",
                      distM = "euclidean",
                      Colv = TRUE,
                      Rowv = TRUE,...) {
-  
+
   ## sees if rownames/ col names exist for entered matrix
   if (length(row.names(mainData))==0) {
     row.names(mainData) = c(1:dim(mainData)[1])
@@ -34,16 +34,16 @@ iHeatmap <- function(mainData,
   if (length(colnames(mainData))== 0) {
     colnames(mainData) = c(1:dim(mainData)[2])
   }
-  
+
   #########FIX THIS!!!
   #########FIX THIS!!!
   #########FIX THIS!!!
-  
+
   if (Rowv) {
     rowClust <- hclust(dist(mainData,distM),ClustM)
     mainData <- mainData[rowClust$order,]
     if (!is.null(rowAnnote)) {
-      rowAnnotes <- rowAnnote[rowClust$order,] 
+      rowAnnotes <- rowAnnote[rowClust$order,]
     }
     rowDend <- HCtoJSON(rowClust)
   } else {
@@ -55,20 +55,20 @@ iHeatmap <- function(mainData,
     colClust <- hclust(dist(t(mainData),distM),ClustM)
     mainData <- mainData[,colClust$order]
     if (!is.null(colAnnote)) {
-      colAnnotes <- colAnnote[colClust$order,]  
+      colAnnotes <- colAnnote[colClust$order,]
     }
     colDend <- HCtoJSON(colClust)
   } else {
     colDend = NULL
     colAnnotes <- colAnnote
   }
-  
+
   if (!is.null(rowAnnote)) {
     if (length(row.names(rowAnnote))==0) {
       row.names(rowAnnote) = c(1:dim(rowAnnote)[1])
       colnames(rowAnnote) = c(1:dim(rowAnnote)[2])
     }
-    if (length(rowAnnote[,1])==dim(mainData)[1]) { 
+    if (length(rowAnnote[,1])==dim(mainData)[1]) {
       rowAnnotes <- matrix(rowAnnotes)
       rowHead <- colnames(rowAnnote)
     } else {
@@ -79,13 +79,13 @@ iHeatmap <- function(mainData,
     rowAnnotes <- rowAnnote
     rowHead <- NULL
   }
-  
+
   if (!is.null(colAnnote)) {
     if(length(row.names(colAnnote))==0) {
       row.names(colAnnote) = c(1:dim(colAnnote)[1])
       colnames(colAnnote) = c(1:dim(colAnnote)[2])
     }
-    if (length(colAnnote[,1])==dim(mainData)[2]) { 
+    if (length(colAnnote[,1])==dim(mainData)[2]) {
       colAnnotes <- matrix(colAnnotes)
       colHead <- colnames(colAnnote)
     } else {
@@ -98,19 +98,19 @@ iHeatmap <- function(mainData,
   }
   #########FIX THIS!!!
   #########FIX THIS!!!
-  
+
   ##Dealing with outliers.. Simple boxplot$out
   ##rng <- range(mainData[abs(mainData)<min(abs(boxplot(mainData)$out))])
   rng <- range(mainData)
   domain <- seq.int(ceiling(rng[2]), floor(rng[1]), length.out = 100)
   colors <- heat.colors(100)
   colors <- sub('FF$', '', colors)
-  
+
   colMeta <- list(data = colAnnotes,
-                  header = colHead) 
+                  header = colHead)
   rowMeta <- list(data = rowAnnotes,
                   header = rowHead)
-  
+
   matrix <- list(data = as.numeric(t(mainData)),
                  dim = dim(mainData),
                  rows = row.names(mainData),
