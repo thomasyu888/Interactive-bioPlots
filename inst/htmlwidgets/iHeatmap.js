@@ -5,17 +5,17 @@ HTMLWidgets.widget({
   type: 'output',
 
   initialize: function(el, width, height) {
-    
+
     return {
       lastTheme: null,
       lastValue: null
     };
-    
+
   },
 
   renderValue: function(el, x, instance) {
     instance.lastValue = x;
-    
+
     if (instance.lastTheme && instance.lastTheme != x.theme) {
       d3.select(document.body).classed("theme-" + instance.lastTheme, false);
     }
