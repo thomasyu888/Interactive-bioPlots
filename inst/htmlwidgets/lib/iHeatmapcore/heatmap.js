@@ -99,9 +99,9 @@ function heatmapdraw(selector,data) {
     };
     var xaxisBounds = {
         position: "absolute",
-        top: colormapBounds.top + colormapBounds.height,
+        top: (mainDat.data==null) ? height : (colormapBounds.top +  colormapBounds.height),
         left: colormapBounds.left,
-        width: colormapBounds.width,
+        width: (mainDat.data==null) ? width : colormapBounds.width,
         height: xaxis_height
     };
 
@@ -159,8 +159,8 @@ function heatmapdraw(selector,data) {
     var heatmap = heatmapGrid(el.select('svg.colormap'), mainDat, colormapBounds.width,colormapBounds.height);
     var colAnnots = (colMeta == null) ? 0 : drawAnnotate(el.select('svg.colAnnote'),colAnnote, true, colABounds.width,colABounds.height);
     var rowAnnots = (rowMeta == null) ? 0: drawAnnotate(el.select('svg.rowAnnote'),rowAnnote, false,rowABounds.width,rowABounds.height);
-	var xLabel = (mainDat.dim[0] > 100) ? 0 : axis(el.select('svg.xAxis'),data.matrix.cols,true,xaxisBounds.width,xaxis_height)
-    var yLabel = (mainDat.dim[1] > 300) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, yaxis_width, yaxisBounds.height)
+	var xLabel = axis(el.select('svg.xAxis'),data.matrix.cols,true,xaxisBounds.width,xaxis_height)
+    var yLabel = axis(el.select('svg.yAxis'),data.matrix.rows,false, yaxis_width, yaxisBounds.height)
 
     //heatLegend = d3.svg.legend().units("").cellWidth(80).cellHeight(10).inputScale(color).cellStepping(100);
 	//d3.select("svg").append("g").attr("transform", "translate(240,30)").attr("class", "legend").call(heatLegend);
@@ -330,7 +330,7 @@ function heatmapdraw(selector,data) {
             //.tickPadding(3)
             .tickValues(data)
 
-        var fontsize = Math.min(9, scale.rangeBand())
+        var fontsize = Math.min(18, Math.max(9, scale.rangeBand() - (rotated ? 11: 8))) + "px";
         // Create the actual axis
         var axisNodes = svg.append("g")
             .call(axis);
