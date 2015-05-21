@@ -1,6 +1,5 @@
-require(rCharts)
 require(shiny)
-library(htmlwidgets)
+require(htmlwidgets)
 require(iHeatmap)
 
 m  <- runif(1000)

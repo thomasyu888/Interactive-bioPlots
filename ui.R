@@ -1,4 +1,3 @@
-require(rCharts)
 shinyUI(pageWithSidebar(
   headerPanel("Interactive Heatmap"),
 
