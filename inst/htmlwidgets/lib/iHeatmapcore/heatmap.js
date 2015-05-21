@@ -56,16 +56,16 @@ function heatmapdraw(selector,data) {
         position: "absolute",
         left: yclust_width+yAnnote_height,
         top: xclust_height+xAnnote_width,
-        width: width - yclust_width - yaxis_width,
-        height: height - xclust_height - xaxis_height
+        width: (mainDat.data==null) ? 0 : width - yclust_width - yaxis_width,
+        height:(mainDat.data==null) ? 0 : height - xclust_height - xaxis_height
     };
 
     var colDendBounds = {
         position: "absolute",
         left: colormapBounds.left,
         top: 0,
-        width: colormapBounds.width,
-        height: (mainDat.data==null) ? colormapBounds.height : xclust_height
+        width: (mainDat.data==null) ? width : colormapBounds.width,
+        height: (mainDat.data==null) ? height : xclust_height
     };
     var rowDendBounds = {
         position: "absolute",
