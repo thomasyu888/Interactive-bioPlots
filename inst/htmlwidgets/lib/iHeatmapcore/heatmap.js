@@ -1,9 +1,9 @@
 function heatmapdraw(selector,data) {
-    
+
     var el = d3.select(selector);
-    
+
     var bbox = el.node().getBoundingClientRect();
-    
+
     var Controller = function() {
         this._events = d3.dispatch("datapoint_hover","transform");
         this._datapoint_hover = {x: null, y: null, value: null};
@@ -37,15 +37,7 @@ function heatmapdraw(selector,data) {
         rowMeta = rowAnnote.data,
         colHead = colAnnote.header,
         rowHead = rowAnnote.header;
-    //ALERTS!
-    //If there are over 170000 data points, there are too many
-    if (mainDat.data.length>170000 ) {
-        alert("Code not optimal for data that is over 170000 data points")
-        return function(){};
-    }
 
-
-    
     var controller = new Controller();
 
   // Set option defaults
@@ -56,8 +48,8 @@ function heatmapdraw(selector,data) {
     yclust_width = width * 0.12;
     xaxis_height = 120;
     yaxis_width = 120;
-    xAnnote_width = colHead.length*5
-    yAnnote_height = rowHead.length*5
+    xAnnote_width = (colHead== null) ? 0:colHead.length*5;
+    yAnnote_height = (rowHead == null) ? 0:rowHead.length*5;
 
 
     var colormapBounds = {
@@ -154,11 +146,7 @@ function heatmapdraw(selector,data) {
     //var x = d3.scale.linear().range([0, width-marginleft]);
     //var y = d3.scale.linear().range([0, height-margintop]);
 
-    //Heatmap colors
 
-    var color = d3.scale.linear()
-    	.domain(mainDat.domain)
-        .range(mainDat.colors);
 
     //Color scheme needs to be fixed
     //var color = d3.scale.threshold()
@@ -181,8 +169,12 @@ function heatmapdraw(selector,data) {
 
     function heatmapGrid(svg, data, width, height) {
         // Check for no data
-        if (data.length === 0)
+        if (data.data == null)
             return function() {};
+        //Heatmap colors
+        var color = d3.scale.linear()
+            .domain(mainDat.domain)
+            .range(mainDat.colors);
 
         var cols = data.dim[1];
         var rows = data.dim[0];

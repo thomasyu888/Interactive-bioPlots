@@ -25,7 +25,8 @@ iHeatmap <- function(mainData,
                      ClustM = "complete",
                      distM = "euclidean",
                      Colv = TRUE,
-                     Rowv = TRUE,...) {
+                     Rowv = TRUE,
+                     showHeat = TRUE,...) {
 
   ## sees if rownames/ col names exist for entered matrix
   if (length(row.names(mainData))==0) {
@@ -110,13 +111,17 @@ iHeatmap <- function(mainData,
                   header = colHead)
   rowMeta <- list(data = rowAnnotes,
                   header = rowHead)
+  if (showHeat) {
+    matrix <- list(data = as.numeric(t(mainData)),
+                   dim = dim(mainData),
+                   rows = row.names(mainData),
+                   cols = colnames(mainData),
+                   colors = colors,
+                   domain = domain)
+  } else {
+    matrix <-list(dim = dim(mainData))
+  }
 
-  matrix <- list(data = as.numeric(t(mainData)),
-                 dim = dim(mainData),
-                 rows = row.names(mainData),
-                 cols = colnames(mainData),
-                 colors = colors,
-                 domain = domain)
   x <- list(rows = rowDend, cols = colDend, theme = theme, colMeta = colMeta,rowMeta = rowMeta, matrix = matrix)
 
   # create widget
