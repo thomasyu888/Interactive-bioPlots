@@ -51,7 +51,6 @@ function heatmapdraw(selector,data) {
     xAnnote_width = (colHead== null) ? 0:colHead.length*5;
     yAnnote_height = (rowHead == null) ? 0:rowHead.length*5;
 
-
     var colormapBounds = {
         position: "absolute",
         left: yclust_width+yAnnote_height,
@@ -79,7 +78,7 @@ function heatmapdraw(selector,data) {
         position: "absolute",
         top: colDendBounds.height,
         left: colormapBounds.left,
-        width: colormapBounds.width,
+        width: (mainDat.data==null) ? width : colormapBounds.width,
         height: xAnnote_width
     }
     var rowABounds = {
@@ -114,11 +113,7 @@ function heatmapdraw(selector,data) {
             height: styles.height + "px"
         };
     }
-    //Width/height of svg
-    //var width = 1300;
-    //var height = 600;
-    //var margintop = 130;
-    //var marginleft = 100;
+
     var transTime = 500;
     //if there are more than 100 x values, it doesn't make sense to show the label
     //if (mainDat.dim[0] > 100) {
@@ -145,13 +140,6 @@ function heatmapdraw(selector,data) {
     //Set xScale and yScale
     //var x = d3.scale.linear().range([0, width-marginleft]);
     //var y = d3.scale.linear().range([0, height-margintop]);
-
-
-
-    //Color scheme needs to be fixed
-    //var color = d3.scale.threshold()
-    //	.domain([-6,-4,-2,-1,0,1,2,4,6])
-    //	.range(colorbrewer.YlOrRd[9])
 
     //Creates everything for the heatmap
     var row = (data.rows ==null) ? 0 : dendrogram(el.select('svg.rowDend'), data.rows, false, rowDendBounds.width,rowDendBounds.height);
@@ -303,11 +291,9 @@ function heatmapdraw(selector,data) {
                     left: d3.event.clientX - 170 + "px",
                     opacity: 0.9
                 });
-                controller.datapoint_hover({col:col, row:row, value:value});
             })
             .on("mouseleave", function() {
                 tip.hide().style("display","none")
-                controller.datapoint_hover(null);
             });
 
 
@@ -375,11 +361,18 @@ function heatmapdraw(selector,data) {
         	.domain([0, rotated ?  mainDat.dim[1] : mainDat.dim[0]])
         	.range([0, rotated ? width : height])
 
+        var tip = d3.tip()
+            .attr('class', 'd3heatmap-tip')
+            .html(function(d) { return d; })
+            .direction("se")
+            .style("position", "fixed");
+
         var cluster = d3.layout.cluster()
             .separation(function(a, b) { return 1; })
             .size([rotated ? width : height, (rotated ? height : width)]);
 
         var transform = "translate(1,0)";
+
         if (rotated) {
             // Flip dendrogram vertically
             x.range([1, 0]);
@@ -430,7 +423,7 @@ function heatmapdraw(selector,data) {
             .attr("width", width)
             .attr("height", height)
             .append("g")
-            .attr("transform", transform);
+            .attr("transform", transform)
 
         var nodes = cluster.nodes(data),
             links = cluster.links(nodes);
@@ -449,7 +442,7 @@ function heatmapdraw(selector,data) {
         var lines = dendrG.selectAll("polyline").data(links1);
         lines
             .enter().append("polyline")
-            .attr("class", "link");
+            .attr("class", "link")
 
         function draw(selection) {
             function elbow(d, i) {
@@ -461,6 +454,7 @@ function heatmapdraw(selector,data) {
             selection
                 .attr("points", elbow);
         }
+
         draw(lines);
 
         controller.on('transform.dendr-' + (rotated ? 'x' : 'y'), function(_) {
@@ -474,7 +468,32 @@ function heatmapdraw(selector,data) {
             .attr('class', 'brush')
             .call(brush)
             .call(brush.event);
+/*
+        if (mainDat.data == null) {
+            brushG.select("rect.background")
+                .on("mouseenter", function() {
+                    tip.style("display", "block");
+                })
+                .on("mousemove", function() {
+                    var col = Math.floor(y.invert(d3.event.offsetX));
 
+                    //Get all the metadata
+                    var output = 'ID: ' + mainDat.cols[col];
+                    if (colMeta != null) {
+                        //for (k=0; k<colHead.length;k++) {
+                            output += '<br>- ' + colHead[0] + ': ' + colMeta[col]
+                        //}
+                    }
+                    tip.show(output).style({
+                        top: d3.event.clientY +15 + "px",
+                        left: d3.event.clientX +15 + "px",
+                        opacity: 0.9
+                    });
+                })
+                .on("mouseleave", function() {
+                    tip.hide().style("display","none")
+                });
+        }*/
     }
 //////////////////////////////////////////////////////////////////////////////////////
 /*
@@ -591,7 +610,6 @@ function heatmapdraw(selector,data) {
             });
             annotation.exit().remove();
 
-
         function draw(selection) {
             selection
                 .attr('x' , function(d,i) {
@@ -615,6 +633,8 @@ function heatmapdraw(selector,data) {
             draw(annotation.transition().duration(transTime).ease("linear"));
         });
 
+
+
         //gradLegend(lin,20,20)
 		    //catLegend(scaling)
 
@@ -624,18 +644,6 @@ function heatmapdraw(selector,data) {
 
   	//d3.select("svg").append("g").attr("transform", "translate(10,30)").attr("class", "legend").call(verticalLegend);
 
-  var dispatcher = d3.dispatch('hover', 'click');
-
-  controller.on("datapoint_hover", function(_) {
-    dispatcher.hover({data: _});
-  });
-
-  return {
-    on: function(type, listener) {
-      dispatcher.on(type, listener);
-      return this;
-    }
-  };
 
     };
 };
