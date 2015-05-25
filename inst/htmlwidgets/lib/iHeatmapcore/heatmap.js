@@ -148,7 +148,7 @@ function heatmapdraw(selector,data) {
     var colAnnots = (colMeta == null) ? 0 : drawAnnotate(el.select('svg.colAnnote'),colAnnote, true, colABounds.width,colABounds.height);
     var rowAnnots = (rowMeta == null) ? 0: drawAnnotate(el.select('svg.rowAnnote'),rowAnnote, false,rowABounds.width,rowABounds.height);
 	var xLabel = axis(el.select('svg.xAxis'),data.matrix.cols,true,xaxisBounds.width,xaxis_height)
-    var yLabel = axis(el.select('svg.yAxis'),data.matrix.rows,false, yaxis_width, yaxisBounds.height)
+    var yLabel = (mainDat.data==null) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, yaxis_width, yaxisBounds.height)
 
     //heatLegend = d3.svg.legend().units("").cellWidth(80).cellHeight(10).inputScale(color).cellStepping(100);
 	//d3.select("svg").append("g").attr("transform", "translate(240,30)").attr("class", "legend").call(heatLegend);
