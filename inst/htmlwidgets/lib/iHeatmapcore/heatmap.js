@@ -443,6 +443,7 @@ function heatmapdraw(selector,data) {
         lines
             .enter().append("polyline")
             .attr("class", "link")
+            .call(tip)
 
         function draw(selection) {
             function elbow(d, i) {
@@ -468,7 +469,7 @@ function heatmapdraw(selector,data) {
             .attr('class', 'brush')
             .call(brush)
             .call(brush.event);
-/*
+
         if (mainDat.data == null) {
             brushG.select("rect.background")
                 .on("mouseenter", function() {
@@ -493,7 +494,7 @@ function heatmapdraw(selector,data) {
                 .on("mouseleave", function() {
                     tip.hide().style("display","none")
                 });
-        }*/
+        }
     }
 //////////////////////////////////////////////////////////////////////////////////////
 /*
