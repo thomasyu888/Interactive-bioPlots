@@ -37,7 +37,7 @@ function heatmapdraw(selector,data) {
         rowMeta = rowAnnote.data,
         colHead = colAnnote.header,
         rowHead = rowAnnote.header;
-
+console.log(colHead)
     var controller = new Controller();
 
   // Set option defaults
@@ -462,7 +462,7 @@ function heatmapdraw(selector,data) {
             var scaleBy = _.scale[rotated ? 0 : 1];
             var translateBy = _.translate[rotated ? 0 : 1];
             y.range([translateBy, height * scaleBy + translateBy]);
-            dscale.range([_.translate[0], (rotated ? width : height) * _.scale[0] + _.translate[0]])
+            dscale.range([translateBy, (rotated ? width : height) * scaleBy + translateBy])
             draw(lines.transition().duration(transTime).ease("linear"));
         });
 
@@ -471,20 +471,21 @@ function heatmapdraw(selector,data) {
             .call(brush)
             .call(brush.event);
 
-        if (mainDat.data == null) {
+        //if (mainDat.data == null) {
             brushG.select("rect.background")
                 .on("mouseenter", function() {
                     tip.style("display", "block");
                 })
                 .on("mousemove", function() {
                     var col = Math.floor(dscale.invert(d3.event.offsetX));
-
+                    var row = Math.floor(dscale.invert(d3.event.offsetY))
                     //Get all the metadata
-                    var output = 'ID: ' + mainDat.cols[col];
-                    if (colMeta != null) {
-                        //for (k=0; k<colHead.length;k++) {
-                            output += '<br>- ' + colHead[0] + ': ' + colMeta[col]
-                        //}
+                    var output = 'ID: ' + (rotated ? mainDat.cols[col] : mainDat.rows[row]);    
+
+                    if (colMeta != null && mainDat.data == null) {
+                        for (k=0; k<colHead.length;k++) {
+                            output += '<br> ' + colHead[k] + ': ' + colMeta[col]
+                        }
                     }
                     tip.show(output).style({
                         top: d3.event.clientY +15 + "px",
@@ -495,7 +496,7 @@ function heatmapdraw(selector,data) {
                 .on("mouseleave", function() {
                     tip.hide().style("display","none")
                 });
-        }
+        //}
     }
 //////////////////////////////////////////////////////////////////////////////////////
 /*

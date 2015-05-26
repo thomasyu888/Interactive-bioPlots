@@ -65,13 +65,15 @@ iHeatmap <- function(mainData,
   }
 
   if (!is.null(rowAnnote)) {
-    if (length(row.names(rowAnnote))==0) {
-      row.names(rowAnnote) = c(1:dim(rowAnnote)[1])
+    #if (is.null(row.names(rowAnnote))) {
+    #  row.names(rowAnnote) = c(1:dim(rowAnnote)[1])
+    #}
+    if (is.null(colnames(rowAnnote))) {
       colnames(rowAnnote) = c(1:dim(rowAnnote)[2])
     }
     if (length(rowAnnote[,1])==dim(mainData)[1]) {
-      rowAnnotes <- matrix(rowAnnotes)
-      rowHead <- colnames(rowAnnote)
+      #rowAnnotes <- matrix(rowAnnotes)
+      rowHead <- matrix(colnames(rowAnnote))
     } else {
       rowAnnotes <- NULL
       rowHead <- NULL
@@ -82,13 +84,15 @@ iHeatmap <- function(mainData,
   }
 
   if (!is.null(colAnnote)) {
-    if(length(row.names(colAnnote))==0) {
-      row.names(colAnnote) = c(1:dim(colAnnote)[1])
+    #if(is.null(row.names(colAnnote))) {
+    #  row.names(colAnnote) = c(1:dim(colAnnote)[1])
+    #}
+    if (is.null(colnames(colAnnote))) {
       colnames(colAnnote) = c(1:dim(colAnnote)[2])
     }
     if (length(colAnnote[,1])==dim(mainData)[2]) {
-      colAnnotes <- matrix(colAnnotes)
-      colHead <- colnames(colAnnote)
+      #colAnnotes <- matrix(colAnnotes)
+      colHead <- matrix(colnames(colAnnote))
     } else {
       colAnnotes <- NULL
       colHead <- NULL
@@ -106,7 +110,8 @@ iHeatmap <- function(mainData,
   domain <- seq.int(ceiling(rng[2]), floor(rng[1]), length.out = 100)
   colors <- heat.colors(100)
   colors <- sub('FF$', '', colors)
-
+#Mid point as median
+#White is the midpoint
   colMeta <- list(data = colAnnotes,
                   header = colHead)
   rowMeta <- list(data = rowAnnotes,
