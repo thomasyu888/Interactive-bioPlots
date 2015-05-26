@@ -362,9 +362,9 @@ function heatmapdraw(selector,data) {
         	.range([0, rotated ? width : height])
 
         var tip = d3.tip()
-            .attr('class', 'd3heatmap-tip')
+            .attr('class', 'Dend-tip')
             .html(function(d) { return d; })
-            .direction("se")
+            .direction("nw")
             .style("position", "fixed");
 
         var cluster = d3.layout.cluster()
@@ -443,7 +443,8 @@ function heatmapdraw(selector,data) {
         lines
             .enter().append("polyline")
             .attr("class", "link")
-            .call(tip)
+            //.call(tip)
+        //var endLines = lines.filter(function(d, i) { if (d.target.y == bbox.height) { return d;}}).call(tip)
 
         function draw(selection) {
             function elbow(d, i) {
@@ -451,17 +452,17 @@ function heatmapdraw(selector,data) {
                     x(d.source.y) + "," + y(d.target.x) + " " +
                     x(d.target.y) + "," + y(d.target.x);
             }
-
             selection
-                .attr("points", elbow);
+                .attr("points", elbow)
+                .call(tip)
         }
-
         draw(lines);
 
         controller.on('transform.dendr-' + (rotated ? 'x' : 'y'), function(_) {
             var scaleBy = _.scale[rotated ? 0 : 1];
             var translateBy = _.translate[rotated ? 0 : 1];
             y.range([translateBy, height * scaleBy + translateBy]);
+            dscale.range([_.translate[0], (rotated ? width : height) * _.scale[0] + _.translate[0]])
             draw(lines.transition().duration(transTime).ease("linear"));
         });
 
@@ -476,7 +477,7 @@ function heatmapdraw(selector,data) {
                     tip.style("display", "block");
                 })
                 .on("mousemove", function() {
-                    var col = Math.floor(y.invert(d3.event.offsetX));
+                    var col = Math.floor(dscale.invert(d3.event.offsetX));
 
                     //Get all the metadata
                     var output = 'ID: ' + mainDat.cols[col];
@@ -556,7 +557,6 @@ function heatmapdraw(selector,data) {
     	var max = Math.max.apply(Math,selectedDat);
         var min = Math.min.apply(Math,selectedDat);
 
-
         var scaling = d3.scale.linear()
             .domain([min, max])
             .range(['powderblue', 'darkblue']);
@@ -566,21 +566,7 @@ function heatmapdraw(selector,data) {
 
         return scaling;
     }
-    /*
-    function linScale(selectedDat) {
-    	var max = Math.max.apply(Math,selectedDat);
-        var min = Math.min.apply(Math,selectedDat);
 
-        var scaling = d3.scale.threshold()
-            .domain([min,max])
-            .range(['powderblue', 'darkblue']);
-
-		horizontalLegend = d3.svg.legend().units("").cellWidth(50).cellHeight(10).inputScale(scaling).cellStepping(100);
-		d3.select("svg").append("g").attr("transform", "translate(113,30)").attr("class", "legend").call(horizontalLegend);
-
-        return scaling;
-    }
-    */
     function drawAnnotate(svg,datum, rotated,width,height) {
 
         svg.attr("width",width).attr("height",height)
@@ -605,9 +591,12 @@ function heatmapdraw(selector,data) {
         //Annotation svg
         var annotation = svg.selectAll('.annotate').data(datum.data);
             annotation.enter().append('svg:rect').classed("annotate",true)
-
             .style('fill',function(d,i) {
-                return (isNaN(d) ? scaling(d):lin(d));
+                if (mainDat.data==null) {
+                    return "white";
+                } else {
+                    return (isNaN(d) ? scaling(d):lin(d));
+                }
             });
             annotation.exit().remove();
 

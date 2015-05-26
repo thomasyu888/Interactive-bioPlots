@@ -44,14 +44,11 @@
   z-index:-15px
 }
 
-
-
 .colormap {
   shape-rendering: crispEdges;
   overflow: hidden;
   z-index:1;
 }
-
 
 .d3heatmap-tip {
   font-size: 10px;
@@ -59,5 +56,14 @@
   background-color: white;
   padding: 6px 12px;
   white-space:nowrap;
+  z-index:2;
+}
+
+.Dend-tip {
+  font-size: 10px;
+  display:inline-block;
+  background-color: white;
+  padding: 6px 12px;
+  width:200px;
   z-index:2;
 }
