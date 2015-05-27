@@ -471,32 +471,31 @@ console.log(colHead)
             .call(brush)
             .call(brush.event);
 
-        //if (mainDat.data == null) {
-            brushG.select("rect.background")
-                .on("mouseenter", function() {
-                    tip.style("display", "block");
-                })
-                .on("mousemove", function() {
-                    var col = Math.floor(dscale.invert(d3.event.offsetX));
-                    var row = Math.floor(dscale.invert(d3.event.offsetY))
-                    //Get all the metadata
-                    var output = 'ID: ' + (rotated ? mainDat.cols[col] : mainDat.rows[row]);    
+        brushG.select("rect.background")
+            .on("mouseenter", function() {
+                tip.style("display", "block");
+            })
+            .on("mousemove", function() {
+                var col = Math.floor(dscale.invert(d3.event.offsetX));
+                var row = Math.floor(dscale.invert(d3.event.offsetY))
+                //Get all the metadata
+                var output = rotated ? mainDat.cols[col] : mainDat.rows[row];    
 
-                    if (colMeta != null && mainDat.data == null) {
-                        for (k=0; k<colHead.length;k++) {
-                            output += '<br> ' + colHead[k] + ': ' + colMeta[col]
-                        }
+                if (colMeta != null && mainDat.data == null) {
+                    for (k=0; k<colHead.length;k++) {
+                        output += '<br> ' + colHead[k] + ': ' + colMeta[col]
                     }
-                    tip.show(output).style({
-                        top: d3.event.clientY +15 + "px",
-                        left: d3.event.clientX +15 + "px",
-                        opacity: 0.9
-                    });
-                })
-                .on("mouseleave", function() {
-                    tip.hide().style("display","none")
+                }
+                tip.show(output).style({
+                    top: d3.event.clientY +15 + "px",
+                    left: d3.event.clientX +15 + "px",
+                    opacity: 0.9
                 });
-        //}
+            })
+            .on("mouseleave", function() {
+                tip.hide().style("display","none")
+            });
+        
     }
 //////////////////////////////////////////////////////////////////////////////////////
 /*
