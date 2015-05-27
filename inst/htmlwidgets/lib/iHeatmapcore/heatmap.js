@@ -37,7 +37,7 @@ function heatmapdraw(selector,data) {
         rowMeta = rowAnnote.data,
         colHead = colAnnote.header,
         rowHead = rowAnnote.header;
-console.log(colHead)
+
     var controller = new Controller();
 
   // Set option defaults
@@ -179,8 +179,8 @@ console.log(colHead)
         var tip = d3.tip()
             .attr('class', 'd3heatmap-tip')
             .html(function(d) { return d; })
-            .direction("se")
-            .style("position", "fixed");
+            .direction("nw")
+            .style("position", "fixed")
 
         var brush = d3.svg.brush()
             .x(x)
@@ -286,11 +286,13 @@ console.log(colHead)
                         output += '<br>- '+rowHead[k] + ': ' + rowMeta[row+(k*rows)]
                     }
                 }
-                tip.show(output).style({
-                    top: d3.event.clientY -120 + "px",
-                    left: d3.event.clientX - 170 + "px",
+                tip.show(output)
+                    .style({
+                    top: d3.event.clientY  +15 + "px",
+                    left: d3.event.clientX +15+ "px",
                     opacity: 0.9
-                });
+                })
+
             })
             .on("mouseleave", function() {
                 tip.hide().style("display","none")
