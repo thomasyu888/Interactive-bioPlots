@@ -292,10 +292,11 @@ function heatmapdraw(selector,data) {
                     left: d3.event.clientX +15+ "px",
                     opacity: 0.9
                 })
-
+                controller.datapoint_hover({col:col, row:row, value:value});
             })
             .on("mouseleave", function() {
                 tip.hide().style("display","none")
+                controller.datapoint_hover(null);
             });
 
 
@@ -496,7 +497,7 @@ function heatmapdraw(selector,data) {
                 var col = Math.floor(dscale.invert(d3.event.offsetX));
                 var row = Math.floor(dscale.invert(d3.event.offsetY))
                 //Get all the metadata
-                var output = rotated ? mainDat.cols[col] : mainDat.rows[row];    
+                var output = rotated ? mainDat.cols[col] : mainDat.rows[row];
 
                 if (colMeta != null && mainDat.data == null) {
                     for (k=0; k<colHead.length;k++) {
@@ -512,7 +513,7 @@ function heatmapdraw(selector,data) {
             .on("mouseleave", function() {
                 tip.hide().style("display","none")
             });
-        
+
     }
 //////////////////////////////////////////////////////////////////////////////////////
 /*
@@ -653,5 +654,19 @@ function heatmapdraw(selector,data) {
 
 
     };
+
+
+  var dispatcher = d3.dispatch('hover');
+
+  controller.on("datapoint_hover", function(_) {
+    dispatcher.hover({data: _});
+  });
+
+  return {
+    on: function(type, listener) {
+      dispatcher.on(type, listener);
+      return this;
+    }
+  };
 };
 
