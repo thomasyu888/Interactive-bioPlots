@@ -318,13 +318,25 @@ function heatmapdraw(selector,data) {
             //.tickPadding(3)
             .tickValues(data)
 
-        var fontsize = Math.min(18, Math.max(9, scale.rangeBand() - (rotated ? 11: 8))) + "px";
+        var fontsize = Math.min(10, Math.max(9, scale.rangeBand() - (rotated ? 11: 8))) + "px";
         // Create the actual axis
         var axisNodes = svg.append("g")
             .call(axis);
             axisNodes.selectAll("text")
             .style("text-anchor", "start")
-   			.style("font-size", fontsize)
+   			.style("font-size", fontsize);
+
+        function text(select,length) {
+        	select.style("opacity", function() {
+        		if (length <= (rotated ? 100: 40)) {
+        			return 1;
+        		} else {
+        			return 0;
+        		}
+        	})
+        }
+
+        text(axisNodes,data.length)
 
         controller.on('transform.axis-' + (rotated ? 'x' : 'y'), function(_) {
             var dim = rotated ? 0 : 1;
@@ -336,16 +348,19 @@ function heatmapdraw(selector,data) {
             // in RStudio Viewer pane
             axisNodes.selectAll("text").style("text-anchor", "start");
             //tAxisNodes.selectAll("g")
-             //   .style("opacity", function(d, i) {
-              //      if (i >= _.extent[0][dim] && i < _.extent[1][dim]) {
-               //         return 1;
-                //    } else {
-                //        return 0;
-                 //   }
-                //});
+              //  .style("opacity", function(d, i) {
+                //    if (i <= _.extent[0][dim] && i < _.extent[1][dim]) {
+                  //      return 1;
+                   // } else {
+                    //    return 0;
+                   // }
+               // });
+
             tAxisNodes
                 .selectAll("text")
                 .style("text-anchor", "start");
+
+            text(tAxisNodes, (_.extent[1][dim] - _.extent[0][dim]));
         });
 
 
