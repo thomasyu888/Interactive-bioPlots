@@ -40,8 +40,6 @@ function heatmapdraw(selector,data) {
 
     var controller = new Controller();
 
-  // Set option defaults
-
     width = bbox.width;
     height = bbox.height;
     xclust_height = height * 0.12;
