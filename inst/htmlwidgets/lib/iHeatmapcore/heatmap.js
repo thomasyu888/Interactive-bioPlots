@@ -58,16 +58,16 @@ function heatmapdraw(selector,data,options) {
         position: "absolute",
         left: opts.yclust_width+opts.yAnnote_height,
         top: opts.xclust_height+opts.xAnnote_width,
-        width: (!opts.showHeat) ? 0 : opts.width - opts.yclust_width - opts.yaxis_width,
-        height: (!opts.showHeat) ? 0 : opts.height - opts.xclust_height - opts.xaxis_height
+        width: (mainDat.data==null) ? 0 : opts.width - opts.yclust_width - opts.yaxis_width,
+        height:(mainDat.data==null) ? 0 : opts.height - opts.xclust_height - opts.xaxis_height
     };
 
     var colDendBounds = {
         position: "absolute",
         left: colormapBounds.left,
         top: 0,
-        width: (!opts.showHeat) ? opts.width : colormapBounds.width,
-        height: (!opts.showHeat) ? opts.height : opts.xclust_height
+        width: (mainDat.data==null) ? opts.width : colormapBounds.width,
+        height: (mainDat.data==null) ? opts.height : opts.xclust_height
     };
     var rowDendBounds = {
         position: "absolute",
@@ -81,7 +81,7 @@ function heatmapdraw(selector,data,options) {
         position: "absolute",
         top: colDendBounds.height,
         left: colormapBounds.left,
-        width: (!opts.showHeat) ? opts.width : colormapBounds.width,
+        width: (mainDat.data==null) ? opts.width : colormapBounds.width,
         height: opts.xAnnote_width
     }
     var rowABounds = {
@@ -101,9 +101,9 @@ function heatmapdraw(selector,data,options) {
     };
     var xaxisBounds = {
         position: "absolute",
-        top: (!opts.showHeat) ? opts.height : (colormapBounds.top +  colormapBounds.height),
+        top: (mainDat.data==null) ? opts.height : (colormapBounds.top +  colormapBounds.height),
         left: colormapBounds.left,
-        width: (!opts.showHeat) ? opts.width : colormapBounds.width,
+        width: (mainDat.data==null) ? opts.width : colormapBounds.width,
         height: opts.xaxis_height
     };
 
@@ -141,11 +141,11 @@ function heatmapdraw(selector,data,options) {
     var heatmap = heatmapGrid(el.select('svg.colormap'), mainDat, colormapBounds.width,colormapBounds.height);
     var colAnnots = (colMeta == null) ? 0 : drawAnnotate(el.select('svg.colAnnote'),colAnnote, true, colABounds.width,colABounds.height);
     var rowAnnots = (rowMeta == null) ? 0: drawAnnotate(el.select('svg.rowAnnote'),rowAnnote, false,rowABounds.width,rowABounds.height);
-	var xLabel = axis(el.select('svg.xAxis'),data.matrix.cols,true,xaxisBounds.width,opts.xaxis_height)
-    var yLabel = (!opts.showHeat) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, opts.yaxis_width, yaxisBounds.height)
+    var xLabel = axis(el.select('svg.xAxis'),data.matrix.cols,true,xaxisBounds.width,opts.xaxis_height)
+    var yLabel = (mainDat.data==null) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, opts.yaxis_width, yaxisBounds.height)
 
     //heatLegend = d3.svg.legend().units("").cellWidth(80).cellHeight(10).inputScale(color).cellStepping(100);
-	//d3.select("svg").append("g").attr("transform", "translate(240,30)").attr("class", "legend").call(heatLegend);
+    //d3.select("svg").append("g").attr("transform", "translate(240,30)").attr("class", "legend").call(heatLegend);
 
     //gradLegend(color,5,50)
 
@@ -286,11 +286,11 @@ function heatmapdraw(selector,data,options) {
                     left: d3.event.clientX +15+ "px",
                     opacity: 0.9
                 })
-                //controller.datapoint_hover({col:col, row:row, value:value});
+                controller.datapoint_hover({col:col, row:row, value:value});
             })
             .on("mouseleave", function() {
                 tip.hide().style("display","none")
-                //controller.datapoint_hover(null);
+                controller.datapoint_hover(null);
             });
 
 
@@ -319,16 +319,16 @@ function heatmapdraw(selector,data,options) {
             .call(axis);
             axisNodes.selectAll("text")
             .style("text-anchor", "start")
-   			.style("font-size", fontsize);
+            .style("font-size", fontsize);
 
         function text(select,length) {
-        	select.style("opacity", function() {
-        		if (length <= (rotated ? 100: 40)) {
-        			return 1;
-        		} else {
-        			return 0;
-        		}
-        	})
+            select.style("opacity", function() {
+                if (length <= (rotated ? 100: 40)) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            })
         }
 
         text(axisNodes,data.length)
@@ -370,8 +370,8 @@ function heatmapdraw(selector,data,options) {
             .range([0, height]);
 
         var dscale = d3.scale.linear()
-        	.domain([0, rotated ?  mainDat.dim[1] : mainDat.dim[0]])
-        	.range([0, rotated ? width : height])
+            .domain([0, rotated ?  mainDat.dim[1] : mainDat.dim[0]])
+            .range([0, rotated ? width : height])
 
         var tip = d3.tip()
             .attr('class', 'Dend-tip')
@@ -415,12 +415,12 @@ function heatmapdraw(selector,data,options) {
                     var tf = controller.transform();
                     var ex = brush.extent();
                     var scale = [
-                    	rotated ? mainDat.dim[1] / (ex[1][0] - ex[0][0]) :1,
-                    	rotated ? 1: mainDat.dim[0] / (ex[1][1] - ex[0][1])
+                        rotated ? mainDat.dim[1] / (ex[1][0] - ex[0][0]) :1,
+                        rotated ? 1: mainDat.dim[0] / (ex[1][1] - ex[0][1])
                     ];
                     var translate = [
-                    	rotated ? ex[0][0] * (width / mainDat.dim[1]) * scale[0] * -1 :0 ,
-                    	rotated ? 0 : ex[0][1] * (height / mainDat.dim[0]) * scale[1] * -1
+                        rotated ? ex[0][0] * (width / mainDat.dim[1]) * scale[0] * -1 :0 ,
+                        rotated ? 0 : ex[0][1] * (height / mainDat.dim[0]) * scale[1] * -1
                     ];
                     controller.transform({scale: scale, translate: translate, extent: ex});
                 }
@@ -503,11 +503,11 @@ function heatmapdraw(selector,data,options) {
                     left: d3.event.clientX +15 + "px",
                     opacity: 0.9
                 });
-                //controller.datapoint_hover({col:col, row:row, value:output});
+                controller.datapoint_hover({col:col, row:row, value:output});
             })
             .on("mouseleave", function() {
                 tip.hide().style("display","none")
-                //controller.datapoint_hover(null);
+                controller.datapoint_hover(null);
             });
 
     }
@@ -515,8 +515,8 @@ function heatmapdraw(selector,data,options) {
 /*
     //Legend for the annotations for categorical annotations!
     function catLegend(scales) {
-    	var legsvg = el.select('svg.legends').attr('width',1000).attr('height', 80)
-       	var leg = legsvg.selectAll('.legend')
+        var legsvg = el.select('svg.legends').attr('width',1000).attr('height', 80)
+        var leg = legsvg.selectAll('.legend')
             .data(scales.domain())
             .enter()
             .append('g')
@@ -529,7 +529,6 @@ function heatmapdraw(selector,data,options) {
             .attr('height',5)
             .style('fill',scales)
             .style('stroke',scales)
-
         leg.append('text')
             .attr('x',5)
             .attr('y',10)
@@ -538,21 +537,19 @@ function heatmapdraw(selector,data,options) {
 /*
     //Legend for quantized values
     function gradLegend(color,width, location) {
-    	var legsvg = el.select('svg.legends').attr('width',1000).attr('height', 80)
-    	var leg = legsvg.append("g")
-    		.attr("class", "key")
-    		.attr("transform", "translate(0," + location +")");
-
-		leg.selectAll("rect")
-		    .data(color.range().map(function(d, i) {
-			    return { z: d };
-		    }))
-		  	.enter().append("rect")
-		    .attr("height", 12)
-		    .attr("x", function(d,i) { return width*i; })
-		    .attr("width", width)
-		    .style("fill", function(d) { return d.z; })
-
+        var legsvg = el.select('svg.legends').attr('width',1000).attr('height', 80)
+        var leg = legsvg.append("g")
+            .attr("class", "key")
+            .attr("transform", "translate(0," + location +")");
+        leg.selectAll("rect")
+            .data(color.range().map(function(d, i) {
+                return { z: d };
+            }))
+            .enter().append("rect")
+            .attr("height", 12)
+            .attr("x", function(d,i) { return width*i; })
+            .attr("width", width)
+            .style("fill", function(d) { return d.z; })
         leg.selectAll('text')
             .attr('class','legendT')
             .data(color.domain().map(function(d,i) {
@@ -568,15 +565,15 @@ function heatmapdraw(selector,data,options) {
 */
     //Linear scaling for continuous values
     function linScale(selectedDat) {
-    	var max = Math.max.apply(Math,selectedDat);
+        var max = Math.max.apply(Math,selectedDat);
         var min = Math.min.apply(Math,selectedDat);
 
         var scaling = d3.scale.linear()
             .domain([min, max])
             .range(['powderblue', 'darkblue']);
 
-		//horizontalLegend = d3.svg.legend().units("").labelFormat("none").cellWidth(50).cellHeight(10).inputScale(scaling).cellStepping(100);
-		//d3.select("svg").append("g").attr("transform", "translate(113,30)").attr("class", "legend").call(horizontalLegend);
+        //horizontalLegend = d3.svg.legend().units("").labelFormat("none").cellWidth(50).cellHeight(10).inputScale(scaling).cellStepping(100);
+        //d3.select("svg").append("g").attr("transform", "translate(113,30)").attr("class", "legend").call(horizontalLegend);
 
         return scaling;
     }
@@ -597,10 +594,10 @@ function heatmapdraw(selector,data,options) {
             .range([0, height]);
 
         for (k=0;k<datum.header.length;k++) {
-        	//If the data is not cateogorical value, get all the values to get a linear scale
-        	if (!isNaN(datum.data[k*length])) {
-        		var lin = linScale(datum.data.slice(k*length, (1+k)*length-1));
-        	}
+            //If the data is not cateogorical value, get all the values to get a linear scale
+            if (!isNaN(datum.data[k*length])) {
+                var lin = linScale(datum.data.slice(k*length, (1+k)*length-1));
+            }
         }
         //Annotation svg
         var annotation = svg.selectAll('.annotate').data(datum.data);
@@ -640,19 +637,19 @@ function heatmapdraw(selector,data,options) {
 
 
         //gradLegend(lin,20,20)
-		    //catLegend(scaling)
+            //catLegend(scaling)
 
    // verticalLegend = d3.svg.legend().cellPadding(5).orientation("vertical")
-    //	.units("Annotation").cellWidth(25).cellHeight(18)
-    //	.inputScale(scaling).cellStepping(10);
+    //  .units("Annotation").cellWidth(25).cellHeight(18)
+    //  .inputScale(scaling).cellStepping(10);
 
-  	//d3.select("svg").append("g").attr("transform", "translate(10,30)").attr("class", "legend").call(verticalLegend);
+    //d3.select("svg").append("g").attr("transform", "translate(10,30)").attr("class", "legend").call(verticalLegend);
 
 
     };
 
 
-  /*var dispatcher = d3.dispatch('hover');
+  var dispatcher = d3.dispatch('hover');
 
   controller.on("datapoint_hover", function(_) {
     dispatcher.hover({data: _});
@@ -663,6 +660,5 @@ function heatmapdraw(selector,data,options) {
       dispatcher.on(type, listener);
       return this;
     }
-  }; */
+  };
 };
-

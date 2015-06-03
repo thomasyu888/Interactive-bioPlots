@@ -125,22 +125,22 @@ iHeatmap <- function(x,
                   header = colHead)
   rowMeta <- list(data = rowAnnotes,
                   header = rowHead)
-  #if (showHeat) {
+  if (showHeat) {
     matrix <- list(data = as.numeric(t(mainData)),
                    dim = dim(mainData),
                    rows = row.names(mainData),
                    cols = colnames(mainData),
                    colors = colors,
                    domain = domain)
- # }
-#else {
- #   matrix <- list(data = 0,
-  #                 dim = dim(mainData),
-   #                rows = row.names(mainData),
-    #               cols = colnames(mainData),
-     #              colors = colors,
-      #             domain = domain)
-#  }
+  }
+  else {
+    matrix <- list(data = 0,
+                   dim = dim(mainData),
+                   rows = row.names(mainData),
+                   cols = colnames(mainData),
+                   colors = colors,
+                   domain = domain)
+  }
 
 
 
