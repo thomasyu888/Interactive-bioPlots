@@ -455,7 +455,6 @@ function heatmapdraw(selector,data,options) {
         lines
             .enter().append("polyline")
             .attr("class", "link")
-            .property("index", function(d,i) {return i;})
             //.call(tip)
         //var endLines = lines.filter(function(d, i) { if (d.target.y == bbox.height) { return d;}}).call(tip)
 

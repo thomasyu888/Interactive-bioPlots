@@ -17,9 +17,13 @@ HTMLWidgets.widget({
 
     el.innerHTML = "";
     var hm = heatmapdraw(el, x, x.options);
-
+console.log(hm)
+console.log(x)
+console.log(x.options)
+console.log(instance)
     if (window.Shiny) {
       var id = this.getId(el);
+
       //hm.on('hover', function(e) {
       //  Shiny.onInputChange(id + '_hover', !e.data ? e.data : {
       //    value: e.data.value,
