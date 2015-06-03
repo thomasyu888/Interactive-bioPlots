@@ -58,16 +58,16 @@ function heatmapdraw(selector,data,options) {
         position: "absolute",
         left: opts.yclust_width+opts.yAnnote_height,
         top: opts.xclust_height+opts.xAnnote_width,
-        width: (opts.showHeat) ? 0 : opts.width - opts.yclust_width - opts.yaxis_width,
-        height: (opts.showHeat) ? 0 : opts.height - opts.xclust_height - opts.xaxis_height
+        width: (!opts.showHeat) ? 0 : opts.width - opts.yclust_width - opts.yaxis_width,
+        height: (!opts.showHeat) ? 0 : opts.height - opts.xclust_height - opts.xaxis_height
     };
 
     var colDendBounds = {
         position: "absolute",
         left: colormapBounds.left,
         top: 0,
-        width: (opts.showHeat) ? opts.width : colormapBounds.width,
-        height: (opts.showHeat) ? opts.height : opts.xclust_height
+        width: (!opts.showHeat) ? opts.width : colormapBounds.width,
+        height: (!opts.showHeat) ? opts.height : opts.xclust_height
     };
     var rowDendBounds = {
         position: "absolute",
@@ -81,7 +81,7 @@ function heatmapdraw(selector,data,options) {
         position: "absolute",
         top: colDendBounds.height,
         left: colormapBounds.left,
-        width: (opts.showHeat) ? opts.width : colormapBounds.width,
+        width: (!opts.showHeat) ? opts.width : colormapBounds.width,
         height: opts.xAnnote_width
     }
     var rowABounds = {
@@ -101,9 +101,9 @@ function heatmapdraw(selector,data,options) {
     };
     var xaxisBounds = {
         position: "absolute",
-        top: (opts.showHeat) ? opts.height : (colormapBounds.top +  colormapBounds.height),
+        top: (!opts.showHeat) ? opts.height : (colormapBounds.top +  colormapBounds.height),
         left: colormapBounds.left,
-        width: (opts.showHeat) ? opts.width : colormapBounds.width,
+        width: (!opts.showHeat) ? opts.width : colormapBounds.width,
         height: opts.xaxis_height
     };
 
@@ -142,7 +142,7 @@ function heatmapdraw(selector,data,options) {
     var colAnnots = (colMeta == null) ? 0 : drawAnnotate(el.select('svg.colAnnote'),colAnnote, true, colABounds.width,colABounds.height);
     var rowAnnots = (rowMeta == null) ? 0: drawAnnotate(el.select('svg.rowAnnote'),rowAnnote, false,rowABounds.width,rowABounds.height);
 	var xLabel = axis(el.select('svg.xAxis'),data.matrix.cols,true,xaxisBounds.width,opts.xaxis_height)
-    var yLabel = (opts.showHeat) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, opts.yaxis_width, yaxisBounds.height)
+    var yLabel = (!opts.showHeat) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, opts.yaxis_width, yaxisBounds.height)
 
     //heatLegend = d3.svg.legend().units("").cellWidth(80).cellHeight(10).inputScale(color).cellStepping(100);
 	//d3.select("svg").append("g").attr("transform", "translate(240,30)").attr("class", "legend").call(heatLegend);
