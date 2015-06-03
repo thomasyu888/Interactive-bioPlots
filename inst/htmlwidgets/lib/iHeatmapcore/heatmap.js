@@ -138,7 +138,7 @@ function heatmapdraw(selector,data,options) {
     //Creates everything for the heatmap
     var row = (data.rows ==null) ? 0 : dendrogram(el.select('svg.rowDend'), data.rows, false, rowDendBounds.width,rowDendBounds.height);
     var col = (data.cols ==null) ? 0 : dendrogram(el.select('svg.colDend'), data.cols, true, colDendBounds.width, colDendBounds.height);
-    var heatmap = (opts.showHeat) ? 0 : heatmapGrid(el.select('svg.colormap'), mainDat, colormapBounds.width,colormapBounds.height);
+    var heatmap = heatmapGrid(el.select('svg.colormap'), mainDat, colormapBounds.width,colormapBounds.height);
     var colAnnots = (colMeta == null) ? 0 : drawAnnotate(el.select('svg.colAnnote'),colAnnote, true, colABounds.width,colABounds.height);
     var rowAnnots = (rowMeta == null) ? 0: drawAnnotate(el.select('svg.rowAnnote'),rowAnnote, false,rowABounds.width,rowABounds.height);
 	var xLabel = axis(el.select('svg.xAxis'),data.matrix.cols,true,xaxisBounds.width,opts.xaxis_height)
