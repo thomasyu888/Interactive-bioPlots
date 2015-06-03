@@ -58,16 +58,16 @@ function heatmapdraw(selector,data,options) {
         position: "absolute",
         left: opts.yclust_width+opts.yAnnote_height,
         top: opts.xclust_height+opts.xAnnote_width,
-        width: (mainDat.data==null) ? 0 : opts.width - opts.yclust_width - opts.yaxis_width,
-        height:(mainDat.data==null) ? 0 : opts.height - opts.xclust_height - opts.xaxis_height
+        width: (opts.showHeat) ? 0 : opts.width - opts.yclust_width - opts.yaxis_width,
+        height: (opts.showHeat) ? 0 : opts.height - opts.xclust_height - opts.xaxis_height
     };
 
     var colDendBounds = {
         position: "absolute",
         left: colormapBounds.left,
         top: 0,
-        width: (mainDat.data==null) ? opts.width : colormapBounds.width,
-        height: (mainDat.data==null) ? opts.height : opts.xclust_height
+        width: (opts.showHeat) ? opts.width : colormapBounds.width,
+        height: (opts.showHeat) ? opts.height : opts.xclust_height
     };
     var rowDendBounds = {
         position: "absolute",
@@ -81,7 +81,7 @@ function heatmapdraw(selector,data,options) {
         position: "absolute",
         top: colDendBounds.height,
         left: colormapBounds.left,
-        width: (mainDat.data==null) ? opts.width : colormapBounds.width,
+        width: (opts.showHeat) ? opts.width : colormapBounds.width,
         height: opts.xAnnote_width
     }
     var rowABounds = {
@@ -101,9 +101,9 @@ function heatmapdraw(selector,data,options) {
     };
     var xaxisBounds = {
         position: "absolute",
-        top: (mainDat.data==null) ? opts.height : (colormapBounds.top +  colormapBounds.height),
+        top: (opts.showHeat) ? opts.height : (colormapBounds.top +  colormapBounds.height),
         left: colormapBounds.left,
-        width: (mainDat.data==null) ? opts.width : colormapBounds.width,
+        width: (opts.showHeat) ? opts.width : colormapBounds.width,
         height: opts.xaxis_height
     };
 
@@ -138,11 +138,11 @@ function heatmapdraw(selector,data,options) {
     //Creates everything for the heatmap
     var row = (data.rows ==null) ? 0 : dendrogram(el.select('svg.rowDend'), data.rows, false, rowDendBounds.width,rowDendBounds.height);
     var col = (data.cols ==null) ? 0 : dendrogram(el.select('svg.colDend'), data.cols, true, colDendBounds.width, colDendBounds.height);
-    var heatmap = heatmapGrid(el.select('svg.colormap'), mainDat, colormapBounds.width,colormapBounds.height);
+    var heatmap = (opts.showHeat) ? 0 : heatmapGrid(el.select('svg.colormap'), mainDat, colormapBounds.width,colormapBounds.height);
     var colAnnots = (colMeta == null) ? 0 : drawAnnotate(el.select('svg.colAnnote'),colAnnote, true, colABounds.width,colABounds.height);
     var rowAnnots = (rowMeta == null) ? 0: drawAnnotate(el.select('svg.rowAnnote'),rowAnnote, false,rowABounds.width,rowABounds.height);
 	var xLabel = axis(el.select('svg.xAxis'),data.matrix.cols,true,xaxisBounds.width,opts.xaxis_height)
-    var yLabel = (mainDat.data==null) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, opts.yaxis_width, yaxisBounds.height)
+    var yLabel = (opts.showHeat) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, opts.yaxis_width, yaxisBounds.height)
 
     //heatLegend = d3.svg.legend().units("").cellWidth(80).cellHeight(10).inputScale(color).cellStepping(100);
 	//d3.select("svg").append("g").attr("transform", "translate(240,30)").attr("class", "legend").call(heatLegend);
@@ -286,11 +286,11 @@ function heatmapdraw(selector,data,options) {
                     left: d3.event.clientX +15+ "px",
                     opacity: 0.9
                 })
-                controller.datapoint_hover({col:col, row:row, value:value});
+                //controller.datapoint_hover({col:col, row:row, value:value});
             })
             .on("mouseleave", function() {
                 tip.hide().style("display","none")
-                controller.datapoint_hover(null);
+                //controller.datapoint_hover(null);
             });
 
 
@@ -503,11 +503,11 @@ function heatmapdraw(selector,data,options) {
                     left: d3.event.clientX +15 + "px",
                     opacity: 0.9
                 });
-                controller.datapoint_hover({col:col, row:row, value:output});
+                //controller.datapoint_hover({col:col, row:row, value:output});
             })
             .on("mouseleave", function() {
                 tip.hide().style("display","none")
-                controller.datapoint_hover(null);
+                //controller.datapoint_hover(null);
             });
 
     }
@@ -652,7 +652,7 @@ function heatmapdraw(selector,data,options) {
     };
 
 
-  var dispatcher = d3.dispatch('hover');
+  /*var dispatcher = d3.dispatch('hover');
 
   controller.on("datapoint_hover", function(_) {
     dispatcher.hover({data: _});
@@ -663,6 +663,6 @@ function heatmapdraw(selector,data,options) {
       dispatcher.on(type, listener);
       return this;
     }
-  };
+  }; */
 };
 

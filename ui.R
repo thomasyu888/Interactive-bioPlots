@@ -1,3 +1,7 @@
+require(shiny)
+require(htmlwidgets)
+require(iHeatmap)
+
 shinyUI(fluidPage(
   headerPanel("Interactive Heatmap"),
 

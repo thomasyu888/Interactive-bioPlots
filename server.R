@@ -1,6 +1,3 @@
-require(shiny)
-require(htmlwidgets)
-require(iHeatmap)
 
 m  <- runif(1000)
 m <- matrix(m, ncol=10)
