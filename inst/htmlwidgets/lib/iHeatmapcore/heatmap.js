@@ -503,9 +503,11 @@ function heatmapdraw(selector,data,options) {
                     left: d3.event.clientX +15 + "px",
                     opacity: 0.9
                 });
+                controller.datapoint_hover({col:col, row:row, value:output});
             })
             .on("mouseleave", function() {
                 tip.hide().style("display","none")
+                controller.datapoint_hover(null);
             });
 
     }

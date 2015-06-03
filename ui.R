@@ -1,20 +1,20 @@
-shinyUI(pageWithSidebar(
+shinyUI(fluidPage(
   headerPanel("Interactive Heatmap"),
 
   sidebarPanel(
-    selectInput(inputId = "x",
-                label = "Clustering method",
-                choices = c('complete', 'average','ward.D','ward.D2','single','mcquitty','median','centroid'),
-                selected = "complete"),
+   selectInput(inputId = "x",
+               label = "Clustering method",
+               choices = c('complete', 'average','ward.D','ward.D2','single','mcquitty','median','centroid'),
+               selected = "complete"),
 
-    selectInput(inputId = "y",
-                label = "Cluster rows",
-                choices = c('TRUE', 'FALSE'),
-                selected = 'TRUE'),
+   selectInput(inputId = "y",
+               label = "Cluster rows",
+               choices = c('TRUE', 'FALSE'),
+               selected = 'TRUE'),
 
-    selectInput(inputId = "z",
-                label = "Cluster columns",
-                choices = c('TRUE','FALSE'),
+   selectInput(inputId = "z",
+               label = "Cluster columns",
+               choices = c('TRUE','FALSE'),
                 selected = 'TRUE'),
 
     selectInput(inputId = "v",
