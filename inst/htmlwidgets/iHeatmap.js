@@ -20,13 +20,13 @@ HTMLWidgets.widget({
 
     if (window.Shiny) {
       var id = this.getId(el);
-      hm.on('hover', function(e) {
-        Shiny.onInputChange(id + '_hover', !e.data ? e.data : {
-          value: e.data.value,
-          row: e.data.row + 1,
-          col: e.data.col + 1
-        });
-      });
+      //hm.on('hover', function(e) {
+      //  Shiny.onInputChange(id + '_hover', !e.data ? e.data : {
+      //    value: e.data.value,
+      //    row: e.data.row + 1,
+      //    col: e.data.col + 1
+      //  });
+      //});
       //hm.on('click', function(e) {
       //  Shiny.onInputChange(id + '_click', !e.data ? e.data : {
       //    value: e.data.value,
