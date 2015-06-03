@@ -117,14 +117,6 @@ function heatmapdraw(selector,data,options) {
         };
     }
 
-    //if there are more than 100 x values, it doesn't make sense to show the label
-    //if (mainDat.dim[0] > 100) {
-      //  marginleft=  0;
-    //}
-    //if (mainDat.dim[1] > 300) {
-      //  margintop = 0;
-    //}
-
     (function() {
         var inner = el.append("div").classed("inner", true);
         //colDend is xDend, rowDend is yDend, colmap is heatmap

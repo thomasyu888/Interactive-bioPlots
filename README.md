@@ -18,6 +18,11 @@ Displays an interactive heatmap that can zoom into a selected area on the heatma
 
 EXTENSION OF JOE CHENG'S rstudio/d3heatmap.  There's no way I would have been able to do this without his work. Thanks to his d3heatmap I was able to put together an extended version with annotations and zoom feature on the dendrograms. Furthermore, thanks to HTML widgets and Shiny as well. Extremely cool.
 
+
+Example:
+http://rpubs.com/thomasyu888/84414
+
+
 References:
 
 https://github.com/rstudio/d3heatmap
