@@ -16,18 +16,22 @@ NULL
     b
 }
 
-iHeatmap <- function(mainData,
+iHeatmap <- function(x,
                      colAnnote=NULL,
                      rowAnnote=NULL,
-                     theme = NULL,
                      width = NULL,
                      height = NULL,
                      ClustM = "complete",
                      distM = "euclidean",
                      Colv = TRUE,
                      Rowv = TRUE,
-                     showHeat = TRUE,...) {
+                     xaxis_height = 120,
+                     yaxis_width = 120,
+                     anim_duration=500,
+                     showHeat = TRUE) {
 
+  mainData <- as.matrix(x)
+  options<-NULL
   ## sees if rownames/ col names exist for entered matrix
   if (length(row.names(mainData))==0) {
     row.names(mainData) = c(1:dim(mainData)[1])
@@ -103,6 +107,11 @@ iHeatmap <- function(mainData,
   }
   #########FIX THIS!!!
   #########FIX THIS!!!
+  options <- c(options, list(
+    xaxis_height = xaxis_height ,
+    yaxis_width = yaxis_width,
+    anim_duration = anim_duration,
+    showheat = showHeat))
 
   ##Dealing with outliers.. Simple boxplot$out
   ##rng <- range(mainData[abs(mainData)<min(abs(boxplot(mainData)$out))])
@@ -128,7 +137,7 @@ iHeatmap <- function(mainData,
                   cols = colnames(mainData))
   }
 
-  x <- list(rows = rowDend, cols = colDend, theme = theme, colMeta = colMeta,rowMeta = rowMeta, matrix = matrix)
+  x <- list(rows = rowDend, cols = colDend, colMeta = colMeta,rowMeta = rowMeta, matrix = matrix,options = options)
 
   # create widget
   htmlwidgets::createWidget(

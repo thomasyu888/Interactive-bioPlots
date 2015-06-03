@@ -1,4 +1,4 @@
-function heatmapdraw(selector,data) {
+function heatmapdraw(selector,data,options) {
 
     var el = d3.select(selector);
 
@@ -39,36 +39,41 @@ function heatmapdraw(selector,data) {
         rowHead = rowAnnote.header;
 
     var controller = new Controller();
+    
+    var opts = {}
+    options = options || {};
+    opts.width = options.width || bbox.width;
+    opts.height = options.height || bbox.height;
+    opts.xclust_height = options.xclust_height || opts.height * 0.12;
+    opts.yclust_width = options.yclust_width || opts.width * 0.12;
+    opts.xaxis_height = options.xaxis_height || 120;
+    opts.yaxis_width = options.yaxis_width || 120;
+    opts.xAnnote_width = (colHead== null) ? 0:colHead.length*5;
+    opts.yAnnote_height = (rowHead == null) ? 0:rowHead.length*5;
+    opts.showHeat = options.showHeat
+    opts.anim_duration = options.anim_duration;
 
-    width = bbox.width;
-    height = bbox.height;
-    xclust_height = height * 0.12;
-    yclust_width = width * 0.12;
-    xaxis_height = 120;
-    yaxis_width = 120;
-    xAnnote_width = (colHead== null) ? 0:colHead.length*5;
-    yAnnote_height = (rowHead == null) ? 0:rowHead.length*5;
 
     var colormapBounds = {
         position: "absolute",
-        left: yclust_width+yAnnote_height,
-        top: xclust_height+xAnnote_width,
-        width: (mainDat.data==null) ? 0 : width - yclust_width - yaxis_width,
-        height:(mainDat.data==null) ? 0 : height - xclust_height - xaxis_height
+        left: opts.yclust_width+opts.yAnnote_height,
+        top: opts.xclust_height+opts.xAnnote_width,
+        width: (mainDat.data==null) ? 0 : opts.width - opts.yclust_width - opts.yaxis_width,
+        height:(mainDat.data==null) ? 0 : opts.height - opts.xclust_height - opts.xaxis_height
     };
 
     var colDendBounds = {
         position: "absolute",
         left: colormapBounds.left,
         top: 0,
-        width: (mainDat.data==null) ? width : colormapBounds.width,
-        height: (mainDat.data==null) ? height : xclust_height
+        width: (mainDat.data==null) ? opts.width : colormapBounds.width,
+        height: (mainDat.data==null) ? opts.height : opts.xclust_height
     };
     var rowDendBounds = {
         position: "absolute",
         left: 0,
         top: colormapBounds.top,
-        width: yclust_width,
+        width: opts.yclust_width,
         height: colormapBounds.height
     };
     //NEED to fix these
@@ -76,14 +81,14 @@ function heatmapdraw(selector,data) {
         position: "absolute",
         top: colDendBounds.height,
         left: colormapBounds.left,
-        width: (mainDat.data==null) ? width : colormapBounds.width,
-        height: xAnnote_width
+        width: (mainDat.data==null) ? opts.width : colormapBounds.width,
+        height: opts.xAnnote_width
     }
     var rowABounds = {
         position: "absolute",
         top: colormapBounds.top,
         left: rowDendBounds.width,
-        width: yAnnote_height,
+        width: opts.yAnnote_height,
         height: colormapBounds.height
     }
     ///
@@ -91,15 +96,15 @@ function heatmapdraw(selector,data) {
         position: "absolute",
         top: colormapBounds.top,
         left: colormapBounds.left + colormapBounds.width,
-        width: yaxis_width,
+        width: opts.yaxis_width,
         height: colormapBounds.height
     };
     var xaxisBounds = {
         position: "absolute",
-        top: (mainDat.data==null) ? height : (colormapBounds.top +  colormapBounds.height),
+        top: (mainDat.data==null) ? opts.height : (colormapBounds.top +  colormapBounds.height),
         left: colormapBounds.left,
-        width: (mainDat.data==null) ? width : colormapBounds.width,
-        height: xaxis_height
+        width: (mainDat.data==null) ? opts.width : colormapBounds.width,
+        height: opts.xaxis_height
     };
 
     function cssify(styles) {
@@ -112,7 +117,6 @@ function heatmapdraw(selector,data) {
         };
     }
 
-    var transTime = 500;
     //if there are more than 100 x values, it doesn't make sense to show the label
     //if (mainDat.dim[0] > 100) {
       //  marginleft=  0;
@@ -145,8 +149,8 @@ function heatmapdraw(selector,data) {
     var heatmap = heatmapGrid(el.select('svg.colormap'), mainDat, colormapBounds.width,colormapBounds.height);
     var colAnnots = (colMeta == null) ? 0 : drawAnnotate(el.select('svg.colAnnote'),colAnnote, true, colABounds.width,colABounds.height);
     var rowAnnots = (rowMeta == null) ? 0: drawAnnotate(el.select('svg.rowAnnote'),rowAnnote, false,rowABounds.width,rowABounds.height);
-	var xLabel = axis(el.select('svg.xAxis'),data.matrix.cols,true,xaxisBounds.width,xaxis_height)
-    var yLabel = (mainDat.data==null) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, yaxis_width, yaxisBounds.height)
+	var xLabel = axis(el.select('svg.xAxis'),data.matrix.cols,true,xaxisBounds.width,opts.xaxis_height)
+    var yLabel = (mainDat.data==null) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, opts.yaxis_width, yaxisBounds.height)
 
     //heatLegend = d3.svg.legend().units("").cellWidth(80).cellHeight(10).inputScale(color).cellStepping(100);
 	//d3.select("svg").append("g").attr("transform", "translate(240,30)").attr("class", "legend").call(heatLegend);
@@ -255,7 +259,7 @@ function heatmapdraw(selector,data) {
         controller.on('transform.colormap', function(_) {
             x.range([_.translate[0], width * _.scale[0] + _.translate[0]]);
             y.range([_.translate[1], height * _.scale[1] + _.translate[1]]);
-            draw(rect.transition().duration(transTime).ease("linear"));
+            draw(rect.transition().duration(opts.anim_duration).ease("linear"));
         });
 
         var brushG = svg.append("g")
@@ -341,7 +345,7 @@ function heatmapdraw(selector,data) {
             var dim = rotated ? 0 : 1;
             var rb = [_.translate[dim], (rotated ? width : height) * _.scale[dim] + _.translate[dim]];
             scale.rangeBands(rb);
-            var tAxisNodes = axisNodes.transition().duration(transTime).ease('linear');
+            var tAxisNodes = axisNodes.transition().duration(opts.anim_duration).ease('linear');
             tAxisNodes.call(axis);
             // Set text-anchor on the non-transitioned node to prevent jumpiness
             // in RStudio Viewer pane
@@ -479,7 +483,7 @@ function heatmapdraw(selector,data) {
             var translateBy = _.translate[rotated ? 0 : 1];
             y.range([translateBy, height * scaleBy + translateBy]);
             dscale.range([translateBy, (rotated ? width : height) * scaleBy + translateBy])
-            draw(lines.transition().duration(transTime).ease("linear"));
+            draw(lines.transition().duration(opts.anim_duration).ease("linear"));
         });
 
         var brushG = svg.append("g")
@@ -636,7 +640,7 @@ function heatmapdraw(selector,data) {
                 y.range([_.translate[1], height * _.scale[1] + _.translate[1]])
             }
 
-            draw(annotation.transition().duration(transTime).ease("linear"));
+            draw(annotation.transition().duration(opts.anim_duration).ease("linear"));
         });
 
 

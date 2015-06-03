@@ -7,7 +7,6 @@ HTMLWidgets.widget({
   initialize: function(el, width, height) {
 
     return {
-      lastTheme: null,
       lastValue: null
     };
 
@@ -17,7 +16,7 @@ HTMLWidgets.widget({
     instance.lastValue = x;
 
     el.innerHTML = "";
-    var hm = heatmapdraw(el, x);
+    var hm = heatmapdraw(el, x, x.options);
 
     if (window.Shiny) {
       var id = this.getId(el);

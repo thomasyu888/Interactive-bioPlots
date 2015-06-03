@@ -1,4 +1,1 @@
-export(iHeatmap)
-export(iHeatmapOutput)
-export(renderIHeatmap)
-import(htmlwidgets)
+exportPattern("^[^\\.]")
