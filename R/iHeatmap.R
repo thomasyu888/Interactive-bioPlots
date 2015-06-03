@@ -134,7 +134,7 @@ iHeatmap <- function(x,
                    domain = domain)
   }
   else {
-    matrix <- list(data = 0,
+    matrix <- list(data = NULL,
                    dim = dim(mainData),
                    rows = row.names(mainData),
                    cols = colnames(mainData),
