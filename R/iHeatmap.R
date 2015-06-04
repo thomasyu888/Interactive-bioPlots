@@ -19,6 +19,7 @@ NULL
 iHeatmap <- function(x,
                      colAnnote=NULL,
                      rowAnnote=NULL,
+                     Addon=NULL,
                      width = NULL,
                      height = NULL,
                      ClustM = "complete",
@@ -32,6 +33,7 @@ iHeatmap <- function(x,
 
   mainData <- as.matrix(x)
   options<-NULL
+  AddonHead<- NULL
   ## sees if rownames/ col names exist for entered matrix
   if (length(row.names(mainData))==0) {
     row.names(mainData) = c(1:dim(mainData)[1])
@@ -61,6 +63,7 @@ iHeatmap <- function(x,
     mainData <- mainData[,colClust$order]
     if (!is.null(colAnnote)) {
       colAnnotes <- colAnnote[colClust$order,]
+      Addon <- Addon[colClust$order,]
     }
     colDend <- HCtoJSON(colClust)
   } else {
@@ -97,6 +100,7 @@ iHeatmap <- function(x,
     if (length(colAnnote[,1])==dim(mainData)[2]) {
       #colAnnotes <- matrix(colAnnotes)
       colHead <- matrix(colnames(colAnnote))
+      AddonHead <- matrix(colnames(Addon))
     } else {
       colAnnotes <- NULL
       colHead <- NULL
@@ -125,6 +129,9 @@ iHeatmap <- function(x,
                   header = colHead)
   rowMeta <- list(data = rowAnnotes,
                   header = rowHead)
+  Addons <- list(Addon = Addon,
+                 header = AddonHead)
+
   if (showHeat) {
     matrix <- list(data = as.numeric(t(mainData)),
                    dim = dim(mainData),
@@ -132,8 +139,7 @@ iHeatmap <- function(x,
                    cols = colnames(mainData),
                    colors = colors,
                    domain = domain)
-  }
-  else {
+  } else {
     matrix <- list(dim = dim(mainData),
                    cols = colnames(mainData))
   }
@@ -141,7 +147,7 @@ iHeatmap <- function(x,
 
 
 
-  x <- list(rows = rowDend, cols = colDend, colMeta = colMeta,rowMeta = rowMeta, matrix = matrix,options = options)
+  x <- list(rows = rowDend, cols = colDend, colMeta = colMeta,rowMeta = rowMeta, matrix = matrix,addon = Addons,options = options)
 
   # create widget
   htmlwidgets::createWidget(
