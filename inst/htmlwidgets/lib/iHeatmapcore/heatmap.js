@@ -29,15 +29,19 @@ function heatmapdraw(selector,data,options) {
     }).call(Controller.prototype);
 
 
-    var mainDat = data.matrix;
+    var mainDat = data.matrix,
         //Global annotations variables
-    var colAnnote = data.colMeta,
+        colAnnote = data.colMeta,
         rowAnnote = data.rowMeta,
         colMeta = colAnnote.data,
         rowMeta = rowAnnote.data,
         colHead = colAnnote.header,
-        rowHead = rowAnnote.header;
+        rowHead = rowAnnote.header,
+        extra = data.addon,
+        addon = extra.data,
+        addonHead = extra.header;
 
+    
     var controller = new Controller();
     
     var opts = {}
@@ -127,9 +131,7 @@ function heatmapdraw(selector,data,options) {
         var rowAnnote = inner.append("svg").classed("rowAnnote",true).style(cssify(rowABounds));
         var xAxis = inner.append("svg").classed("xAxis",true).style(cssify(xaxisBounds));
         var yAxis = inner.append("svg").classed("yAxis",true).style(cssify(yaxisBounds));
-
     })();
-
 
     //Set xScale and yScale
     //var x = d3.scale.linear().range([0, width-marginleft]);
@@ -362,7 +364,6 @@ function heatmapdraw(selector,data,options) {
     }
 
 
-
     function dendrogram(svg, data, rotated, width, height) {
         var x = d3.scale.linear();
         var y = d3.scale.linear()
@@ -493,7 +494,12 @@ function heatmapdraw(selector,data,options) {
                 //Get all the metadata
                 var output = rotated ? mainDat.cols[col] : mainDat.rows[row];
 
-                if (colMeta != null && mainDat.data == null) {
+                if (addon != null && mainDat.data == null) {
+                    for (k=0; k<addonHead.length;k++) {
+                        output += '<br> ' + addonHead[k] + ': ' + addon[col]
+                    }
+                }
+                if (colMeta != null &&mainDat.data == null) {
                     for (k=0; k<colHead.length;k++) {
                         output += '<br> ' + colHead[k] + ': ' + colMeta[col]
                     }
@@ -503,11 +509,11 @@ function heatmapdraw(selector,data,options) {
                     left: d3.event.clientX +15 + "px",
                     opacity: 0.9
                 });
-                controller.datapoint_hover({col:col, row:row, value:output});
+                //controller.datapoint_hover({col:col, row:row, value:output});
             })
             .on("mouseleave", function() {
                 tip.hide().style("display","none")
-                controller.datapoint_hover(null);
+                //controller.datapoint_hover(null);
             });
 
     }
@@ -603,11 +609,7 @@ function heatmapdraw(selector,data,options) {
         var annotation = svg.selectAll('.annotate').data(datum.data);
             annotation.enter().append('svg:rect').classed("annotate",true)
             .style('fill',function(d,i) {
-                if (mainDat.data==null) {
-                    return "white";
-                } else {
-                    return (isNaN(d) ? scaling(d):lin(d));
-                }
+                return (isNaN(d) ? scaling(d):lin(d));
             });
             annotation.exit().remove();
 
@@ -648,7 +650,7 @@ function heatmapdraw(selector,data,options) {
 
     };
 
-
+/*
   var dispatcher = d3.dispatch('hover');
 
   controller.on("datapoint_hover", function(_) {
@@ -660,5 +662,5 @@ function heatmapdraw(selector,data,options) {
       dispatcher.on(type, listener);
       return this;
     }
-  };
+  };*/
 };
