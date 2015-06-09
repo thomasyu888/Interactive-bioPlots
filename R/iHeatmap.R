@@ -71,7 +71,7 @@ iHeatmap <- function(x,
     if (!is.null(addOnInfo)) {
       addonHead <- matrix(colnames(addOnInfo))
       add <- addOnInfo[colClust$order,]
-      add <- matrix(addOnInfo)
+      add <- matrix(add)
     }
     colDend <- HCtoJSON(colClust)
   } else {
@@ -137,7 +137,7 @@ iHeatmap <- function(x,
                   header = colHead)
   rowMeta <- list(data = rowAnnotes,
                   header = rowHead)
-  Addons <- list(data = add,
+  addon <- list(data = add,
                  header = addonHead)
 
   if (showHeat) {
@@ -155,7 +155,7 @@ iHeatmap <- function(x,
 
 
 
-  x <- list(rows = rowDend, cols = colDend, colMeta = colMeta,rowMeta = rowMeta, matrix = matrix,addon = Addons,options = options)
+  x <- list(rows = rowDend, cols = colDend, colMeta = colMeta,rowMeta = rowMeta, matrix = matrix,addon = addon,options = options)
 
   # create widget
   htmlwidgets::createWidget(
