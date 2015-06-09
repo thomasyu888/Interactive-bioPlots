@@ -19,7 +19,7 @@ NULL
 iHeatmap <- function(x,
                      colAnnote=NULL,
                      rowAnnote=NULL,
-                     extra=NULL,
+                     Addon=NULL,
                      width = NULL,
                      height = NULL,
                      ClustM = "complete",
@@ -66,11 +66,10 @@ iHeatmap <- function(x,
     if (!is.null(colAnnote)) {
       colAnnotes <- colAnnote[colClust$order,]
     }
-    if (!is.null(extra)) {
-
-      AddonHead <- matrix(colnames(extra))
-      extras <- extra[colClust$order,]
-      extras <- matrix(extras)
+    if (!is.null(Addon)) {
+      AddonHead <- matrix(colnames(Addon))
+      Addon <- Addon[colClust$order,]
+      Addon <- matrix(Addon)
     }
     colDend <- HCtoJSON(colClust)
   } else {
@@ -136,7 +135,7 @@ iHeatmap <- function(x,
                   header = colHead)
   rowMeta <- list(data = rowAnnotes,
                   header = rowHead)
-  Addons <- list(data = extras,
+  Addons <- list(data = Addon,
                  header = AddonHead)
 
   if (showHeat) {
