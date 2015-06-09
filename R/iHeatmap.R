@@ -35,7 +35,7 @@ iHeatmap <- function(x,
   mainData <- as.matrix(x)
   options<-NULL
   addonHead <- NULL
-  addOns <- NULL
+  add <- NULL
 
   ## sees if rownames/ col names exist for entered matrix
   if (length(row.names(mainData))==0) {
@@ -68,10 +68,10 @@ iHeatmap <- function(x,
     if (!is.null(colAnnote)) {
       colAnnotes <- colAnnote[colClust$order,]
     }
-    if (!is.null(addOn)) {
+    if (!is.null(addOnInfo)) {
       addonHead <- matrix(colnames(addOnInfo))
-      addOns <- addOnInfo[colClust$order,]
-      addOns <- matrix(addOnInfo)
+      add <- addOnInfo[colClust$order,]
+      add <- matrix(addOnInfo)
     }
     colDend <- HCtoJSON(colClust)
   } else {
@@ -137,7 +137,7 @@ iHeatmap <- function(x,
                   header = colHead)
   rowMeta <- list(data = rowAnnotes,
                   header = rowHead)
-  Addons <- list(data = addOns,
+  Addons <- list(data = add,
                  header = addonHead)
 
   if (showHeat) {
