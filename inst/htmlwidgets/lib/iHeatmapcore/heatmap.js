@@ -609,7 +609,9 @@ function heatmapdraw(selector,data,options) {
         var annotation = svg.selectAll('.annotate').data(datum.data);
             annotation.enter().append('svg:rect').classed("annotate",true)
             .style('fill',function(d,i) {
-                return (isNaN(d) ? scaling(d):lin(d));
+                //Fix color schemes of entire document
+                return scaling(d);
+                //return (isNaN(d) ? scaling(d):lin(d));
             });
             annotation.exit().remove();
 
