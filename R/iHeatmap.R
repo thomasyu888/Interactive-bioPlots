@@ -29,7 +29,7 @@ iHeatmap <- function(x,
                      yaxis_width = 120,
                      anim_duration=500,
                      showHeat = TRUE,
-                     addOnInfo=NULL,
+                     addOnInfo = NULL,
                      ...) {
 
   mainData <- as.matrix(x)

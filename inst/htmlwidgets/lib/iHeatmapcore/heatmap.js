@@ -41,9 +41,9 @@ function heatmapdraw(selector,data,options) {
         addon = extra.data,
         addonHead = extra.header;
 
-    
+
     var controller = new Controller();
-    
+
     var opts = {}
     options = options || {};
     opts.width = options.width || bbox.width;
@@ -588,7 +588,7 @@ function heatmapdraw(selector,data,options) {
 
         svg.attr("width",width).attr("height",height)
 
-        var scaling = d3.scale.category10()
+        var scaling = d3.scale.category20()
         var length = datum.data.length/datum.header.length
 
         var x = d3.scale.linear()
