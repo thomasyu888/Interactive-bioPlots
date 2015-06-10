@@ -32,11 +32,17 @@ iHeatmap <- function(x,
                      showHeat = TRUE,
                      addOnInfo = NULL,
                      ...) {
-
+  ## Define the variables
   mainData <- as.matrix(x)
   options<-NULL
   addonHead <- NULL
   add <- NULL
+  rowDend <- NULL
+  rowHead <- NULL
+  rowAnnotes <- rowAnnote
+  colDend <- NULL
+  colHead <- NULL
+  colAnnotes <- colAnnote
 
   ## sees if rownames/ col names exist for entered matrix
   if (length(row.names(mainData))==0) {
@@ -46,27 +52,43 @@ iHeatmap <- function(x,
     colnames(mainData) = c(1:dim(mainData)[2])
   }
 
-  #########FIX THIS!!!
-  #########FIX THIS!!!
-  #########FIX THIS!!!
+  if (!is.null(rowAnnote)) {
+      if (is.null(colnames(rowAnnote))) {
+        colnames(rowAnnote) = c(1:dim(rowAnnote)[2])
+      }
+      if (length(rowAnnote[,1])==dim(mainData)[1]) {
+        #rowAnnotes <- matrix(rowAnnotes)
+        rowHead <- matrix(colnames(rowAnnote))
+      } else { ## If the length of annotations are different don't display it
+        rowAnnotes <- NULL
+      }
+  }
+
+  if (!is.null(colAnnote)) {
+    if (is.null(colnames(colAnnote))) {
+      colnames(colAnnote) = c(1:dim(colAnnote)[2])
+    }
+    if (length(colAnnote[,1])==dim(mainData)[2]) {
+      #colAnnotes <- matrix(colAnnotes)
+      colHead <- matrix(colnames(colAnnote))
+    } else { ##If the length of annotations are different don't display it
+      colAnnotes <- NULL
+    }
+  }
 
   if (Rowv) {
     rowClust <- hclust(dist(mainData,distM),ClustM)
     mainData <- mainData[rowClust$order,]
-    if (!is.null(rowAnnote)) {
+    if (!is.null(rowAnnotes)) {
       rowAnnotes <- rowAnnote[rowClust$order,]
     }
     rowDend <- HCtoJSON(rowClust)
-  } else {
-    rowDend = NULL
-    rowAnnotes <- rowAnnote
   }
-  ### NEED TO RUN EVEN IF METADATA is different dimensions
+
   if (Colv) {
     colClust <- hclust(dist(t(mainData),distM),ClustM)
     mainData <- mainData[,colClust$order]
-
-    if (!is.null(colAnnote)) {
+    if (!is.null(colAnnotes)) {
       colAnnotes <- colAnnote[colClust$order,]
     }
     if (!is.null(addOnInfo)) {
@@ -75,57 +97,16 @@ iHeatmap <- function(x,
       add <- matrix(add)
     }
     colDend <- HCtoJSON(colClust)
-  } else {
-    colDend = NULL
-    colAnnotes <- colAnnote
   }
 
-  if (!is.null(rowAnnote)) {
-    #if (is.null(row.names(rowAnnote))) {
-    #  row.names(rowAnnote) = c(1:dim(rowAnnote)[1])
-    #}
-    if (is.null(colnames(rowAnnote))) {
-      colnames(rowAnnote) = c(1:dim(rowAnnote)[2])
-    }
-    if (length(rowAnnote[,1])==dim(mainData)[1]) {
-      #rowAnnotes <- matrix(rowAnnotes)
-      rowHead <- matrix(colnames(rowAnnote))
-    } else {
-      rowAnnotes <- NULL
-      rowHead <- NULL
-    }
-  } else {
-    rowAnnotes <- rowAnnote
-    rowHead <- NULL
-  }
-
-  if (!is.null(colAnnote)) {
-    #if(is.null(row.names(colAnnote))) {
-    #  row.names(colAnnote) = c(1:dim(colAnnote)[1])
-    #}
-    if (is.null(colnames(colAnnote))) {
-      colnames(colAnnote) = c(1:dim(colAnnote)[2])
-    }
-    if (length(colAnnote[,1])==dim(mainData)[2]) {
-      #colAnnotes <- matrix(colAnnotes)
-      colHead <- matrix(colnames(colAnnote))
-
-    } else {
-      colAnnotes <- NULL
-      colHead <- NULL
-    }
-  } else {
-    colAnnotes <- colAnnote
-    colHead <- NULL
-  }
-  #########FIX THIS!!!
-  #########FIX THIS!!!
   options <- c(options, list(
     xaxis_height = xaxis_height ,
     yaxis_width = yaxis_width,
     anim_duration = anim_duration,
     showheat = showHeat))
 
+  #########FIX THIS!!!
+  #########FIX THIS!!!
   ##Dealing with outliers.. Simple boxplot$out
   ##rng <- range(mainData[abs(mainData)<min(abs(boxplot(mainData)$out))])
   rng <- range(mainData)
@@ -151,7 +132,6 @@ iHeatmap <- function(x,
     matrix <- list(dim = dim(mainData),
                    cols = colnames(mainData))
   }
-
 
   x <- list(rows = rowDend, cols = colDend, colMeta = colMeta,rowMeta = rowMeta, matrix = matrix,addon = addon,options = options)
 
