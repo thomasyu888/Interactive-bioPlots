@@ -21,6 +21,7 @@ iHeatmap <- function(x,
                      rowAnnote=NULL,
                      width = NULL,
                      height = NULL,
+                     colors = "RdYlBu",
                      ClustM = "complete",
                      distM = "euclidean",
                      Colv = TRUE,
@@ -129,8 +130,7 @@ iHeatmap <- function(x,
   ##rng <- range(mainData[abs(mainData)<min(abs(boxplot(mainData)$out))])
   rng <- range(mainData)
   domain <- seq.int(ceiling(rng[2]), floor(rng[1]), length.out = 100)
-  colors <- heat.colors(100)
-  colors <- sub('FF$', '', colors)
+  colors <- leaflet::colorNumeric(colors, 1:100)(1:100)
 #Mid point as median
 #White is the midpoint
   colMeta <- list(data = colAnnotes,
@@ -151,8 +151,6 @@ iHeatmap <- function(x,
     matrix <- list(dim = dim(mainData),
                    cols = colnames(mainData))
   }
-
-
 
 
   x <- list(rows = rowDend, cols = colDend, colMeta = colMeta,rowMeta = rowMeta, matrix = matrix,addon = addon,options = options)
