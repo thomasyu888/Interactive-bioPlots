@@ -212,7 +212,7 @@ function heatmapdraw(selector,data,options) {
                 }
                 brush.clear();
                 d3.select(this).call(brush).select(".brush .extent")
-                    .style({fill: "steelblue", stroke: "steelblue",opacity: 0.5});
+                    .style({fill: "steelblue", stroke: "blue", opacity: 0.5});
             });
 
         svg = svg
