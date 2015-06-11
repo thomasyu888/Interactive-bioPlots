@@ -76,7 +76,7 @@ iHeatmap <- function(x,
       colAnnotes <- NULL
     }
   }
-
+##Cluster_mat returns flashClusted matrix
   if (Rowv) {
     rowClust <- cluster_mat(mainData, distM, ClustM, cor_method)
     mainData <- mainData[rowClust$order,]
@@ -92,6 +92,7 @@ iHeatmap <- function(x,
     if (!is.null(colAnnotes)) {
       colAnnotes <- colAnnote[colClust$order,]
     }
+    ##Addon Info is only the for (X) side (So patients...)
     if (!is.null(addOnInfo)) {
       addonHead <- matrix(colnames(addOnInfo))
       add <- addOnInfo[colClust$order,]
@@ -106,11 +107,11 @@ iHeatmap <- function(x,
     anim_duration = anim_duration,
     showheat = showHeat))
 
-  #########FIX THIS!!!
-  #########FIX THIS!!!
-  ##Dealing with outliers.. Simple boxplot$out
-  ##rng <- range(mainData[abs(mainData)<min(abs(boxplot(mainData)$out))])
-  rng <- range(mainData)
+  #########FIX THIS!!!####
+  #########FIX THIS!!!####
+  ##Dealing with outliers.. For now this works?
+  rng <- range(mainData[!mainData %in% boxplot.stats(mainData)$out])
+  #rng <- range(mainData)
   domain <- seq.int(ceiling(rng[2]), floor(rng[1]), length.out = 100)
   colors <- leaflet::colorNumeric(colors, 1:100)(1:100)
 #Mid point as median
