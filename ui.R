@@ -23,7 +23,7 @@ shinyUI(fluidPage(
 
     selectInput(inputId = "v",
                 label = "Distance method",
-                choices = c('euclidean','maximum','manhattan','canberra','binary','minkowski'),
+                choices = c('correlation','euclidean','maximum','manhattan','canberra','binary','minkowski'),
                 selected = 'euclidean')
   ),
 
