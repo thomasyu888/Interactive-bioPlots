@@ -31,6 +31,7 @@ iHeatmap <- function(x,
                      anim_duration=500,
                      showHeat = TRUE,
                      addOnInfo = NULL,
+                     cor_method = "pearson",
                      ...) {
   ## Define the variables
   mainData <- as.matrix(x)
@@ -77,7 +78,7 @@ iHeatmap <- function(x,
   }
 
   if (Rowv) {
-    rowClust <- hclust(dist(mainData,distM),ClustM)
+    rowClust <- cluster_mat(mainData, distM, ClustM, cor_method)
     mainData <- mainData[rowClust$order,]
     if (!is.null(rowAnnotes)) {
       rowAnnotes <- rowAnnote[rowClust$order,]
@@ -86,7 +87,7 @@ iHeatmap <- function(x,
   }
 
   if (Colv) {
-    colClust <- hclust(dist(t(mainData),distM),ClustM)
+    colClust <- cluster_mat(t(mainData), distM, ClustM, cor_method)
     mainData <- mainData[,colClust$order]
     if (!is.null(colAnnotes)) {
       colAnnotes <- colAnnote[colClust$order,]
