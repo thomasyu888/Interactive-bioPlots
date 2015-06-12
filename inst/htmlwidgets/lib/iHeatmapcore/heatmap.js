@@ -52,16 +52,16 @@ function heatmapdraw(selector,data,options) {
     opts.yclust_width = options.yclust_width || opts.width * 0.12;
     opts.xaxis_height = options.xaxis_height || 120;
     opts.yaxis_width = options.yaxis_width || 120;
-    opts.xAnnote_width = (colHead== null) ? 0:colHead.length*5;
-    opts.yAnnote_height = (rowHead == null) ? 0:rowHead.length*5;
+    opts.xAnnote_width = (colHead== null) ? 0:colHead.length*6;
+    opts.yAnnote_height = (rowHead == null) ? 0:rowHead.length*6;
     opts.showHeat = options.showHeat
     opts.anim_duration = options.anim_duration;
 
 
     var colormapBounds = {
         position: "absolute",
-        left: opts.yclust_width+opts.yAnnote_height,
-        top: opts.xclust_height+opts.xAnnote_width,
+        left: opts.yclust_width+opts.yAnnote_height+2,
+        top: opts.xclust_height+opts.xAnnote_width+2,
         width: (mainDat.data==null) ? 0 : opts.width - opts.yclust_width - opts.yaxis_width,
         height:(mainDat.data==null) ? 0 : opts.height - opts.xclust_height - opts.xaxis_height
     };
@@ -83,7 +83,7 @@ function heatmapdraw(selector,data,options) {
     //NEED to fix these
     var colABounds = {
         position: "absolute",
-        top: colDendBounds.height,
+        top: colDendBounds.height+1,
         left: colormapBounds.left,
         width: (mainDat.data==null) ? opts.width : colormapBounds.width,
         height: opts.xAnnote_width
@@ -91,7 +91,7 @@ function heatmapdraw(selector,data,options) {
     var rowABounds = {
         position: "absolute",
         top: colormapBounds.top,
-        left: rowDendBounds.width,
+        left: rowDendBounds.width+1,
         width: opts.yAnnote_height,
         height: colormapBounds.height
     }
@@ -269,8 +269,9 @@ function heatmapdraw(selector,data,options) {
                 var col = Math.floor(x.invert(d3.event.offsetX));
                 var row = Math.floor(y.invert(d3.event.offsetY));
 
-                var value = merged[row*cols + col];
-                var output = 'Gene loci: '+ data.rows[row]+'<br>Level of expression: '+value+'<br>ID: '+ data.cols[col] +'<br>Annotations:'
+                var value = Math.round(merged[row*cols + col]*100)/100;
+
+                var output = 'Row Feature Name: '+ data.rows[row]+'<br>Column Feature Name: '+ data.cols[col] +'<br>Value: '+value+'<br>Annotations:'
                 //Get all the metadata
                 if (colMeta != null) {
                     for (k=0; k<colHead.length;k++) {
