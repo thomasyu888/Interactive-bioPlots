@@ -33,6 +33,7 @@ iHeatmap <- function(x,
                      addOnInfo = NULL,
                      scale=FALSE,
                      cor_method = "pearson",
+                     font_size = 10,
                      ...) {
   ## Define the variables
   mainData <- as.matrix(x)
@@ -106,7 +107,8 @@ iHeatmap <- function(x,
     xaxis_height = xaxis_height ,
     yaxis_width = yaxis_width,
     anim_duration = anim_duration,
-    showheat = showHeat))
+    showheat = showHeat,
+    font_size = font_size))
 ### ### ### #####  ######## ### ### #####  ######## ### ### #####  ######## ### ### #####
   #########FIX THIS!!!####
   #########FIX THIS!!!####

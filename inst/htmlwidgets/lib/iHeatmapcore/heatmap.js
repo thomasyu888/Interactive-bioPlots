@@ -56,7 +56,7 @@ function heatmapdraw(selector,data,options) {
     opts.yAnnote_height = (rowHead == null) ? 0:rowHead.length*6;
     opts.showHeat = options.showHeat
     opts.anim_duration = options.anim_duration;
-
+    opts.font_size = options.font_size;
 
     var colormapBounds = {
         position: "absolute",
@@ -316,7 +316,7 @@ function heatmapdraw(selector,data,options) {
             //.tickPadding(3)
             .tickValues(data)
 
-        var fontsize = Math.min(10, Math.max(9, scale.rangeBand() - (rotated ? 11: 8))) + "px";
+        var fontsize = Math.min(opts.font_size, Math.max(9, scale.rangeBand() - (rotated ? 11: 8))) + "px";
         // Create the actual axis
         var axisNodes = svg.append("g")
             .call(axis);
