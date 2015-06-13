@@ -111,6 +111,14 @@ function heatmapdraw(selector,data,options) {
         height: opts.xaxis_height
     };
 
+    var colLegendBounds = {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: 10,
+        height:50
+    };
+
     function cssify(styles) {
         return {
             position: styles.position,
@@ -131,6 +139,7 @@ function heatmapdraw(selector,data,options) {
         var rowAnnote = inner.append("svg").classed("rowAnnote",true).style(cssify(rowABounds));
         var xAxis = inner.append("svg").classed("xAxis",true).style(cssify(xaxisBounds));
         var yAxis = inner.append("svg").classed("yAxis",true).style(cssify(yaxisBounds));
+        var colLegend = inner.append("svg").classed("colLegend",true).style(cssify(colLegendBounds))
     })();
 
     //Set xScale and yScale
@@ -519,17 +528,15 @@ function heatmapdraw(selector,data,options) {
 
     }
 //////////////////////////////////////////////////////////////////////////////////////
-/*
+
     //Legend for the annotations for categorical annotations!
-    function catLegend(scales) {
-        var legsvg = el.select('svg.legends').attr('width',1000).attr('height', 80)
-        var leg = legsvg.selectAll('.legend')
+    function catLegend(svg, scales) {
+        var leg = svg.selectAll('.legend')
             .data(scales.domain())
             .enter()
             .append('g')
-            .attr("class","legend")
             .attr('transform', function(d,i) {
-                return 'translate(' + i*30+',0)';
+                return 'translate(30,' + i*10+')';
             });
         leg.append('rect')
             .attr('width',5)
@@ -537,9 +544,10 @@ function heatmapdraw(selector,data,options) {
             .style('fill',scales)
             .style('stroke',scales)
         leg.append('text')
-            .attr('x',5)
-            .attr('y',10)
-            .text(function(d) { return d});
+            .attr('x',6)
+            .attr('y',5)
+            .text(function(d) { return d})
+            .style("font-size","6px");
        }
 /*
     //Legend for quantized values
@@ -571,7 +579,7 @@ function heatmapdraw(selector,data,options) {
     }
 */
     //Linear scaling for continuous values
-    function linScale(selectedDat) {
+   /* function linScale(selectedDat) {
         var max = Math.max.apply(Math,selectedDat);
         var min = Math.min.apply(Math,selectedDat);
 
@@ -584,7 +592,7 @@ function heatmapdraw(selector,data,options) {
 
         return scaling;
     }
-
+*/
     function drawAnnotate(svg,datum, rotated,width,height) {
 
         svg.attr("width",width).attr("height",height)
@@ -600,12 +608,12 @@ function heatmapdraw(selector,data,options) {
             .domain([0, length])
             .range([0, height]);
 
-        for (k=0;k<datum.header.length;k++) {
+        //for (k=0;k<datum.header.length;k++) {
             //If the data is not cateogorical value, get all the values to get a linear scale
-            if (!isNaN(datum.data[k*length])) {
-                var lin = linScale(datum.data.slice(k*length, (1+k)*length-1));
-            }
-        }
+          //  if (!isNaN(datum.data[k*length])) {
+            //    var lin = linScale(datum.data.slice(k*length, (1+k)*length-1));
+            //}
+        //}
         //Annotation svg
         var annotation = svg.selectAll('.annotate').data(datum.data);
             annotation.enter().append('svg:rect').classed("annotate",true)
@@ -642,7 +650,7 @@ function heatmapdraw(selector,data,options) {
 
 
         //gradLegend(lin,20,20)
-            //catLegend(scaling)
+            catLegend(el.select('svg.yAxis'),scaling)
 
    // verticalLegend = d3.svg.legend().cellPadding(5).orientation("vertical")
     //  .units("Annotation").cellWidth(25).cellHeight(18)
