@@ -64,6 +64,7 @@ iHeatmap <- function(x,
         rowHead <- matrix(colnames(rowAnnote))
       } else { ## If the length of annotations are different don't display it
         rowAnnotes <- NULL
+        print("row annotations not the same dimension")
       }
   }
 
@@ -76,6 +77,7 @@ iHeatmap <- function(x,
       colHead <- matrix(colnames(colAnnote))
     } else { ##If the length of annotations are different don't display it
       colAnnotes <- NULL
+      print("col annotations not the same dimension")
     }
   }
 ##Cluster_mat returns flashClusted matrix

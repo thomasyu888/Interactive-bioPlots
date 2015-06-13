@@ -9,4 +9,3 @@ shinyServer(function(input, output) {
     iHeatmap(m,colAnnote = round(d,1),Rowv=input$y,Colv=input$z,distM = input$v,ClustM = input$x)
   )
 })
-
