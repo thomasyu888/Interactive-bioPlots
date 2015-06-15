@@ -67,9 +67,11 @@ iHeatmap <- function(x,
     } else {
       mainData <- t(scale(t(mainData)))
     }
+    rng <- range(mainData)
+  } else {
+    rng <- range(mainData[!mainData %in% boxplot.stats(mainData)$out])
   }
-  rng <- range(mainData)
- # rng <- range(mainData[!mainData %in% boxplot.stats(mainData)$out])
+
   domain <- seq.int(ceiling(rng[2]), floor(rng[1]), length.out = 100)
   colors <- leaflet::colorNumeric(colors, 1:100)(1:100)
 #Mid point as median
