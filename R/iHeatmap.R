@@ -31,7 +31,7 @@ iHeatmap <- function(x,
                      anim_duration=500,
                      showHeat = TRUE,
                      addOnInfo = NULL,
-                     toScale = FALSE,
+                     scale = FALSE,
                      col_scale = TRUE,
                      cor_method = "pearson",
                      font_size = 10,
@@ -61,7 +61,7 @@ iHeatmap <- function(x,
 #rng <- range(mainData[!mainData %in% boxplot.stats(mainData)$out])
 #temp <- t(rescale_mid(t(mainData),mid = mean(mainData)))
 
-  if (toScale) {
+  if (scale) {
     if (col_scale) {
       mainData <- scale(mainData)
     } else {
@@ -69,7 +69,7 @@ iHeatmap <- function(x,
     }
   }
   rng <- range(mainData)
-  rng <- range(mainData[!mainData %in% boxplot.stats(mainData)$out])
+ # rng <- range(mainData[!mainData %in% boxplot.stats(mainData)$out])
   domain <- seq.int(ceiling(rng[2]), floor(rng[1]), length.out = 100)
   colors <- leaflet::colorNumeric(colors, 1:100)(1:100)
 #Mid point as median
