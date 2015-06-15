@@ -31,7 +31,8 @@ iHeatmap <- function(x,
                      anim_duration=500,
                      showHeat = TRUE,
                      addOnInfo = NULL,
-                     scale=FALSE,
+                     toScale = FALSE,
+                     col_scale = TRUE,
                      cor_method = "pearson",
                      font_size = 10,
                      ...) {
@@ -46,8 +47,39 @@ iHeatmap <- function(x,
   colDend <- NULL
   colHead <- NULL
   colAnnotes <- colAnnote
+##Scale before the dendrogram grouping or else it makes no sense.
+### ### ### #####  ######## ### ### #####  ######## ### ### #####  ######## ### ### #####
+#########FIX THIS!!!####
+#########FIX THIS!!!####
 
-  ## sees if rownames/ col names exist for entered matrix, if not make rownames
+##Dealing with outliers.. For now this works?
+#rng <- range(mainData[!mainData %in% boxplot.stats(mainData)$out])
+#The red should be really red and the blue should just be really blue
+### FIX THE COLOR SCALE#### FIX the scale function tooo...
+
+#domain <- seq.int(ceiling(quantile(temp)[["75%"]]), floor(quantile(temp)[["25%"]]), length.out = 100)
+#rng <- range(mainData[!mainData %in% boxplot.stats(mainData)$out])
+#temp <- t(rescale_mid(t(mainData),mid = mean(mainData)))
+
+  if (toScale) {
+    if (col_scale) {
+      mainData <- scale(mainData)
+    } else {
+      mainData <- t(scale(t(mainData)))
+    }
+  }
+  rng <- range(mainData)
+  rng <- range(mainData[!mainData %in% boxplot.stats(mainData)$out])
+  domain <- seq.int(ceiling(rng[2]), floor(rng[1]), length.out = 100)
+  colors <- leaflet::colorNumeric(colors, 1:100)(1:100)
+#Mid point as median
+#White is the midpoint
+
+######  ### ### ### #####  ######## ### ### #####  ######## ### ### #####  #####
+######################################
+######################
+
+## sees if rownames/ col names exist for entered matrix, if not make rownames
   if (length(row.names(mainData))==0) {
     row.names(mainData) = c(1:dim(mainData)[1])
   }
@@ -111,33 +143,8 @@ iHeatmap <- function(x,
     anim_duration = anim_duration,
     showheat = showHeat,
     font_size = font_size))
-### ### ### #####  ######## ### ### #####  ######## ### ### #####  ######## ### ### #####
-  #########FIX THIS!!!####
-  #########FIX THIS!!!####
-
-  ##Dealing with outliers.. For now this works?
-  #rng <- range(mainData[!mainData %in% boxplot.stats(mainData)$out])
-#The red should be really red and the blue should just be really blue
-### FIX THIS COLOR SCALE#### FIX the scale function tooo...
-  if (scale) {
-    temp <- t(scale(t(mainData)))
-    rng <- range(temp)
-    #domain <- seq.int(ceiling(quantile(temp)[["75%"]]), floor(quantile(temp)[["25%"]]), length.out = 100)
-  } else {
-    temp <- mainData
-    rng <- range(mainData[!mainData %in% boxplot.stats(mainData)$out])
-  }
-  domain <- seq.int(ceiling(rng[2]), floor(rng[1]), length.out = 100)
-  #temp <- t(rescale_mid(t(mainData),mid = mean(mainData)))
 
 
-
-  colors <- leaflet::colorNumeric(colors, 1:100)(1:100)
-#Mid point as median
-#White is the midpoint
-
-
-######  ### ### ### #####  ######## ### ### #####  ######## ### ### #####  #####
   colMeta <- list(data = colAnnotes,
                   header = colHead)
   rowMeta <- list(data = rowAnnotes,
@@ -146,7 +153,7 @@ iHeatmap <- function(x,
                  header = addonHead)
 
   if (showHeat) {
-    matrix <- list(data = as.numeric(t(temp)),
+    matrix <- list(data = as.numeric(t(mainData)),
                    dim = dim(mainData),
                    rows = row.names(mainData),
                    cols = colnames(mainData),
