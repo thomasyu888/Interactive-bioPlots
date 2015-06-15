@@ -536,7 +536,7 @@ function heatmapdraw(selector,data,options) {
             .enter()
             .append('g')
             .attr('transform', function(d,i) {
-                return 'translate(50,' + i*10+')';
+                return 'translate(65,' + i*10+')';
             });
         leg.append('rect')
             .attr('width',5)
