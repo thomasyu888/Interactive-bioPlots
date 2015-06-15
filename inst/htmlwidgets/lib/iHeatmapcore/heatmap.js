@@ -388,7 +388,13 @@ function heatmapdraw(selector,data,options) {
             .attr('class', 'Dend-tip')
             .html(function(d) { return d; })
             .direction("nw")
-            .style("position", "fixed");
+            .style("position", "fixed")
+      //Set the max tooltip width to 200px
+       tipwidth = tip.style("width").replace(/[^0-9.]+/g, '')
+       tipwidth = parseInt(tipwidth)
+       if ((tipwidth)>200) {
+         tip.style("width","200px")
+       }
 
         var cluster = d3.layout.cluster()
             .separation(function(a, b) { return 1; })
@@ -467,7 +473,6 @@ function heatmapdraw(selector,data,options) {
             .enter().append("polyline")
             .attr("class", "link")
             //.call(tip)
-        //var endLines = lines.filter(function(d, i) { if (d.target.y == bbox.height) { return d;}}).call(tip)
 
         function draw(selection) {
             function elbow(d, i) {
@@ -480,6 +485,7 @@ function heatmapdraw(selector,data,options) {
                 .call(tip)
         }
         draw(lines);
+
 
         controller.on('transform.dendr-' + (rotated ? 'x' : 'y'), function(_) {
             var scaleBy = _.scale[rotated ? 0 : 1];
