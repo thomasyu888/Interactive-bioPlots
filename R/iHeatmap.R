@@ -8,7 +8,7 @@
 #' @export
 #'
 NULL
-
+##This defines the function that does returns a if a isn't null, and b if a is null
 `%||%` <- function(a, b) {
   if (!is.null(a))
     a
@@ -72,7 +72,8 @@ iHeatmap <- function(x,
     rng <- range(mainData[!mainData %in% boxplot.stats(mainData)$out])
   }
 
-  domain <- seq.int(ceiling(rng[2]), floor(rng[1]), length.out = 100)
+  #domain <- seq.int(ceiling(rng[2]), floor(rng[1]), length.out = 100)
+  domain <- seq.int(rng[2], rng[1], length.out = 100)
   colors <- leaflet::colorNumeric(colors, 1:100)(1:100)
 #Mid point as median
 #White is the midpoint
@@ -80,14 +81,6 @@ iHeatmap <- function(x,
 ######  ### ### ### #####  ######## ### ### #####  ######## ### ### #####  #####
 ######################################
 ######################
-
-## sees if rownames/ col names exist for entered matrix, if not make rownames
-  if (length(row.names(mainData))==0) {
-    row.names(mainData) = c(1:dim(mainData)[1])
-  }
-  if (length(colnames(mainData))== 0) {
-    colnames(mainData) = c(1:dim(mainData)[2])
-  }
 
   if (!is.null(rowAnnote)) {
       if (is.null(colnames(rowAnnote))) {
@@ -157,8 +150,9 @@ iHeatmap <- function(x,
   if (showHeat) {
     matrix <- list(data = as.numeric(t(mainData)),
                    dim = dim(mainData),
-                   rows = row.names(mainData),
-                   cols = colnames(mainData),
+                   ##defined %||% function which does paste(..) if row.names is NULL
+                   rows = row.names(mainData)%||% paste(1:nrow(mainData)),
+                   cols = colnames(mainData)%||% paste(1:ncol(mainData)),
                    colors = colors,
                    domain = domain)
   } else {
