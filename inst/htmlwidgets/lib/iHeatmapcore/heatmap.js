@@ -52,7 +52,7 @@ function heatmapdraw(selector,data,options) {
     opts.yclust_width = options.yclust_width || opts.width * 0.12;
     opts.xaxis_height = options.xaxis_height || 120;
     opts.yaxis_width = options.yaxis_width || 120;
-    opts.legend_width = options.legend_width || 30;
+    opts.legend_width = options.legend_width || 200;
     opts.xAnnote_width = (colHead== null) ? 0:colHead.length*6;
     opts.yAnnote_height = (rowHead == null) ? 0:rowHead.length*6;
     opts.showHeat = options.showHeat
@@ -544,7 +544,7 @@ function heatmapdraw(selector,data,options) {
             .enter()
             .append('g')
             .attr('transform', function(d,i) {
-                return 'translate(10,' + i*8+')';
+                return 'translate(90,' + i*8+')';
             });
         leg.append('rect')
             .attr('width',5)
