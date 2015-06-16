@@ -52,6 +52,7 @@ function heatmapdraw(selector,data,options) {
     opts.yclust_width = options.yclust_width || opts.width * 0.12;
     opts.xaxis_height = options.xaxis_height || 120;
     opts.yaxis_width = options.yaxis_width || 120;
+    opts.legend_width = options.legend_width || 30;
     opts.xAnnote_width = (colHead== null) ? 0:colHead.length*6;
     opts.yAnnote_height = (rowHead == null) ? 0:rowHead.length*6;
     opts.showHeat = options.showHeat
@@ -62,15 +63,15 @@ function heatmapdraw(selector,data,options) {
         position: "absolute",
         left: opts.yclust_width+opts.yAnnote_height+2,
         top: opts.xclust_height+opts.xAnnote_width+2,
-        width: (mainDat.data==null) ? 0 : opts.width - opts.yclust_width - opts.yaxis_width,
-        height:(mainDat.data==null) ? 0 : opts.height - opts.xclust_height - opts.xaxis_height
+        width: (mainDat.data==null) ? 0 : opts.width - opts.yclust_width - opts.yaxis_width-opts.yAnnote_height-2,
+        height:(mainDat.data==null) ? 0 : opts.height - opts.xclust_height - opts.xaxis_height - opts.xAnnote_width-2
     };
 
     var colDendBounds = {
         position: "absolute",
         left: colormapBounds.left,
         top: 0,
-        width: (mainDat.data==null) ? opts.width : colormapBounds.width,
+        width: (mainDat.data==null) ? (opts.width - opts.yaxis_width) : colormapBounds.width,
         height: (mainDat.data==null) ? opts.height : opts.xclust_height
     };
     var rowDendBounds = {
@@ -85,7 +86,7 @@ function heatmapdraw(selector,data,options) {
         position: "absolute",
         top: colDendBounds.height+1,
         left: colormapBounds.left,
-        width: (mainDat.data==null) ? opts.width : colormapBounds.width,
+        width: (mainDat.data==null) ? (opts.width - opts.yaxis_width) : colormapBounds.width,
         height: opts.xAnnote_width
     }
     var rowABounds = {
@@ -105,18 +106,18 @@ function heatmapdraw(selector,data,options) {
     };
     var xaxisBounds = {
         position: "absolute",
-        top: (mainDat.data==null) ? opts.height : (colormapBounds.top +  colormapBounds.height),
+        top: (mainDat.data==null) ? opts.height : (colormapBounds.top + colormapBounds.height),
         left: colormapBounds.left,
-        width: (mainDat.data==null) ? opts.width : colormapBounds.width,
+        width: (mainDat.data==null) ? (opts.width-opts.yaxis_width) : colormapBounds.width,
         height: opts.xaxis_height
     };
 
     var colLegendBounds = {
         position: "absolute",
         top: 0,
-        left: 0,
-        width: 10,
-        height:50
+        left: colormapBounds.left+colormapBounds.width,
+        width: opts.legend_width,
+        height:80
     };
 
     function cssify(styles) {
@@ -154,7 +155,7 @@ function heatmapdraw(selector,data,options) {
     var rowAnnots = (rowMeta == null) ? 0: drawAnnotate(el.select('svg.rowAnnote'),rowAnnote, false,rowABounds.width,rowABounds.height);
     var xLabel = axis(el.select('svg.xAxis'),data.matrix.cols,true,xaxisBounds.width,opts.xaxis_height)
     var yLabel = (mainDat.data==null) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, opts.yaxis_width, yaxisBounds.height)
-
+    var columnLegend = (colMeta == null) ? 0 : catLegend(el.select('svg.colLegend'),colAnnots)
     //heatLegend = d3.svg.legend().units("").cellWidth(80).cellHeight(10).inputScale(color).cellStepping(100);
     //d3.select("svg").append("g").attr("transform", "translate(240,30)").attr("class", "legend").call(heatLegend);
 
@@ -389,12 +390,7 @@ function heatmapdraw(selector,data,options) {
             .html(function(d) { return d; })
             .direction("nw")
             .style("position", "fixed")
-      //Set the max tooltip width to 200px
-       tipwidth = tip.style("width").replace(/[^0-9.]+/g, '')
-       tipwidth = parseInt(tipwidth)
-       if ((tipwidth)>200) {
-         tip.style("width","200px")
-       }
+
 
         var cluster = d3.layout.cluster()
             .separation(function(a, b) { return 1; })
@@ -483,6 +479,12 @@ function heatmapdraw(selector,data,options) {
             selection
                 .attr("points", elbow)
                 .call(tip)
+                  //Set the max tooltip width to 200px
+            tipwidth = tip.style("width").replace(/[^0-9.]+/g, '')
+            tipwidth = parseInt(tipwidth)
+            if ((tipwidth)>200) {
+                tip.style("width","200px")
+            }
         }
         draw(lines);
 
@@ -542,7 +544,7 @@ function heatmapdraw(selector,data,options) {
             .enter()
             .append('g')
             .attr('transform', function(d,i) {
-                return 'translate(65,' + i*10+')';
+                return 'translate(10,' + i*8+')';
             });
         leg.append('rect')
             .attr('width',5)
@@ -553,7 +555,7 @@ function heatmapdraw(selector,data,options) {
             .attr('x',6)
             .attr('y',5)
             .text(function(d) { return d})
-            .style("font-size","6px");
+            .style("font-size","7px");
        }
 /*
     //Legend for quantized values
@@ -603,7 +605,7 @@ function heatmapdraw(selector,data,options) {
 
         svg.attr("width",width).attr("height",height)
 
-        var scaling = d3.scale.category20()
+        var scaling = d3.scale.category10()
         var length = datum.data.length/datum.header.length
 
         var x = d3.scale.linear()
@@ -653,16 +655,13 @@ function heatmapdraw(selector,data,options) {
             draw(annotation.transition().duration(opts.anim_duration).ease("linear"));
         });
 
-
-
+            return scaling;
         //gradLegend(lin,20,20)
-            catLegend(el.select('svg.yAxis'),scaling)
+
 
    // verticalLegend = d3.svg.legend().cellPadding(5).orientation("vertical")
     //  .units("Annotation").cellWidth(25).cellHeight(18)
     //  .inputScale(scaling).cellStepping(10);
-
-    //d3.select("svg").append("g").attr("transform", "translate(10,30)").attr("class", "legend").call(verticalLegend);
 
 
     };

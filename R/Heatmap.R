@@ -23,8 +23,11 @@ HCtoJSON<-function(hc){
 
 
 cluster_mat = function(mat, distance, method, cor_method){
-  if(!(method %in% c("ward.D","ward.D2","single", "complete", "average", "mcquitty", "median", "centroid"))){
-    stop("clustering method has to one form the list: 'ward.D', 'ward.D2', 'single', 'complete', 'average', 'mcquitty', 'median' or 'centroid'.")
+  #if(!(method %in% c("ward.D","ward.D2","single", "complete", "average", "mcquitty", "median", "centroid"))){
+  #  stop("clustering method has to one form the list: 'ward.D', 'ward.D2', 'single', 'complete', 'average', 'mcquitty', 'median' or 'centroid'.")
+  #}
+  if(!(method %in% c("ward","single", "complete", "average", "mcquitty", "median", "centroid"))){
+    stop("clustering method has to one form the list: 'ward', 'single', 'complete', 'average', 'mcquitty', 'median' or 'centroid'.")
   }
   if(!(distance %in% c("correlation", "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski")) & class(distance) != "dist"){
     print(!(distance %in% c("correlation", "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski")) | class(distance) != "dist")
@@ -42,6 +45,6 @@ cluster_mat = function(mat, distance, method, cor_method){
     }
   }
   #ward.D2 doesn't work in flashClust
-  #return(flashClust(d, method = method)) #hclust replaced by flashClust from WCGNA (much faster than hclust)
-  return (hclust(d,method=method))
+  return(flashClust(d, method = method)) #hclust replaced by flashClust from WCGNA (much faster than hclust)
+  #return (hclust(d,method=method))
 }

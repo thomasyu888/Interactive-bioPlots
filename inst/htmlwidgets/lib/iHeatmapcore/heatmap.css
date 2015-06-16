@@ -49,6 +49,9 @@
   overflow: hidden;
   z-index:1;
 }
+.colLegend {
+  position:absolute;
+}
 
 .d3heatmap-tip {
   font-size: 10px;
