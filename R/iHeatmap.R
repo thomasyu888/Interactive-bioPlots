@@ -35,6 +35,7 @@ iHeatmap <- function(x,
                      col_scale = TRUE,
                      cor_method = "pearson",
                      font_size = 10,
+                     probs = 100,
                      ...) {
   ## Define the variables
   mainData <- as.matrix(x)
@@ -47,6 +48,10 @@ iHeatmap <- function(x,
   colDend <- NULL
   colHead <- NULL
   colAnnotes <- colAnnote
+
+  if (!(probs %in% c(100,90,80,70,60,50,40,30,20,10,0))) {
+    stop("probs needs to be a multiple of 10 from 0 to 100")
+  }
 ##Scale before the dendrogram grouping or else it makes no sense.
 ### ### ### #####  ######## ### ### #####  ######## ### ### #####  ######## ### ### #####
 #########FIX THIS!!!####
@@ -67,15 +72,19 @@ iHeatmap <- function(x,
     } else {
       mainData <- t(scale(t(mainData)))
     }
-    rng <- range(mainData)
+    #rng <- range(prepared[paste(probs,'%',sep=""], prepared[paste((1-probs),'%',sep="")])
     #domain <- seq.int(quantile(mainData)[["75%"]], quantile(mainData)[["25%"]], length.out = 100)
-  } else {
-    rng <- range(mainData[!mainData %in% boxplot.stats(mainData)$out])
-
-  }
+  } #else {
+    #rng <- range(mainData[!mainData %in% boxplot.stats(mainData)$out])
+    #rng <- range(quantile(mainData)[["75%"]], quantile(mainData)[["25%"]])
+  #}
+  prepared <- quantile(mainData,seq(0,1,0.1))
+  rng <- range(prepared[paste(probs,'%',sep="")],
+               prepared[paste((100-as.integer(probs)),'%',sep="")])
   domain <- seq.int(rng[2], rng[1], length.out = 100)
-  #domain <- seq.int(ceiling(rng[2]), floor(rng[1]), length.out = 100)
+
   colors <- leaflet::colorNumeric(colors, 1:100)(1:100)
+
 #Mid point as median
 #White is the midpoint
 
