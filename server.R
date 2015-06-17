@@ -1,7 +1,7 @@
 m  <- runif(1000)
 m <- matrix(m, ncol=10)
-d <- runif(11)
-d <- matrix(d,11,1)
+d <- runif(10)
+d <- matrix(d,10,1)
 f <- runif(100)
 f <- matrix(f,100,1)
 
