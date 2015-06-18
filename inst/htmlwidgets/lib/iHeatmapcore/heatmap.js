@@ -52,7 +52,7 @@ function heatmapdraw(selector,data,options) {
     opts.yclust_width = options.yclust_width || opts.width * 0.12;
     opts.xaxis_height = options.xaxis_height || 120;
     opts.yaxis_width = options.yaxis_width || 120;
-    opts.legend_width = options.legend_width || 200;
+    opts.legend_width = options.legend_width || 100;
     opts.xAnnote_width = (colHead== null) ? 0:colHead.length*6;
     opts.yAnnote_height = (rowHead == null) ? 0:rowHead.length*6;
     opts.showHeat = options.showHeat
@@ -115,9 +115,17 @@ function heatmapdraw(selector,data,options) {
     var colLegendBounds = {
         position: "absolute",
         top: 0,
-        left: colormapBounds.left+colormapBounds.width,
+        left: colormapBounds.left+colormapBounds.width+opts.yaxis_width,
         width: opts.legend_width,
-        height:80
+        height:200
+    };
+
+    var rowLegendBounds = {
+        position: "absolute",
+        top: colLegendBounds.height,
+        left: colormapBounds.left+colormapBounds.width+opts.yaxis_width,
+        width: opts.legend_width,
+        height:200
     };
 
     function cssify(styles) {
@@ -140,12 +148,10 @@ function heatmapdraw(selector,data,options) {
         var rowAnnote = inner.append("svg").classed("rowAnnote",true).style(cssify(rowABounds));
         var xAxis = inner.append("svg").classed("xAxis",true).style(cssify(xaxisBounds));
         var yAxis = inner.append("svg").classed("yAxis",true).style(cssify(yaxisBounds));
-        var colLegend = inner.append("svg").classed("colLegend",true).style(cssify(colLegendBounds))
+        var colLegend = inner.append("svg").classed("colLegend",true).style(cssify(colLegendBounds));
+        var rowLegend = inner.append("svg").classed("rowLegend",true).style(cssify(rowLegendBounds));
+        //var heatLegend = inner.append("svg").classed("heatLegend",true).style(cssify(heatLegendBounds));
     })();
-
-    //Set xScale and yScale
-    //var x = d3.scale.linear().range([0, width-marginleft]);
-    //var y = d3.scale.linear().range([0, height-margintop]);
 
     //Creates everything for the heatmap
     var row = (data.rows ==null) ? 0 : dendrogram(el.select('svg.rowDend'), data.rows, false, rowDendBounds.width,rowDendBounds.height);
@@ -155,11 +161,12 @@ function heatmapdraw(selector,data,options) {
     var rowAnnots = (rowMeta == null) ? 0: drawAnnotate(el.select('svg.rowAnnote'),rowAnnote, false,rowABounds.width,rowABounds.height);
     var xLabel = axis(el.select('svg.xAxis'),data.matrix.cols,true,xaxisBounds.width,opts.xaxis_height)
     var yLabel = (mainDat.data==null) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, opts.yaxis_width, yaxisBounds.height)
-    var columnLegend = (colMeta == null) ? 0 : catLegend(el.select('svg.colLegend'),colAnnots)
-    //heatLegend = d3.svg.legend().units("").cellWidth(80).cellHeight(10).inputScale(color).cellStepping(100);
-    //d3.select("svg").append("g").attr("transform", "translate(240,30)").attr("class", "legend").call(heatLegend);
+    var colALegend = (colMeta == null) ? 0 : catLegend(el.select('svg.colLegend'),colAnnots)
+    var rowALegend = (rowMeta == null) ? 0 : catLegend(el.select('svg.rowLegend'),rowAnnots)
+    //var heatmapLegend = (mainDat.data == null) ? 0 : catLegend(el.select('svg.colLegend'),colAnnots)
 
-    //gradLegend(color,5,50)
+
+
 
     function heatmapGrid(svg, data, width, height) {
         // Check for no data
@@ -554,7 +561,7 @@ function heatmapdraw(selector,data,options) {
             .enter()
             .append('g')
             .attr('transform', function(d,i) {
-                return 'translate(90,' + i*8+')';
+                return 'translate(0,' + i*8+')';
             });
         leg.append('rect')
             .attr('width',5)

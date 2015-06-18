@@ -9,7 +9,7 @@ shinyUI(fluidPage(
   sidebarPanel(
    selectInput(inputId = "x",
                label = "Clustering method",
-               choices = c('complete', 'average','ward.D','ward.D2','single','mcquitty','median','centroid'),
+               choices = c('complete', 'average','ward','single','mcquitty','median','centroid'),
                selected = "complete"),
 
    selectInput(inputId = "y",

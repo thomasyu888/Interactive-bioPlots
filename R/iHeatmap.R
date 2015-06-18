@@ -48,7 +48,7 @@ iHeatmap <- function(x,
   colDend <- NULL
   colHead <- NULL
   colAnnotes <- colAnnote
-
+## Since the data is split into quantiles of 0.1. this will only take multiples of 10
   if (!(probs %in% c(100,90,80,70,60,50,40,30,20,10,0))) {
     stop("probs needs to be a multiple of 10 from 0 to 100")
   }
