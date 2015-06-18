@@ -128,6 +128,13 @@ function heatmapdraw(selector,data,options) {
         height:200
     };
 
+    var heatLegendBounds = {
+        position: "absolute",
+        top: colormapBounds.top+colormapBounds.height+opts.xaxis_height,
+        left: colormapBounds.left + (colormapBounds.width/4),
+        width: 500,
+        height:30
+    };
     function cssify(styles) {
         return {
             position: styles.position,
@@ -150,7 +157,7 @@ function heatmapdraw(selector,data,options) {
         var yAxis = inner.append("svg").classed("yAxis",true).style(cssify(yaxisBounds));
         var colLegend = inner.append("svg").classed("colLegend",true).style(cssify(colLegendBounds));
         var rowLegend = inner.append("svg").classed("rowLegend",true).style(cssify(rowLegendBounds));
-        //var heatLegend = inner.append("svg").classed("heatLegend",true).style(cssify(heatLegendBounds));
+        var heatLegend = inner.append("svg").classed("heatLegend",true).style(cssify(heatLegendBounds));
     })();
 
     //Creates everything for the heatmap
@@ -161,9 +168,9 @@ function heatmapdraw(selector,data,options) {
     var rowAnnots = (rowMeta == null) ? 0: drawAnnotate(el.select('svg.rowAnnote'),rowAnnote, false,rowABounds.width,rowABounds.height);
     var xLabel = axis(el.select('svg.xAxis'),data.matrix.cols,true,xaxisBounds.width,opts.xaxis_height)
     var yLabel = (mainDat.data==null) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, opts.yaxis_width, yaxisBounds.height)
-    var colALegend = (colMeta == null) ? 0 : catLegend(el.select('svg.colLegend'),colAnnots)
-    var rowALegend = (rowMeta == null) ? 0 : catLegend(el.select('svg.rowLegend'),rowAnnots)
-    //var heatmapLegend = (mainDat.data == null) ? 0 : catLegend(el.select('svg.colLegend'),colAnnots)
+    var colALegend = (colMeta == null) ? 0 : legend(el.select('svg.colLegend'),colAnnots,true)
+    var rowALegend = (rowMeta == null) ? 0 : legend(el.select('svg.rowLegend'),rowAnnots,true)
+    var heatmapLegend = (mainDat.data == null) ? 0 : legend(el.select('svg.heatLegend'),heatmap,false)
 
 
 
@@ -323,7 +330,7 @@ function heatmapdraw(selector,data,options) {
                 controller.datapoint_hover(null);
             });
 
-
+        return color;
     }
 
     function axis(svg, data, rotated,width,height) {
@@ -554,25 +561,34 @@ function heatmapdraw(selector,data,options) {
     }
 
     //Legend for the annotations for annotations!
-    function catLegend(svg, scales) {
+    function legend(svg, scales,annotations) {
         var leg = svg.selectAll('.legend')
             .data(scales.domain())
             .enter()
             .append('g')
             .attr('transform', function(d,i) {
-                return 'translate(0,' + i*8+')';
+                return annotations ? 'translate(0,' + i*8+')' : 'translate(' +i*2 +',0)';
             });
         leg.append('rect')
-            .attr('width',5)
+            .attr('width',annotations ? 5 : 2)
             .attr('height',5)
             .style('fill',scales)
             .style('stroke',scales)
+
         leg.append('text')
-            .attr('x',6)
-            .attr('y',5)
-            .text(function(d) { return d})
+            .attr('x',annotations ? 6 : 1)
+            .attr('y',annotations ? 5 : 11)
+            .text(function(d,i) { 
+                if (annotations) {
+                    return d;
+                } else if (i%10==0) {
+                    return  Math.round(d*10)/10;
+                }
+            })
             .style("font-size","7px");
        }
+
+
 /*
 //////////////////////////////////////////////////////////////////////////////////////
     //Legend for quantized values

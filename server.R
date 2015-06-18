@@ -8,7 +8,7 @@ f <- matrix(f,100,1)
 shinyServer(function(input, output) {
   output$myChart <- renderIHeatmap(
     iHeatmap(m,
-             #colAnnote = round(d,1),
+             colAnnote = round(d,1),
              rowAnnote = round(f,1),
              Rowv=input$y,Colv=input$z,distM = input$v,ClustM = input$x)
   )
