@@ -552,9 +552,8 @@ function heatmapdraw(selector,data,options) {
             });
 
     }
-//////////////////////////////////////////////////////////////////////////////////////
 
-    //Legend for the annotations for categorical annotations!
+    //Legend for the annotations for annotations!
     function catLegend(svg, scales) {
         var leg = svg.selectAll('.legend')
             .data(scales.domain())
@@ -575,6 +574,7 @@ function heatmapdraw(selector,data,options) {
             .style("font-size","7px");
        }
 /*
+//////////////////////////////////////////////////////////////////////////////////////
     //Legend for quantized values
     function gradLegend(color,width, location) {
         var legsvg = el.select('svg.legends').attr('width',1000).attr('height', 80)
@@ -602,22 +602,9 @@ function heatmapdraw(selector,data,options) {
                 if (d.y%1==0) return "≤ "+d.y
             })
     }
-*/
-    //Linear scaling for continuous values
-   /* function linScale(selectedDat) {
-        var max = Math.max.apply(Math,selectedDat);
-        var min = Math.min.apply(Math,selectedDat);
 
-        var scaling = d3.scale.linear()
-            .domain([min, max])
-            .range(['powderblue', 'darkblue']);
-
-        //horizontalLegend = d3.svg.legend().units("").labelFormat("none").cellWidth(50).cellHeight(10).inputScale(scaling).cellStepping(100);
-        //d3.select("svg").append("g").attr("transform", "translate(113,30)").attr("class", "legend").call(horizontalLegend);
-
-        return scaling;
-    }
-*/
+*////ONLY ACCEPTS CATEGORICAL ANNOTATIONS, IF VALUES SUCH AS WEIGHT
+//PUT INTO BINS FIRST SO 100 - 110 POUNDS IS ONE CATEGORY...
     function drawAnnotate(svg,datum, rotated,width,height) {
 
         svg.attr("width",width).attr("height",height)
@@ -633,19 +620,12 @@ function heatmapdraw(selector,data,options) {
             .domain([0, length])
             .range([0, height]);
 
-        //for (k=0;k<datum.header.length;k++) {
-            //If the data is not cateogorical value, get all the values to get a linear scale
-          //  if (!isNaN(datum.data[k*length])) {
-            //    var lin = linScale(datum.data.slice(k*length, (1+k)*length-1));
-            //}
-        //}
         //Annotation svg
         var annotation = svg.selectAll('.annotate').data(datum.data);
             annotation.enter().append('svg:rect').classed("annotate",true)
             .style('fill',function(d,i) {
                 //Fix color schemes of entire document
                 return scaling(d);
-                //return (isNaN(d) ? scaling(d):lin(d));
             });
             annotation.exit().remove();
 
@@ -672,15 +652,7 @@ function heatmapdraw(selector,data,options) {
             draw(annotation.transition().duration(opts.anim_duration).ease("linear"));
         });
 
-            return scaling;
-        //gradLegend(lin,20,20)
-
-
-   // verticalLegend = d3.svg.legend().cellPadding(5).orientation("vertical")
-    //  .units("Annotation").cellWidth(25).cellHeight(18)
-    //  .inputScale(scaling).cellStepping(10);
-
-
+        return scaling;
     };
 
 /*
