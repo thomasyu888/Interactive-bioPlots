@@ -4,7 +4,8 @@
 #' MY OWN WORK.  CREDITS TO JOE CHENG!!!
 #'
 #' @import htmlwidgets
-#'
+#' @import flashClust
+#' @import shiny
 #' @export
 #'
 NULL
