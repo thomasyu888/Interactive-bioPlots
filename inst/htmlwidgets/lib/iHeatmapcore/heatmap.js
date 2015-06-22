@@ -53,18 +53,18 @@ function heatmapdraw(selector,data,options) {
     opts.xaxis_height = options.xaxis_height || 120;
     opts.yaxis_width = options.yaxis_width || 120;
     opts.legend_width = options.legend_width || 100;
-    opts.xAnnote_width = (colHead== null) ? 0:colHead.length*6;
-    opts.yAnnote_height = (rowHead == null) ? 0:rowHead.length*6;
+    opts.xAnnote_width = (colHead== null) ? 0:colHead.length*7;
+    opts.yAnnote_height = (rowHead == null) ? 0:rowHead.length*7;
     opts.showHeat = options.showHeat
     opts.anim_duration = options.anim_duration;
     opts.font_size = options.font_size;
 
     var colormapBounds = {
         position: "absolute",
-        left: opts.yclust_width+opts.yAnnote_height+2,
-        top: opts.xclust_height+opts.xAnnote_width+2,
-        width: (mainDat.data==null) ? 0 : opts.width - opts.yclust_width - opts.yaxis_width-opts.yAnnote_height-2,
-        height:(mainDat.data==null) ? 0 : opts.height - opts.xclust_height - opts.xaxis_height - opts.xAnnote_width-2
+        left: opts.yclust_width+2*opts.yAnnote_height,
+        top: opts.xclust_height+2*opts.xAnnote_width,
+        width: (mainDat.data==null) ? 0 : opts.width - opts.yclust_width - opts.yaxis_width-(2*opts.yAnnote_height),
+        height:(mainDat.data==null) ? 0 : opts.height - opts.xclust_height - opts.xaxis_height - (2*opts.xAnnote_width)
     };
 
     var colDendBounds = {
@@ -131,7 +131,8 @@ function heatmapdraw(selector,data,options) {
     var heatLegendBounds = {
         position: "absolute",
         top: colormapBounds.top+colormapBounds.height+opts.xaxis_height,
-        left: colormapBounds.left + (colormapBounds.width/4),
+        //The -99 is because 99 is half the width of the heatLegend, This will center the legend
+        left: colormapBounds.left + (colormapBounds.width/2) - 99,
         width: 500,
         height:30
     };
@@ -451,13 +452,21 @@ function heatmapdraw(selector,data,options) {
                 } else {
                     var tf = controller.transform();
                     var ex = brush.extent();
+                    rotated ? ex[1][0] = ex[1][0] : ex[1][0] = mainDat.dim[1]
+                    rotated ? ex[0][0] = ex[0][0] : ex[0][0] = 0
+                    rotated ? ex[1][1] = mainDat.dim[0] : ex[1][1] = ex[1][1]
+                    rotated ? ex[0][1] = 0 : ex[0][1] = ex[0][1] 
                     var scale = [
-                        rotated ? mainDat.dim[1] / (ex[1][0] - ex[0][0]) :1,
-                        rotated ? 1: mainDat.dim[0] / (ex[1][1] - ex[0][1])
+                        //rotated ? mainDat.dim[1] / (ex[1][0] - ex[0][0]) :1,
+                        mainDat.dim[1] / (ex[1][0] - ex[0][0]),
+                        //rotated ? 1: mainDat.dim[0] / (ex[1][1] - ex[0][1])
+                        mainDat.dim[0] / (ex[1][1] - ex[0][1])
                     ];
                     var translate = [
-                        rotated ? ex[0][0] * (width / mainDat.dim[1]) * scale[0] * -1 :0 ,
-                        rotated ? 0 : ex[0][1] * (height / mainDat.dim[0]) * scale[1] * -1
+                        //rotated ? ex[0][0] * (width / mainDat.dim[1]) * scale[0] * -1 :0 ,
+                        ex[0][0] * (width / mainDat.dim[1]) * scale[0] * -1,
+                        //rotated ? 0 : ex[0][1] * (height / mainDat.dim[0]) * scale[1] * -1
+                        ex[0][1] * (height / mainDat.dim[0]) * scale[1] * -1
                     ];
                     controller.transform({scale: scale, translate: translate, extent: ex});
                 }
@@ -563,7 +572,7 @@ function heatmapdraw(selector,data,options) {
     //Legend for the annotations for annotations!
     function legend(svg, scales,annotations) {
         var leg = svg.selectAll('.legend')
-            .data(scales.domain())
+            .data(scales.domain().reverse())
             .enter()
             .append('g')
             .attr('transform', function(d,i) {
@@ -582,7 +591,7 @@ function heatmapdraw(selector,data,options) {
                 if (annotations) {
                     return d;
                 } else if (i%10==0) {
-                    return  Math.round(d*10)/10;
+                    return  Math.round(d*100)/100;
                 }
             })
             .style("font-size","7px");
@@ -652,8 +661,8 @@ function heatmapdraw(selector,data,options) {
                     return (rotated ? x(i%length) : 5*Math.floor(i/length));
                 })
                 .attr('y', function(d,i) { return (rotated? 5*Math.floor(i/length) : y(i%length)); })
-                .attr('width' , function(d) { return (rotated ? x(1)-x(0) : 4); })
-                .attr('height', function(d) { return (rotated ? 4 : y(1)-y(0)); })
+                .attr('width' , function(d) { return (rotated ? x(1)-x(0) :  opts.xAnnote_width); })
+                .attr('height', function(d) { return (rotated ?  opts.yAnnote_height : y(1)-y(0)); })
         }
 
         draw(annotation);
