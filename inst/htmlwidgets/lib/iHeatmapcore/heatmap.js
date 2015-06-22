@@ -452,6 +452,9 @@ function heatmapdraw(selector,data,options) {
                 } else {
                     var tf = controller.transform();
                     var ex = brush.extent();
+                    //Have to change the ex, because dendrogram zoom will cause the text to show when it shouldn't.  
+                    //When rotated make the dimensions of the height not change, when not rotated, the dimensions
+                    //Of the width should not change.
                     rotated ? ex[1][0] = ex[1][0] : ex[1][0] = mainDat.dim[1]
                     rotated ? ex[0][0] = ex[0][0] : ex[0][0] = 0
                     rotated ? ex[1][1] = mainDat.dim[0] : ex[1][1] = ex[1][1]
