@@ -50,20 +50,22 @@ function heatmapdraw(selector,data,options) {
     opts.height = options.height || bbox.height;
     opts.xclust_height = options.xclust_height || opts.height * 0.12;
     opts.yclust_width = options.yclust_width || opts.width * 0.12;
-    opts.xaxis_height = options.xaxis_height || 120;
-    opts.yaxis_width = options.yaxis_width || 120;
-    opts.legend_width = options.legend_width || 100;
-    opts.xAnnote_width = (colHead== null) ? 0:colHead.length*7;
-    opts.yAnnote_height = (rowHead == null) ? 0:rowHead.length*7;
+    opts.xaxis_height = options.xaxis_height || 100;
+    opts.yaxis_width = options.yaxis_width || 100;
+    opts.legend_width = options.legend_width || 50;
+    opts.annote_pad = options.annote_pad = 7;
+    opts.xAnnote_width = (colHead== null) ? 0:colHead.length*opts.annote_pad;
+    opts.yAnnote_height = (rowHead == null) ? 0:rowHead.length*opts.annote_pad;
     opts.showHeat = options.showHeat
     opts.anim_duration = options.anim_duration;
     opts.font_size = options.font_size;
+    opts.padding = 20;
 
     var colormapBounds = {
         position: "absolute",
         left: opts.yclust_width+2*opts.yAnnote_height,
         top: opts.xclust_height+2*opts.xAnnote_width,
-        width: (mainDat.data==null) ? 0 : opts.width - opts.yclust_width - opts.yaxis_width-(2*opts.yAnnote_height),
+        width: (mainDat.data==null) ? 0 : opts.width - opts.yclust_width - opts.yaxis_width-(2*opts.yAnnote_height)-opts.legend_width,
         height:(mainDat.data==null) ? 0 : opts.height - opts.xclust_height - opts.xaxis_height - (2*opts.xAnnote_width)
     };
 
@@ -130,11 +132,11 @@ function heatmapdraw(selector,data,options) {
 
     var heatLegendBounds = {
         position: "absolute",
-        top: colormapBounds.top+colormapBounds.height+opts.xaxis_height,
+        top: 5,
         //The -99 is because 99 is half the width of the heatLegend, This will center the legend
-        left: colormapBounds.left + (colormapBounds.width/2) - 99,
-        width: 500,
-        height:30
+        left: 5,
+        width: 100,
+        height:70
     };
     function cssify(styles) {
         return {
@@ -579,59 +581,30 @@ function heatmapdraw(selector,data,options) {
             .enter()
             .append('g')
             .attr('transform', function(d,i) {
-                return annotations ? 'translate(0,' + i*8+')' : 'translate(' +i*2 +',0)';
+                return annotations ? 'translate(0,' + i*8+')' : 'translate(' +i*0.6 +',0)';
             });
         leg.append('rect')
-            .attr('width',annotations ? 5 : 2)
-            .attr('height',5)
+            .attr('width',annotations ? 5 : 0.6)
+            .attr('height',annotations ? 5 : 35)
             .style('fill',scales)
             .style('stroke',scales)
 
         leg.append('text')
-            .attr('x',annotations ? 6 : 1)
-            .attr('y',annotations ? 5 : 11)
+            .attr('x',annotations ? 6 : 0)
+            .attr('y',annotations ? 5 : 45)
             .text(function(d,i) { 
                 if (annotations) {
                     return d;
-                } else if (i%10==0) {
-                    return  Math.round(d*100)/100;
+                } else if (i==0 || i==49 || i==99) {
+                    //return  Math.round(d*100)/100;
+                    return d.toFixed(2);
                 }
             })
             .style("font-size","7px");
        }
 
 
-/*
-//////////////////////////////////////////////////////////////////////////////////////
-    //Legend for quantized values
-    function gradLegend(color,width, location) {
-        var legsvg = el.select('svg.legends').attr('width',1000).attr('height', 80)
-        var leg = legsvg.append("g")
-            .attr("class", "key")
-            .attr("transform", "translate(0," + location +")");
-        leg.selectAll("rect")
-            .data(color.range().map(function(d, i) {
-                return { z: d };
-            }))
-            .enter().append("rect")
-            .attr("height", 12)
-            .attr("x", function(d,i) { return width*i; })
-            .attr("width", width)
-            .style("fill", function(d) { return d.z; })
-        leg.selectAll('text')
-            .attr('class','legendT')
-            .data(color.domain().map(function(d,i) {
-                return  {y:d};
-            }))
-            .enter().append('text')
-            .attr('x',function(d,i) { return width*i})
-            .attr('y',24)
-            .text(function(d) {
-                if (d.y%1==0) return "≤ "+d.y
-            })
-    }
-
-*////ONLY ACCEPTS CATEGORICAL ANNOTATIONS, IF VALUES SUCH AS WEIGHT
+////ONLY ACCEPTS CATEGORICAL ANNOTATIONS, IF VALUES SUCH AS WEIGHT
 //PUT INTO BINS FIRST SO 100 - 110 POUNDS IS ONE CATEGORY...
     function drawAnnotate(svg,datum, rotated,width,height) {
 
@@ -664,8 +637,8 @@ function heatmapdraw(selector,data,options) {
                     return (rotated ? x(i%length) : 5*Math.floor(i/length));
                 })
                 .attr('y', function(d,i) { return (rotated? 5*Math.floor(i/length) : y(i%length)); })
-                .attr('width' , function(d) { return (rotated ? x(1)-x(0) :  opts.xAnnote_width); })
-                .attr('height', function(d) { return (rotated ?  opts.yAnnote_height : y(1)-y(0)); })
+                .attr('width' , function(d) { return (rotated ? x(1)-x(0) :  opts.annote_pad); })
+                .attr('height', function(d) { return (rotated ?  opts.annote_pad : y(1)-y(0)); })
         }
 
         draw(annotation);

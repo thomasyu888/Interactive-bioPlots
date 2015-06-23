@@ -27,8 +27,8 @@ iHeatmap <- function(x,
                      distM = "euclidean",
                      Colv = TRUE,
                      Rowv = TRUE,
-                     xaxis_height = 120,
-                     yaxis_width = 120,
+                     xaxis_height = 100,
+                     yaxis_width = 100,
                      anim_duration=500,
                      showHeat = TRUE,
                      addOnInfo = NULL,
@@ -37,6 +37,7 @@ iHeatmap <- function(x,
                      cor_method = "pearson",
                      font_size = 10,
                      probs = 100,
+                     annote_pad = 7,
                      ...) {
   ## Define the variables
   mainData <- as.matrix(x)
@@ -148,7 +149,8 @@ iHeatmap <- function(x,
     yaxis_width = yaxis_width,
     anim_duration = anim_duration,
     showheat = showHeat,
-    font_size = font_size))
+    font_size = font_size,
+    annote_pad = annote_pad))
 
 
   colMeta <- list(data = colAnnotes,
