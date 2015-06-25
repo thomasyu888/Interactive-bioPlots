@@ -658,45 +658,50 @@ function heatmapdraw(selector,data,options) {
             });
             annotation.exit().remove();
 
-        function draw(selection) {
+        function draw(selection,xtemp,ytemp) {
             selection
                 .attr('x' , function(d,i) {
                     //This is to account for 2 or more sets of annotation data
-                    return (rotated ? x(i%length) : 5*Math.floor(i/length));
+                    return (rotated ? x(i%length)+xtemp : 5*Math.floor(i/length));
                 })
-                .attr('y', function(d,i) { return (rotated? 5*Math.floor(i/length) : y(i%length)); })
+                .attr('y', function(d,i) { return (rotated? 5*Math.floor(i/length) : y(i%length)+ytemp); })
                 .attr('width' , function(d) { return (rotated ? x(1)-x(0) :  opts.annote_pad); })
                 .attr('height', function(d) { return (rotated ?  opts.annote_pad : y(1)-y(0)); })
         }
 
-        draw(annotation);
+        draw(annotation,0,0);
 
         controller.on('transform.annotation-' + (rotated ? 'x' : 'y'), function(_) {
-            height = colormapBounds.height;
-            width = colormapBounds.width;
-            if (cols >100 & _.extent[1][0]-_.extent[0][0] > 100) {
-                ytemp=0
-                height = colormapBounds.height+100;
-            } else if (_.extent[1][0]-_.extent[0][0] <=100 & cols>100) {
-                ytemp=_.extent[0][1]*100/(_.extent[1][1]-_.extent[0][1])
-            } else {
-                ytemp=0;
-            }
-            if ((rows>40 & _.extent[1][1] - _.extent[0][1] >40)) {
-                xtemp=0;
-                width = colormapBounds.width+100;
-            } else if (_.extent[1][1] - _.extent[0][1] <=40 & rows>40) {
-                xtemp=_.extent[0][0]*100/(_.extent[1][0]-_.extent[0][0]);
-            } else {
-                xtemp=0;
-            }
             if (rotated) {
-                x.range([_.translate[0], width * _.scale[0] + _.translate[0]])
-            } else {
+                height = colormapBounds.height;
+                if (length >100 & _.extent[1][0]-_.extent[0][0] > 100) {
+                    ytemp=0
+                    height = colormapBounds.height+100;
+                } else if (_.extent[1][0]-_.extent[0][0] <=100 & length>100) {
+                    ytemp=_.extent[0][1]*100/(_.extent[1][1]-_.extent[0][1])
+                } else {
+                    ytemp=0;
+                }            
+                el.select('svg.rowAnnote')
+                    .style("height",height)
                 y.range([_.translate[1], height * _.scale[1] + _.translate[1]])
+            } else {
+                width = colormapBounds.width;
+
+                if (length> 40 & _.extent[1][1] - _.extent[0][1] >40) {
+                    xtemp=0;
+                    width = colormapBounds.width+100;
+                } else if (_.extent[1][1] - _.extent[0][1] <=40 & length>40) {
+                    xtemp=_.extent[0][0]*100/(_.extent[1][0]-_.extent[0][0]);
+                } else {
+                    xtemp=0;
+                }
+                el.select('svg.colAnnote')
+                    .style("width", width)
+                x.range([_.translate[0], width * _.scale[0] + _.translate[0]])
             }
 
-            draw(annotation.transition().duration(opts.anim_duration).ease("linear"));
+            draw(annotation.transition().duration(opts.anim_duration).ease("linear"),xtemp,ytemp);
         });
 
         return scaling;
