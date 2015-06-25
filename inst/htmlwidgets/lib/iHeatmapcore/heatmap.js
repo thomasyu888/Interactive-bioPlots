@@ -135,7 +135,7 @@ function heatmapdraw(selector,data,options) {
         top: 5,
         //The -99 is because 99 is half the width of the heatLegend, This will center the legend
         left: 5,
-        width: 100,
+        width: opts.yclust_width,
         height:70
     };
     function cssify(styles) {
@@ -173,7 +173,7 @@ function heatmapdraw(selector,data,options) {
     var yLabel = (mainDat.data==null) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, opts.yaxis_width, yaxisBounds.height)
     var colALegend = (colMeta == null) ? 0 : legend(el.select('svg.colLegend'),colAnnots,true)
     var rowALegend = (rowMeta == null) ? 0 : legend(el.select('svg.rowLegend'),rowAnnots,true)
-    var heatmapLegend = (mainDat.data == null) ? 0 : legend(el.select('svg.heatLegend'),heatmap,false)
+    var heatmapLegend = (mainDat.data == null) ? 0 : legend(el.select('svg.heatLegend'),heatmap,false,heatLegendBounds.width-20)
 
 
 
@@ -574,23 +574,24 @@ function heatmapdraw(selector,data,options) {
 
     }
 
-    //Legend for the annotations for annotations!
-    function legend(svg, scales,annotations) {
+    //Legend for the annotations for annotations! width=> interactive width for heatmap legend
+    function legend(svg, scales,annotations,width) {
         var leg = svg.selectAll('.legend')
             .data(scales.domain().reverse())
             .enter()
             .append('g')
             .attr('transform', function(d,i) {
-                return annotations ? 'translate(0,' + i*8+')' : 'translate(' +i*0.6 +',0)';
+                //The +5 is so that the text for the heatmap legend is fixed 
+                return annotations ? 'translate(0,' + i*8+')' : 'translate(' +(5+i*width/100) +',0)';
             });
         leg.append('rect')
-            .attr('width',annotations ? 5 : 0.6)
+            .attr('width',annotations ? 5 : width/100)
             .attr('height',annotations ? 5 : 35)
             .style('fill',scales)
             .style('stroke',scales)
 
         leg.append('text')
-            .attr('x',annotations ? 6 : 0)
+            .attr('x',annotations ? 6 : -5)
             .attr('y',annotations ? 5 : 45)
             .text(function(d,i) { 
                 if (annotations) {
