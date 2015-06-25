@@ -50,8 +50,10 @@ function heatmapdraw(selector,data,options) {
     opts.height = options.height || bbox.height;
     opts.xclust_height = options.xclust_height || opts.height * 0.12;
     opts.yclust_width = options.yclust_width || opts.width * 0.12;
-    opts.xaxis_height = options.xaxis_height || 100;
-    opts.yaxis_width = options.yaxis_width || 100;
+    //opts.xaxis_height =  (colMeta.length>100) ? 0: (options.xaxis_height || 100);
+    //opts.yaxis_width =  (rowMeta.length>40) ? 0:(options.yaxis_width || 100);
+    opts.xaxis_height =  options.xaxis_height || 100;
+    opts.yaxis_width =  options.yaxis_width || 100;
     opts.legend_width = options.legend_width || 50;
     opts.annote_pad = options.annote_pad = 7;
     opts.xAnnote_width = (colHead== null) ? 0:colHead.length*opts.annote_pad;
@@ -135,7 +137,7 @@ function heatmapdraw(selector,data,options) {
         top: 5,
         //The -99 is because 99 is half the width of the heatLegend, This will center the legend
         left: 5,
-        width: 100,
+        width: opts.yclust_width,
         height:70
     };
     function cssify(styles) {
@@ -173,9 +175,7 @@ function heatmapdraw(selector,data,options) {
     var yLabel = (mainDat.data==null) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, opts.yaxis_width, yaxisBounds.height)
     var colALegend = (colMeta == null) ? 0 : legend(el.select('svg.colLegend'),colAnnots,true)
     var rowALegend = (rowMeta == null) ? 0 : legend(el.select('svg.rowLegend'),rowAnnots,true)
-    var heatmapLegend = (mainDat.data == null) ? 0 : legend(el.select('svg.heatLegend'),heatmap,false)
-
-
+    var heatmapLegend = (mainDat.data == null) ? 0 : legend(el.select('svg.heatLegend'),heatmap,false,heatLegendBounds.width-20)
 
 
     function heatmapGrid(svg, data, width, height) {
@@ -273,24 +273,51 @@ function heatmapdraw(selector,data,options) {
             .text(function(d, i) { return (d === null) ? "NA" : d + ""; })
         rect.call(tip);
 
-        function draw(selection) {
+        function draw(selection,xtemp,ytemp) {
             selection
                 .attr("x", function(d, i) {
-                    return x(i % cols);
+                    return x(i % cols)+xtemp;
                 })
                 .attr("y", function(d, i) {
-                    return y(Math.floor(i/cols));
+                    return y(Math.floor(i/cols))+ytemp;
                 })
                 .attr("width", (x(1) - x(0)))
                 .attr("height", (y(1) - y(0)))
+
+
         }
 
-        draw(rect);
+        draw(rect,0,0);
 
         controller.on('transform.colormap', function(_) {
+            //////REFORMAT heatmap when axis isn't showing
+            height = colormapBounds.height;
+            width = colormapBounds.width;
+            if (cols >100 & _.extent[1][0]-_.extent[0][0] > 100) {
+                ytemp=0
+                height = colormapBounds.height+100;
+            } else if (_.extent[1][0]-_.extent[0][0] <=100 & cols>100) {
+                ytemp=_.extent[0][1]*100/(_.extent[1][1]-_.extent[0][1])
+            } else {
+                ytemp=0;
+            }
+            if ((rows>40 & _.extent[1][1] - _.extent[0][1] >40)) {
+                xtemp=0;
+                width = colormapBounds.width+100;
+            } else if (_.extent[1][1] - _.extent[0][1] <=40 & rows>40) {
+                xtemp=_.extent[0][0]*100/(_.extent[1][0]-_.extent[0][0]);
+            } else {
+                xtemp=0;
+            }
+
+
+            el.select('svg.colormap')
+                .style("width", width)
+                .style("height",height)
+
             x.range([_.translate[0], width * _.scale[0] + _.translate[0]]);
             y.range([_.translate[1], height * _.scale[1] + _.translate[1]]);
-            draw(rect.transition().duration(opts.anim_duration).ease("linear"));
+            draw(rect.transition().duration(opts.anim_duration).ease("linear"),xtemp,ytemp);
         });
 
         var brushG = svg.append("g")
@@ -574,23 +601,24 @@ function heatmapdraw(selector,data,options) {
 
     }
 
-    //Legend for the annotations for annotations!
-    function legend(svg, scales,annotations) {
+    //Legend for the annotations for annotations! width=> interactive width for heatmap legend
+    function legend(svg, scales,annotations,width) {
         var leg = svg.selectAll('.legend')
             .data(scales.domain().reverse())
             .enter()
             .append('g')
             .attr('transform', function(d,i) {
-                return annotations ? 'translate(0,' + i*8+')' : 'translate(' +i*0.6 +',0)';
+                //The +5 is so that the text for the heatmap legend is fixed 
+                return annotations ? 'translate(0,' + i*8+')' : 'translate(' +(5+i*width/100) +',0)';
             });
         leg.append('rect')
-            .attr('width',annotations ? 5 : 0.6)
+            .attr('width',annotations ? 5 : width/100)
             .attr('height',annotations ? 5 : 35)
             .style('fill',scales)
             .style('stroke',scales)
 
         leg.append('text')
-            .attr('x',annotations ? 6 : 0)
+            .attr('x',annotations ? 6 : -5)
             .attr('y',annotations ? 5 : 45)
             .text(function(d,i) { 
                 if (annotations) {
@@ -630,27 +658,50 @@ function heatmapdraw(selector,data,options) {
             });
             annotation.exit().remove();
 
-        function draw(selection) {
+        function draw(selection,xtemp,ytemp) {
             selection
                 .attr('x' , function(d,i) {
                     //This is to account for 2 or more sets of annotation data
-                    return (rotated ? x(i%length) : 5*Math.floor(i/length));
+                    return (rotated ? x(i%length)+xtemp : 5*Math.floor(i/length));
                 })
-                .attr('y', function(d,i) { return (rotated? 5*Math.floor(i/length) : y(i%length)); })
+                .attr('y', function(d,i) { return (rotated? 5*Math.floor(i/length) : y(i%length)+ytemp); })
                 .attr('width' , function(d) { return (rotated ? x(1)-x(0) :  opts.annote_pad); })
                 .attr('height', function(d) { return (rotated ?  opts.annote_pad : y(1)-y(0)); })
         }
 
-        draw(annotation);
+        draw(annotation,0,0);
 
         controller.on('transform.annotation-' + (rotated ? 'x' : 'y'), function(_) {
             if (rotated) {
-                x.range([_.translate[0], width * _.scale[0] + _.translate[0]])
-            } else {
+                height = colormapBounds.height;
+                if (length >100 & _.extent[1][0]-_.extent[0][0] > 100) {
+                    ytemp=0
+                    height = colormapBounds.height+100;
+                } else if (_.extent[1][0]-_.extent[0][0] <=100 & length>100) {
+                    ytemp=_.extent[0][1]*100/(_.extent[1][1]-_.extent[0][1])
+                } else {
+                    ytemp=0;
+                }            
+                el.select('svg.rowAnnote')
+                    .style("height",height)
                 y.range([_.translate[1], height * _.scale[1] + _.translate[1]])
+            } else {
+                width = colormapBounds.width;
+
+                if (length> 40 & _.extent[1][1] - _.extent[0][1] >40) {
+                    xtemp=0;
+                    width = colormapBounds.width+100;
+                } else if (_.extent[1][1] - _.extent[0][1] <=40 & length>40) {
+                    xtemp=_.extent[0][0]*100/(_.extent[1][0]-_.extent[0][0]);
+                } else {
+                    xtemp=0;
+                }
+                el.select('svg.colAnnote')
+                    .style("width", width)
+                x.range([_.translate[0], width * _.scale[0] + _.translate[0]])
             }
 
-            draw(annotation.transition().duration(opts.anim_duration).ease("linear"));
+            draw(annotation.transition().duration(opts.anim_duration).ease("linear"),xtemp,ytemp);
         });
 
         return scaling;
