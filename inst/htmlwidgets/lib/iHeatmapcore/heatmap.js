@@ -52,8 +52,9 @@ function heatmapdraw(selector,data,options) {
     opts.yclust_width = options.yclust_width || opts.width * 0.12;
     opts.xaxis_height = options.xaxis_height || 100;
     opts.yaxis_width = options.yaxis_width || 100;
-    opts.legend_width = options.legend_width || 50;
-    opts.annote_pad = options.annote_pad = 7;
+    opts.legend_width = (mainDat.data == null) ? 0 : (options.legend_width || 50);
+    opts.legend_height = (mainDat.data == null) ? 0 : (options.legend_width || 200)
+    opts.annote_pad = options.annote_pad || 7;
     opts.xAnnote_width = (colHead== null) ? 0:colHead.length*opts.annote_pad;
     opts.yAnnote_height = (rowHead == null) ? 0:rowHead.length*opts.annote_pad;
     opts.showHeat = options.showHeat
@@ -119,7 +120,7 @@ function heatmapdraw(selector,data,options) {
         top: 0,
         left: colormapBounds.left+colormapBounds.width+opts.yaxis_width,
         width: opts.legend_width,
-        height:200
+        height: opts.legend_height
     };
 
     var rowLegendBounds = {
@@ -127,7 +128,7 @@ function heatmapdraw(selector,data,options) {
         top: colLegendBounds.height,
         left: colormapBounds.left+colormapBounds.width+opts.yaxis_width,
         width: opts.legend_width,
-        height:200
+        height: opts.legend_height
     };
 
     var heatLegendBounds = {
@@ -136,7 +137,7 @@ function heatmapdraw(selector,data,options) {
         //The -99 is because 99 is half the width of the heatLegend, This will center the legend
         left: 5,
         width: opts.yclust_width,
-        height:70
+        height: 70
     };
     function cssify(styles) {
         return {
