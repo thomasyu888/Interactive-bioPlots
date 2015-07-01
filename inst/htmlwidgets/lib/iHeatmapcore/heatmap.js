@@ -171,8 +171,8 @@ function heatmapdraw(selector,data,options) {
     var rowAnnots = (rowMeta == null) ? 0: drawAnnotate(el.select('svg.rowAnnote'),rowAnnote, false,rowABounds.width,rowABounds.height);
     var xLabel = axis(el.select('svg.xAxis'),data.matrix.cols,true,xaxisBounds.width,opts.xaxis_height)
     var yLabel = (mainDat.data==null) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, opts.yaxis_width, yaxisBounds.height)
-    var colALegend = (colMeta == null) ? 0 : legend(el.select('svg.colLegend'),colAnnots,true)
-    var rowALegend = (rowMeta == null) ? 0 : legend(el.select('svg.rowLegend'),rowAnnots,true)
+    var colALegend = (colMeta == null | mainDat.data == null) ? 0 : legend(el.select('svg.colLegend'),colAnnots,true)
+    var rowALegend = (rowMeta == null | mainDat.data == null) ? 0 : legend(el.select('svg.rowLegend'),rowAnnots,true)
     var heatmapLegend = (mainDat.data == null) ? 0 : legend(el.select('svg.heatLegend'),heatmap,false,heatLegendBounds.width-20)
 
 
@@ -454,13 +454,13 @@ function heatmapdraw(selector,data,options) {
                 } else {
                     var tf = controller.transform();
                     var ex = brush.extent();
-                    //Have to change the ex, because dendrogram zoom will cause the text to show when it shouldn't.  
+                    //Have to change the ex, because dendrogram zoom will cause the text to show when it shouldn't.
                     //When rotated make the dimensions of the height not change, when not rotated, the dimensions
                     //Of the width should not change.
                     rotated ? ex[1][0] = ex[1][0] : ex[1][0] = mainDat.dim[1]
                     rotated ? ex[0][0] = ex[0][0] : ex[0][0] = 0
                     rotated ? ex[1][1] = mainDat.dim[0] : ex[1][1] = ex[1][1]
-                    rotated ? ex[0][1] = 0 : ex[0][1] = ex[0][1] 
+                    rotated ? ex[0][1] = 0 : ex[0][1] = ex[0][1]
                     var scale = [
                         //rotated ? mainDat.dim[1] / (ex[1][0] - ex[0][0]) :1,
                         mainDat.dim[1] / (ex[1][0] - ex[0][0]),
@@ -581,7 +581,7 @@ function heatmapdraw(selector,data,options) {
             .enter()
             .append('g')
             .attr('transform', function(d,i) {
-                //The +5 is so that the text for the heatmap legend is fixed 
+                //The +5 is so that the text for the heatmap legend is fixed
                 return annotations ? 'translate(0,' + i*8+')' : 'translate(' +(5+i*width/100) +',0)';
             });
         leg.append('rect')
@@ -593,7 +593,7 @@ function heatmapdraw(selector,data,options) {
         leg.append('text')
             .attr('x',annotations ? 6 : -5)
             .attr('y',annotations ? 5 : 45)
-            .text(function(d,i) { 
+            .text(function(d,i) {
                 if (annotations) {
                     return d;
                 } else if (i==0 || i==49 || i==99) {
