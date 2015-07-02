@@ -52,8 +52,8 @@ function heatmapdraw(selector,data,options) {
     opts.yclust_width = options.yclust_width || opts.width * 0.12;
     opts.xaxis_height = options.xaxis_height || 100;
     opts.yaxis_width = options.yaxis_width || 100;
-    opts.legend_width = (mainDat.data == null) ? 0 : (options.legend_width || 50);
-    opts.legend_height = (mainDat.data == null) ? 0 : (options.legend_width || 200)
+    opts.legend_width = options.legend_width || 50;
+    //opts.legend_height = options.legend_height || 200;
     opts.annote_pad = options.annote_pad || 7;
     opts.xAnnote_width = (colHead== null) ? 0:colHead.length*opts.annote_pad;
     opts.yAnnote_height = (rowHead == null) ? 0:rowHead.length*opts.annote_pad;
@@ -118,7 +118,7 @@ function heatmapdraw(selector,data,options) {
     var colLegendBounds = {
         position: "absolute",
         top: 0,
-        left: colormapBounds.left+colormapBounds.width+opts.yaxis_width,
+        left: colormapBounds.left+colDendBounds.width+opts.yaxis_width,
         width: opts.legend_width,
         height: opts.legend_height
     };
@@ -137,7 +137,7 @@ function heatmapdraw(selector,data,options) {
         //The -99 is because 99 is half the width of the heatLegend, This will center the legend
         left: 5,
         width: opts.yclust_width,
-        height: 70
+        height: opts.legend_height
     };
     function cssify(styles) {
         return {
@@ -172,8 +172,8 @@ function heatmapdraw(selector,data,options) {
     var rowAnnots = (rowMeta == null) ? 0: drawAnnotate(el.select('svg.rowAnnote'),rowAnnote, false,rowABounds.width,rowABounds.height);
     var xLabel = axis(el.select('svg.xAxis'),data.matrix.cols,true,xaxisBounds.width,opts.xaxis_height)
     var yLabel = (mainDat.data==null) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, opts.yaxis_width, yaxisBounds.height)
-    var colALegend = (colMeta == null | mainDat.data == null) ? 0 : legend(el.select('svg.colLegend'),colAnnots,true)
-    var rowALegend = (rowMeta == null | mainDat.data == null) ? 0 : legend(el.select('svg.rowLegend'),rowAnnots,true)
+    var colALegend = (colMeta == null) ? 0 : legend(el.select('svg.colLegend'),colAnnots,true)
+    var rowALegend = (rowMeta == null) ? 0 : legend(el.select('svg.rowLegend'),rowAnnots,true)
     var heatmapLegend = (mainDat.data == null) ? 0 : legend(el.select('svg.heatLegend'),heatmap,false,heatLegendBounds.width-20)
 
 
@@ -327,7 +327,7 @@ function heatmapdraw(selector,data,options) {
                     left: d3.event.clientX +15+ "px",
                     opacity: 0.9
                 })
-                controller.datapoint_hover({col:col, row:row, value:value});
+                //controller.datapoint_hover({col:col, row:row, value:value});
             })
             .on("mouseleave", function() {
                 tip.hide().style("display","none")
@@ -550,27 +550,30 @@ function heatmapdraw(selector,data,options) {
                 var row = Math.floor(dscale.invert(d3.event.offsetY))
                 //Get all the metadata
                 var output = rotated ? mainDat.cols[col] : mainDat.rows[row];
-
+                var value = output
                 if (addon != null && mainDat.data == null) {
-                    for (k=0; k<addonHead.length;k++) {
-                        output += '<br> ' + addonHead[k] + ': ' + addon[col]
-                    }
+                      value += ': '+addon[0][0][col] //Fix this later <-
+                //    for (k=0; k<addonHead.length;k++) {
+                //        output += '<br> ' + addonHead[k] + ': ' + addon[col]
+                //    }
                 }
                 if (colMeta != null &&mainDat.data == null) {
                     for (k=0; k<colHead.length;k++) {
                         output += '<br> ' + colHead[k] + ': ' + colMeta[col]
                     }
                 }
+
+
                 tip.show(output).style({
                     top: d3.event.clientY +15 + "px",
                     left: d3.event.clientX +15 + "px",
                     opacity: 0.9
-                });
-                //controller.datapoint_hover({col:col, row:row, value:output});
+                });//Need to fix this.. Array in an Array in an Array ....T.T
+                controller.datapoint_hover({row:value, col:colMeta[col], value:addon[1][0][col]});
             })
             .on("mouseleave", function() {
                 tip.hide().style("display","none")
-                //controller.datapoint_hover(null);
+                controller.datapoint_hover(null);
             });
 
     }
@@ -658,7 +661,7 @@ function heatmapdraw(selector,data,options) {
         return scaling;
     };
 
-/*
+
   var dispatcher = d3.dispatch('hover');
 
   controller.on("datapoint_hover", function(_) {
@@ -670,5 +673,5 @@ function heatmapdraw(selector,data,options) {
       dispatcher.on(type, listener);
       return this;
     }
-  };*/
+  };
 };

@@ -38,6 +38,7 @@ iHeatmap <- function(x,
                      font_size = 10,
                      probs = 100,
                      annote_pad = 7,
+                     legend_width=50,
                      ...) {
   ## Define the variables
   mainData <- as.matrix(x)
@@ -150,7 +151,8 @@ iHeatmap <- function(x,
     anim_duration = anim_duration,
     showheat = showHeat,
     font_size = font_size,
-    annote_pad = annote_pad))
+    annote_pad = annote_pad,
+    legend_width = legend_width))
 
 
   colMeta <- list(data = colAnnotes,

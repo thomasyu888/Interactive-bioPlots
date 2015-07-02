@@ -18,16 +18,16 @@ HTMLWidgets.widget({
     el.innerHTML = "";
     var hm = heatmapdraw(el, x, x.options);
 
-    //if (window.Shiny) {
-    //  var id = this.getId(el);
+    if (window.Shiny) {
+      var id = this.getId(el);
 
-      //hm.on('hover', function(e) {
-      //  Shiny.onInputChange(id + '_hover', !e.data ? e.data : {
-      //    value: e.data.value,
-      //    row: e.data.row + 1,
-      //    col: e.data.col + 1
-      //  });
-      //});
+      hm.on('hover', function(e) {
+        Shiny.onInputChange(id + '_hover', !e.data ? e.data : {
+          title: e.data.row,
+          abstract: e.data.value,
+          cluster: e.data.col
+        });
+      });
       //hm.on('click', function(e) {
       //  Shiny.onInputChange(id + '_click', !e.data ? e.data : {
       //    value: e.data.value,
@@ -35,7 +35,7 @@ HTMLWidgets.widget({
     //      col: e.data.col + 1
       //  });
       //});
-    //}
+    }
   },
 
 
