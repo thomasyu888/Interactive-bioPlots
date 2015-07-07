@@ -51,8 +51,11 @@
 }
 .colLegend {
   position:absolute;
+  z-index:-10
 }
-
+.rowLegend {
+  z-index:-15
+}
 .d3heatmap-tip {
   font-size: 10px;
   display:inline-block;

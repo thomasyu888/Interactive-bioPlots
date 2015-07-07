@@ -53,7 +53,7 @@ function heatmapdraw(selector,data,options) {
     opts.xaxis_height = options.xaxis_height || 100;
     opts.yaxis_width = options.yaxis_width || 100;
     opts.legend_width = options.legend_width || 50;
-    //opts.legend_height = options.legend_height || 200;
+    opts.legend_height = options.legend_height || 200;
     opts.annote_pad = options.annote_pad || 7;
     opts.xAnnote_width = (colHead== null) ? 0:colHead.length*opts.annote_pad;
     opts.yAnnote_height = (rowHead == null) ? 0:rowHead.length*opts.annote_pad;
@@ -172,7 +172,7 @@ function heatmapdraw(selector,data,options) {
     var rowAnnots = (rowMeta == null) ? 0: drawAnnotate(el.select('svg.rowAnnote'),rowAnnote, false,rowABounds.width,rowABounds.height);
     var xLabel = axis(el.select('svg.xAxis'),data.matrix.cols,true,xaxisBounds.width,opts.xaxis_height)
     var yLabel = (mainDat.data==null) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, opts.yaxis_width, yaxisBounds.height)
-    var colALegend = (colMeta == null) ? 0 : legend(el.select('svg.colLegend'),colAnnots,true)
+    var colALegend = (colMeta == null | mainDat.data == null ) ? 0 : legend(el.select('svg.colLegend'),colAnnots,true)
     var rowALegend = (rowMeta == null) ? 0 : legend(el.select('svg.rowLegend'),rowAnnots,true)
     var heatmapLegend = (mainDat.data == null) ? 0 : legend(el.select('svg.heatLegend'),heatmap,false,heatLegendBounds.width-20)
 
