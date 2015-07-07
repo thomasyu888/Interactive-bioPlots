@@ -6,7 +6,6 @@ Description: Interactive Heatmap with hoverover ability, and zoom by rectangle f
 Depends:
   R (>= 3.1.2),
   htmlwidgets,
-  shiny,
-  flashClust
+  shiny
 License: GPL-3
 LazyData: true

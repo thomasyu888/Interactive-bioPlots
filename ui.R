@@ -1,7 +1,7 @@
 require(shiny)
 require(htmlwidgets)
 require(iHeatmap)
-library(flashClust)
+
 
 shinyUI(fluidPage(
   headerPanel("Interactive Heatmap"),

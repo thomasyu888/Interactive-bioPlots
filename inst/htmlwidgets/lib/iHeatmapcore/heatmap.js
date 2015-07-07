@@ -75,7 +75,7 @@ function heatmapdraw(selector,data,options) {
         left: colormapBounds.left,
         top: 0,
         width: (mainDat.data==null) ? (opts.width - opts.yaxis_width) : colormapBounds.width,
-        height: (mainDat.data==null) ? opts.height : opts.xclust_height
+        height: (mainDat.data==null) ? (opts.height-2*opts.xAnnote_width) : opts.xclust_height
     };
     var rowDendBounds = {
         position: "absolute",
