@@ -146,7 +146,7 @@ iHeatmap <- function(x,
   }
 
   options <- c(options, list(
-    xaxis_height = xaxis_height ,
+    xaxis_height = xaxis_height,
     yaxis_width = yaxis_width,
     anim_duration = anim_duration,
     showheat = showHeat,
