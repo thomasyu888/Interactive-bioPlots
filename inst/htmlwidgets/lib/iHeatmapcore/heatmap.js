@@ -109,7 +109,7 @@ function heatmapdraw(selector,data,options) {
     };
     var xaxisBounds = {
         position: "absolute",
-        top: (mainDat.data==null) ? opts.height : (colormapBounds.top + colormapBounds.height),
+        top: (mainDat.data==null) ? (colABounds.top+opts.xAnnote_width) : (colormapBounds.top + colormapBounds.height),
         left: colormapBounds.left,
         width: (mainDat.data==null) ? (opts.width-opts.yaxis_width) : colormapBounds.width,
         height: opts.xaxis_height
