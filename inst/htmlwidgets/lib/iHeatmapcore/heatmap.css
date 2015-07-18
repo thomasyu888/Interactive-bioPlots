@@ -49,13 +49,13 @@
   overflow: hidden;
   z-index:1;
 }
-.colLegend {
+/*.colLegend {
   position:absolute;
-  z-index:-10
+  z-index:-15
 }
 .rowLegend {
   z-index:-15
-}
+}*/
 .d3heatmap-tip {
   font-size: 10px;
   display:inline-block;
