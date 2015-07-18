@@ -569,7 +569,9 @@ function heatmapdraw(selector,data,options) {
                     left: d3.event.clientX +15 + "px",
                     opacity: 0.9
                 });//Need to fix this.. Array in an Array in an Array ....T.T
-                controller.datapoint_hover({row:value, col:colMeta[col], value:addon[1][0][col]});
+                if (addon !=null) {
+                    controller.datapoint_hover({row:value, col:colMeta[col], value:addon[1][0][col]});
+                }
             })
             .on("mouseleave", function() {
                 tip.hide().style("display","none")
