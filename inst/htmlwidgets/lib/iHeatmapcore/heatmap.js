@@ -318,6 +318,8 @@ function heatmapdraw(selector,data,options) {
             x.range([_.translate[0], width * _.scale[0] + _.translate[0]]);
             y.range([_.translate[1], height * _.scale[1] + _.translate[1]]);
             draw(rect.transition().duration(opts.anim_duration).ease("linear"),xtemp,ytemp);
+
+
         });
 
         var brushG = svg.append("g")
@@ -434,7 +436,7 @@ function heatmapdraw(selector,data,options) {
         var y = d3.scale.linear()
             .domain([0, height])
             .range([0, height]);
-
+        //For the zoom
         var dscale = d3.scale.linear()
             .domain([0, rotated ?  mainDat.dim[1] : mainDat.dim[0]])
             .range([0, rotated ? width : height])
@@ -672,12 +674,12 @@ function heatmapdraw(selector,data,options) {
         draw(annotation,0,0);
 
         controller.on('transform.annotation-' + (rotated ? 'x' : 'y'), function(_) {
-            if (rotated) {
+            if (!rotated) {
                 height = colormapBounds.height;
-                if (length >100 & _.extent[1][0]-_.extent[0][0] > 100) {
+                if (mainDat.dim[1] >100 & _.extent[1][0]-_.extent[0][0] > 100) {
                     ytemp=0
                     height = colormapBounds.height+100;
-                } else if (_.extent[1][0]-_.extent[0][0] <=100 & length>100) {
+                } else if (_.extent[1][0]-_.extent[0][0] <=100 & mainDat.dim[1]>100) {
                     ytemp=_.extent[0][1]*100/(_.extent[1][1]-_.extent[0][1])
                 } else {
                     ytemp=0;
@@ -688,10 +690,10 @@ function heatmapdraw(selector,data,options) {
             } else {
                 width = colormapBounds.width;
 
-                if (length> 40 & _.extent[1][1] - _.extent[0][1] >40) {
+                if (mainDat.dim[0]> 40 & _.extent[1][1] - _.extent[0][1] >40) {
                     xtemp=0;
                     width = colormapBounds.width+100;
-                } else if (_.extent[1][1] - _.extent[0][1] <=40 & length>40) {
+                } else if (_.extent[1][1] - _.extent[0][1] <=40 & mainDat.dim[0]>40) {
                     xtemp=_.extent[0][0]*100/(_.extent[1][0]-_.extent[0][0]);
                 } else {
                     xtemp=0;

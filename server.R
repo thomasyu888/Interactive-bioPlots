@@ -1,9 +1,9 @@
-m  <- runif(1000)
-m <- matrix(m, ncol=10)
-d <- runif(10)
-d <- matrix(d,10,1)
-f <- runif(100)
-f <- matrix(f,100,1)
+m  <- runif(4840)
+m <- matrix(m, ncol=110)
+d <- runif(110)
+d <- matrix(d,110,1)
+f <- runif(44)
+f <- matrix(f,44,1)
 
 shinyServer(function(input, output) {
   output$myChart <- renderIHeatmap(
