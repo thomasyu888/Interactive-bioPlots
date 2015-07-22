@@ -136,8 +136,8 @@ function heatmapdraw(selector,data,options) {
         top: 5,
         //The -99 is because 99 is half the width of the heatLegend, This will center the legend
         left: 5,
-        width: opts.yclust_width,
-        height: opts.legend_height
+        width: opts.yclust_width-5,
+        height: colormapBounds.top-5
     };
     function cssify(styles) {
         return {
