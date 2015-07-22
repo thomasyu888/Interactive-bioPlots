@@ -159,9 +159,9 @@ function heatmapdraw(selector,data,options) {
         var rowAnnote = inner.append("svg").classed("rowAnnote",true).style(cssify(rowABounds));
         var xAxis = inner.append("svg").classed("xAxis",true).style(cssify(xaxisBounds));
         var yAxis = inner.append("svg").classed("yAxis",true).style(cssify(yaxisBounds));
-        var colLegend = inner.append("svg").classed("colLegend",true).style(cssify(colLegendBounds));
-        var rowLegend = inner.append("svg").classed("rowLegend",true).style(cssify(rowLegendBounds));
-        var heatLegend = inner.append("svg").classed("heatLegend",true).style(cssify(heatLegendBounds));
+        var colLegend = (colMeta == null | mainDat.data == null ) ? 0 : inner.append("svg").classed("colLegend",true).style(cssify(colLegendBounds));
+        var rowLegend = (rowMeta == null) ? 0 : inner.append("svg").classed("rowLegend",true).style(cssify(rowLegendBounds));
+        var heatLegend = (mainDat.data == null) ? 0 : inner.append("svg").classed("heatLegend",true).style(cssify(heatLegendBounds));
     })();
 
     //Creates everything for the heatmap
