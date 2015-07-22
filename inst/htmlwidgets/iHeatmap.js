@@ -13,6 +13,12 @@ HTMLWidgets.widget({
   },
 
   renderValue: function(el, x, instance) {
+    this.doRenderValue(el,x,instance)
+  },
+  
+  doRenderValue: function(el, x, instance) {
+    var self = this;
+
     instance.lastValue = x;
 
     el.innerHTML = "";
@@ -41,7 +47,7 @@ HTMLWidgets.widget({
 
   resize: function(el, width, height, instance) {
     if (instance.lastValue) {
-      this.renderValue(el, instance.lastValue, instance);
+      this.doRenderValue(el, instance.lastValue, instance);
     }
   }
 
