@@ -1,27 +1,47 @@
-#' Interactive Heatmap
-#'
-#' EXTENSION OFF JOE CHENG'S d3heatmap/rstudio.  THIS BY NO MEANS IS COMPLETELY
-#' MY OWN WORK.  CREDITS TO JOE CHENG!!!
-#'
 #' @import htmlwidgets
-#' @import flashClust
 #' @import shiny
-#' @export
-#'
-#'@param x A numeric matrix
-#'@param colAnnote Column annotations
-#'  Takes a matrix: n x 1 format
-#'@param rowAnnote Row annotations
-#'  Takes a matrix: m x 1 matrix
-#'
 NULL
-##This defines the function that does returns a if a isn't null, and b if a is null
 `%||%` <- function(a, b) {
+  ##This defines the function that does returns a if a isn't null, and b if a is null
   if (!is.null(a))
     a
   else
     b
 }
+
+#' Interactive Heatmap
+#'
+#'Creates a D3.js-based heatmap widget.
+#'
+#'
+#'@param x A numeric \code{m x n} matrix.
+#'@param colAnnote Column annotations-
+#'  Takes a \code{n x 1} matrix.
+#'@param rowAnnote Row annotations-
+#'  Takes a \code{m x 1} matrix.
+#'@param width Width in pixels (optional, defaults to automatic sizing).
+#'@param height Height in pixels (optional, defaults to automatic sizing).
+#'@param colors Either a colorbrewer2.org palette name (e.g. \code{"RdYlBu"} or
+#'   \code{"Blues"}).
+#'@param ClustM The agglomeration (Linkage) method to be used.
+#'  This should be (an unambiguous abbreviation of) one of \code{"ward.D"}, \code{"ward.D2"},
+#'  \code{"single"}, \code{"complete"}, \code{"average"} (= UPGMA), \code{"mcquitty"} (= WPGMA),
+#'  \code{"median"} (= WPGMC) or \code{"centroid"} (= UPGMC).
+#'@param distM The distance measure to be used. This must be one of \code{"correlation"},\code{"euclidean"},
+#'  \code{"maximum"}, \code{"manhattan"}, \code{"canberra"}, \code{"binary"} or \code{"minkowski"}.
+#'@param Colv Determines if columns should be clustered (defaults to \code{TRUE})
+#'@param Rowv Determines if rows should be clustered (defaults to \code{TRUE})
+#'@param showHeat Only show the dendrogram.
+#'@param addOnInfo For adding on extra information
+#'@param scale Determine if the data is to be scaled, defaults to \code{TRUE}
+#'@param col_scale Determins if data is to be scaled by row or column, defaults to \code{TRUE} (scale by column)
+#'@param cor_method Determins correlation method, defaults to \code{"pearson"}
+#'@param probs Determines the quantile, defaults to \code{100}
+#'
+#'@examples
+#' library(iHeatmap)
+#' iHeatmap(mtcars, scale = TRUE, col_scale=TRUE, colors = "Blues")
+
 
 iHeatmap <- function(x,
                      colAnnote=NULL,
