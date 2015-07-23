@@ -38,6 +38,10 @@ NULL
 #'@param cor_method Determins correlation method, defaults to \code{"pearson"}
 #'@param probs Determines the quantile, defaults to \code{100}
 #'
+#' @export
+#' @source
+#' The interface was designed based on Joe cheng's \link{d3heatmap}.
+#'
 #'@examples
 #' library(iHeatmap)
 #' iHeatmap(mtcars, scale = TRUE, col_scale=TRUE, colors = "Blues")
@@ -81,6 +85,23 @@ iHeatmap <- function(x,
   if (!(probs %in% c(100,90,80,70,60,50,40,30,20,10,0))) {
     stop("probs needs to be a multiple of 10 from 0 to 100")
   }
+##====================
+  if(!is.matrix(x)) {
+    x <- as.matrix(x)
+  }
+  if(!is.matrix(x)) stop("x must be a matrix")
+##====================
+  #if(!is.matrix(colAnnote)) {
+  #  colAnnote <- as.matrix(colAnnote)
+  #}
+  #if(!is.matrix(colAnnote)) stop("colAnnote must be a matrix")
+##====================
+  #if(!is.matrix(rowAnnote)) {
+  #  rowAnnote <- as.matrix(rowAnnote)
+  #}
+  #if(!is.matrix(rowAnnote)) stop("rowAnnote must be a matrix")
+
+
 ##Scale before the dendrogram grouping or else it makes no sense.
 ### ### ### #####  ######## ### ### #####  ######## ### ### #####  ######## ### ### #####
 #########FIX THIS!!!####
