@@ -3,6 +3,9 @@
 \name{iHeatmap}
 \alias{iHeatmap}
 \title{Interactive Heatmap}
+\source{
+The interface was designed based on Joe cheng's \link{d3heatmap}.
+}
 \usage{
 iHeatmap(x, colAnnote = NULL, rowAnnote = NULL, width = NULL,
   height = NULL, colors = "RdYlBu", ClustM = "complete",
