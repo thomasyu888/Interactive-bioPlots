@@ -8,6 +8,12 @@
 #' @import shiny
 #' @export
 #'
+#'@param x A numeric matrix
+#'@param colAnnote Column annotations
+#'  Takes a matrix: n x 1 format
+#'@param rowAnnote Row annotations
+#'  Takes a matrix: m x 1 matrix
+#'
 NULL
 ##This defines the function that does returns a if a isn't null, and b if a is null
 `%||%` <- function(a, b) {
