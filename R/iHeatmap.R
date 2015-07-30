@@ -33,8 +33,7 @@ NULL
 #'@param Rowv Determines if rows should be clustered (defaults to \code{TRUE})
 #'@param showHeat Only show the dendrogram.
 #'@param addOnInfo For adding on extra information
-#'@param scale Determine if the data is to be scaled, defaults to \code{TRUE}
-#'@param col_scale Determins if data is to be scaled by row or column, defaults to \code{TRUE} (scale by column)
+#'@param scale Determine if the data is to be scaled by \code{"row"} or \code{"column"}, defaults to \code{"none"}
 #'@param cor_method Determins correlation method, defaults to \code{"pearson"}
 #'@param probs Determines the quantile, defaults to \code{100}
 #'
@@ -62,8 +61,7 @@ iHeatmap <- function(x,
                      anim_duration=500,
                      showHeat = TRUE,
                      addOnInfo = NULL,
-                     scale = FALSE,
-                     col_scale = TRUE,
+                     scale = c("none","column","row"),
                      cor_method = "pearson",
                      font_size = 10,
                      probs = 100,
@@ -115,16 +113,15 @@ iHeatmap <- function(x,
 #domain <- seq.int(ceiling(quantile(temp)[["75%"]]), floor(quantile(temp)[["25%"]]), length.out = 100)
 #rng <- range(mainData[!mainData %in% boxplot.stats(mainData)$out])
 #temp <- t(rescale_mid(t(mainData),mid = mean(mainData)))
-
-  if (scale) {
-    if (col_scale) {
+  scale = match.arg(scale)
+  if (scale=="column") {
       mainData <- scale(mainData)
-    } else {
+  } else if (scale=="row") {
       mainData <- t(scale(t(mainData)))
-    }
-    #rng <- range(prepared[paste(probs,'%',sep=""], prepared[paste((1-probs),'%',sep="")])
-    #domain <- seq.int(quantile(mainData)[["75%"]], quantile(mainData)[["25%"]], length.out = 100)
-  } #else {
+  }
+  #rng <- range(prepared[paste(probs,'%',sep=""], prepared[paste((1-probs),'%',sep="")])
+  #domain <- seq.int(quantile(mainData)[["75%"]], quantile(mainData)[["25%"]], length.out = 100)
+   #else {
     #rng <- range(mainData[!mainData %in% boxplot.stats(mainData)$out])
     #rng <- range(quantile(mainData)[["75%"]], quantile(mainData)[["25%"]])
   #}
