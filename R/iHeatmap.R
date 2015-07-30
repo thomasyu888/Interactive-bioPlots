@@ -251,21 +251,25 @@ iHeatmap <- function(x,
 #' library(shiny)
 #'
 #' ui <- fluidPage(
-#'   h1("A heatmap demo"),
+#' headerPanel("A heatmap demo"),
+#' sidebarPanel(
 #'   selectInput("palette", "Palette", c("YlOrRd", "RdYlBu", "Greens", "Blues")),
-#'   selectInput("cluster_method", "Clustering Method", c('complete', 'average','ward','single','mcquitty','median','centroid'))
-#'   selectInput("cluster_row","Cluster rows",c('TRUE', 'FALSE'))
-#'   selectInput("cluster_col","Cluster columns",c('TRUE','FALSE'))
+#'   selectInput("cluster_method", "Clustering Method", c('complete', 'average','ward.D2','single','mcquitty','median','centroid')),
+#'   selectInput("cluster_row","Cluster rows",c('TRUE', 'FALSE')),
+#'   selectInput("cluster_col","Cluster columns",c('TRUE','FALSE')),
 #'   selectInput("dist","Distance method",c('euclidean','correlation','maximum','manhattan','canberra','binary','minkowski'))
+#' ),
+#' mainPanel(
 #'   iHeatmapOutput("heatmap")
+#' )
 #' )
 #'
 #' server <- function(input, output, session) {
 #'   output$heatmap <- renderIHeatmap({
-#'    col_annot <- matrix(runif(11),11,1)
-#'    row_annot <- matrix(runif(32),32,1)
+#'     col_annot <- matrix(runif(11),11,1)
+#'     row_annot <- matrix(runif(32),32,1)
 #'     iHeatmap(
-#'       mtcars,colAnnote=col_annot,rowAnnote=row_annot,
+#'       mtcars,colAnnote=round(col_annot,1),rowAnnote= round(row_annot,1),
 #'       scale="column",colors = input$palette,
 #'       ClustM= input$cluster_method, distM= input$dist,
 #'       Colv = input$cluster_col,Rowv = input$cluster_row
