@@ -234,13 +234,13 @@ iHeatmap <- function(x,
 
 #' Wrapper functions for using d3heatmap in shiny
 #'
-#' Use \code{iHeatmapOutput} to create a UI element, and \code{renderiHeatmap}
+#' Use \code{iHeatmapOutput} to create a UI element, and \code{renderIHeatmap}
 #' to render the heatmap.
 #'
 #' @param outputId Output variable to read from
 #' @param width,height The width and height of the map (see
 #'   \link[htmlwidgets]{shinyWidgetOutput})
-#' @param expr An expression that generates a \code{\link{d3heatmap}} object
+#' @param expr An expression that generates a \code{\link{iHeatmap}} object
 #' @param env The environment in which to evaluate \code{expr}
 #' @param quoted Is \code{expr} a quoted expression (with \code{quote()})? This
 #'   is useful if you want to save an expression in a variable.

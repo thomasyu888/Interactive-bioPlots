@@ -15,7 +15,7 @@ renderIHeatmap(expr, env = parent.frame(), quoted = FALSE)
 \item{width,height}{The width and height of the map (see
 \link[htmlwidgets]{shinyWidgetOutput})}
 
-\item{expr}{An expression that generates a \code{\link{d3heatmap}} object}
+\item{expr}{An expression that generates a \code{\link{iHeatmap}} object}
 
 \item{env}{The environment in which to evaluate \code{expr}}
 
@@ -23,7 +23,7 @@ renderIHeatmap(expr, env = parent.frame(), quoted = FALSE)
   is useful if you want to save an expression in a variable.}
 }
 \description{
-Use \code{iHeatmapOutput} to create a UI element, and \code{renderiHeatmap}
+Use \code{iHeatmapOutput} to create a UI element, and \code{renderIHeatmap}
 to render the heatmap.
 }
 \examples{
