@@ -253,7 +253,7 @@ iHeatmap <- function(x,
 #' ui <- fluidPage(
 #'   h1("A heatmap demo"),
 #'   selectInput("palette", "Palette", c("YlOrRd", "RdYlBu", "Greens", "Blues")),
-#'   selectInput("cluster_method", "Clustering Method, c('complete', 'average','ward','single','mcquitty','median','centroid'))
+#'   selectInput("cluster_method", "Clustering Method", c('complete', 'average','ward','single','mcquitty','median','centroid'))
 #'   selectInput("cluster_row","Cluster rows",c('TRUE', 'FALSE'))
 #'   selectInput("cluster_col","Cluster columns",c('TRUE','FALSE'))
 #'   selectInput("dist","Distance method",c('euclidean','correlation','maximum','manhattan','canberra','binary','minkowski'))
