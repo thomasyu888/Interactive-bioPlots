@@ -232,15 +232,56 @@ iHeatmap <- function(x,
   )
 }
 
-#' Widget output function for use in Shiny
+#' Wrapper functions for using d3heatmap in shiny
+#'
+#' Use \code{d3heatmapOutput} to create a UI element, and \code{renderD3heatmap}
+#' to render the heatmap.
+#'
+#' @param outputId Output variable to read from
+#' @param width,height The width and height of the map (see
+#'   \link[htmlwidgets]{shinyWidgetOutput})
+#' @param expr An expression that generates a \code{\link{d3heatmap}} object
+#' @param env The environment in which to evaluate \code{expr}
+#' @param quoted Is \code{expr} a quoted expression (with \code{quote()})? This
+#'   is useful if you want to save an expression in a variable.
+#'
+#' @examples
+#' \donttest{
+#' library(iHeatmap)
+#' library(shiny)
+#'
+#' ui <- fluidPage(
+#'   h1("A heatmap demo"),
+#'   selectInput("palette", "Palette", c("YlOrRd", "RdYlBu", "Greens", "Blues")),
+#'   selectInput("cluster_method", "Clustering Method, c('complete', 'average','ward','single','mcquitty','median','centroid'))
+#'   selectInput("cluster_row","Cluster rows",c('TRUE', 'FALSE'))
+#'   selectInput("cluster_col","Cluster columns",c('TRUE','FALSE'))
+#'   selectInput("dist","Distance method",c('euclidean','correlation','maximum','manhattan','canberra','binary','minkowski'))
+#'   iHeatmapOutput("heatmap")
+#' )
+#'
+#' server <- function(input, output, session) {
+#'   output$heatmap <- renderIHeatmap({
+#'    col_annot <- matrix(runif(11),11,1)
+#'    row_annot <- matrix(runif(32),32,1)
+#'     iHeatmap(
+#'       mtcars,colAnnote=col_annot,rowAnnote=row_annot,
+#'       scale="column",colors = input$palette,
+#'       ClustM= input$cluster_method, distM= input$dist,
+#'       Colv = input$cluster_col,Rowv = input$cluster_row
+#'     )
+#'   })
+#' }
+#'
+#' shinyApp(ui, server)
+#' }
 #'
 #' @export
 iHeatmapOutput <- function(outputId, width = '100%', height = '400px'){
   shinyWidgetOutput(outputId, 'iHeatmap', width, height, package = 'iHeatmap')
 }
 
-#' Widget render function for use in Shiny
-#'
+#' @rdname iHeatmapOutput
 #' @export
 renderIHeatmap <- function(expr, env = parent.frame(), quoted = FALSE) {
   if (!quoted) { expr <- substitute(expr) } # force quoted
