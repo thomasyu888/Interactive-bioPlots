@@ -11,7 +11,7 @@ iHeatmap(x, colAnnote = NULL, rowAnnote = NULL, width = NULL,
   height = NULL, colors = "RdYlBu", ClustM = "complete",
   distM = "euclidean", Colv = TRUE, Rowv = TRUE, xaxis_height = 100,
   yaxis_width = 100, anim_duration = 500, showHeat = TRUE,
-  addOnInfo = NULL, scale = FALSE, col_scale = TRUE,
+  addOnInfo = NULL, scale = c("none", "column", "row"),
   cor_method = "pearson", font_size = 10, probs = 100, annote_pad = 7,
   legend_width = 50, ...)
 }
@@ -47,9 +47,7 @@ This should be (an unambiguous abbreviation of) one of \code{"ward.D"}, \code{"w
 
 \item{addOnInfo}{For adding on extra information}
 
-\item{scale}{Determine if the data is to be scaled, defaults to \code{TRUE}}
-
-\item{col_scale}{Determins if data is to be scaled by row or column, defaults to \code{TRUE} (scale by column)}
+\item{scale}{Determine if the data is to be scaled by \code{"row"} or \code{"column"}, defaults to \code{"none"}}
 
 \item{cor_method}{Determins correlation method, defaults to \code{"pearson"}}
 
