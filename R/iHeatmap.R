@@ -234,7 +234,7 @@ iHeatmap <- function(x,
 
 #' Wrapper functions for using d3heatmap in shiny
 #'
-#' Use \code{d3heatmapOutput} to create a UI element, and \code{renderD3heatmap}
+#' Use \code{iHeatmapOutput} to create a UI element, and \code{renderiHeatmap}
 #' to render the heatmap.
 #'
 #' @param outputId Output variable to read from

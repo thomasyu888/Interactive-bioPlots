@@ -23,7 +23,7 @@ renderIHeatmap(expr, env = parent.frame(), quoted = FALSE)
   is useful if you want to save an expression in a variable.}
 }
 \description{
-Use \code{d3heatmapOutput} to create a UI element, and \code{renderD3heatmap}
+Use \code{iHeatmapOutput} to create a UI element, and \code{renderiHeatmap}
 to render the heatmap.
 }
 \examples{
