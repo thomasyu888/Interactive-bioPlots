@@ -142,9 +142,10 @@ iHeatmap <- function(x,
       #Check it colnames exist
       if (is.null(colnames(rowAnnote))) {
         colnames(rowAnnote) = c(1:dim(rowAnnote)[2])
-        rowtitle<- colnames(rowAnnote)
         print("row annotations don't have title (ie. weight, height...)")
       }
+      rowtitle <- colnames(rowAnnote)
+
       #If rownames do not exist, if not set rownames = to mainData rownames
       if (is.null(rownames(rowAnnote))) {
         print("No row annotation names, so can't be matched to matrix row names
@@ -178,9 +179,10 @@ iHeatmap <- function(x,
       #Check it colnames exist
       if (is.null(colnames(colAnnote))) {
         colnames(colAnnote) = c(1:dim(colAnnote)[2])
-        coltitle <- colnames(colAnnote)
         print("column annotations don't have title (ie. weight, height...)")
       }
+      coltitle <- colnames(colAnnote)
+
       #If rownames do not exist, if not set rownames = to mainData rownames
       if (is.null(rownames(colAnnote))) {
         print("No column annotation names, so can't be matched to matrix column names
