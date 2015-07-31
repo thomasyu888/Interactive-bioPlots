@@ -68,8 +68,10 @@ iHeatmap <- function(x,
                      annote_pad = 7,
                      legend_width=50,
                      ...) {
+  #----------------------------------------------------
   ## Define the variables
-  mainData <- as.matrix(x)
+  #----------------------------------------------------
+  mainData<-x
   options<-NULL
   addonHead <- NULL
   add <- NULL
@@ -79,52 +81,38 @@ iHeatmap <- function(x,
   colDend <- NULL
   colHead <- NULL
   colAnnotes <- colAnnote
-## Since the data is split into quantiles of 0.1. this will only take multiples of 10
+
+  #----------------------------------------------------
+  ## Catching errors
+  #----------------------------------------------------
+
+  ## Since the data is split into quantiles of 0.1. this will only take multiples of 10
   if (!(probs %in% c(100,90,80,70,60,50,40,30,20,10,0))) {
     stop("probs needs to be a multiple of 10 from 0 to 100")
   }
-##====================
-  if(!is.matrix(x)) {
-    x <- as.matrix(x)
+  ## If input data isnt matrix, make it a matrix
+  if(!is.matrix(mainData)) {
+    mainData <- as.matrix(x)
   }
-  if(!is.matrix(x)) stop("x must be a matrix")
-##====================
-  #if(!is.matrix(colAnnote)) {
-  #  colAnnote <- as.matrix(colAnnote)
-  #}
-  #if(!is.matrix(colAnnote)) stop("colAnnote must be a matrix")
-##====================
-  #if(!is.matrix(rowAnnote)) {
-  #  rowAnnote <- as.matrix(rowAnnote)
-  #}
-  #if(!is.matrix(rowAnnote)) stop("rowAnnote must be a matrix")
+  if(!is.matrix(mainData)) stop("x (mainData) must be a matrix")
 
+  ## Matrix should have row/column names
+  if (is.null(colnames(mainData))) {
+    colnames(mainData)<-c(1:dim(mainData)[2])
+  }
 
-##Scale before the dendrogram grouping or else it makes no sense.
-### ### ### #####  ######## ### ### #####  ######## ### ### #####  ######## ### ### #####
-#########FIX THIS!!!####
-#########FIX THIS!!!####
+  if (is.null(rownames(mainData))) {
+    rownames(mainData)<-c(1:dim(mainData)[1])
+  }
 
-##Dealing with outliers.. For now this works?
-#rng <- range(mainData[!mainData %in% boxplot.stats(mainData)$out])
-#The red should be really red and the blue should just be really blue
-### FIX THE COLOR SCALE#### FIX the scale function tooo...
-
-#domain <- seq.int(ceiling(quantile(temp)[["75%"]]), floor(quantile(temp)[["25%"]]), length.out = 100)
-#rng <- range(mainData[!mainData %in% boxplot.stats(mainData)$out])
-#temp <- t(rescale_mid(t(mainData),mid = mean(mainData)))
+  # scale before the dendrogram
   scale = match.arg(scale)
   if (scale=="column") {
-      mainData <- scale(mainData)
+    mainData <- scale(mainData)
   } else if (scale=="row") {
-      mainData <- t(scale(t(mainData)))
+    mainData <- t(scale(t(mainData)))
   }
-  #rng <- range(prepared[paste(probs,'%',sep=""], prepared[paste((1-probs),'%',sep="")])
-  #domain <- seq.int(quantile(mainData)[["75%"]], quantile(mainData)[["25%"]], length.out = 100)
-   #else {
-    #rng <- range(mainData[!mainData %in% boxplot.stats(mainData)$out])
-    #rng <- range(quantile(mainData)[["75%"]], quantile(mainData)[["25%"]])
-  #}
+  ##setting quantiles, so that the there can be more contrast in colors
   prepared <- quantile(mainData,seq(0,1,0.1))
   rng <- range(prepared[paste(probs,'%',sep="")],
                prepared[paste((100-as.integer(probs)),'%',sep="")])
@@ -132,39 +120,84 @@ iHeatmap <- function(x,
 
   colors <- leaflet::colorNumeric(colors, 1:100)(1:100)
 
-#Mid point as median
-#White is the midpoint
-
-######  ### ### ### #####  ######## ### ### #####  ######## ### ### #####  #####
-######################################
-######################
+  #----------------------------------------------------
+  ## Row annotations
+  #----------------------------------------------------
 
   if (!is.null(rowAnnote)) {
+    #Convert to matrix
+    if(!is.matrix(rowAnnote)) {
+      rowAnnote <- as.matrix(rowAnnote)
+    }
+    #Check if matrix is in the correct format
+    if (dim(rowAnnote)[2]==dim(mainData)[1]) {
+      rowAnnote <- t(rowAnnote)
+    }
+
+    #check to see if the same dimensions
+    if (dim(rowAnnote)[1]!=dim(mainData)[1]) {
+      rowAnnotes<-NULL
+      print("Incorrect row annotation dimensions, your annotations will not display.")
+    } else {
+      #Check it colnames exist
       if (is.null(colnames(rowAnnote))) {
         colnames(rowAnnote) = c(1:dim(rowAnnote)[2])
+        rowtitle<- colnames(rowAnnote)
+        print("row annotations don't have title (ie. weight, height...)")
       }
-      if (length(rowAnnote[,1])==dim(mainData)[1]) {
-        #rowAnnotes <- matrix(rowAnnotes)
-        rowHead <- matrix(colnames(rowAnnote))
-      } else { ## If the length of annotations are different don't display it
-        rowAnnotes <- NULL
-        print("row annotations not the same dimension")
+      #If rownames do not exist, if not set rownames = to mainData rownames
+      if (is.null(rownames(rowAnnote))) {
+        print("No row annotation names, so can't be matched to matrix row names
+              (default assumes user passes in annotations that matches the matrix)")
+      } else { #Make sure row annotations match the mainData
+        rowAnnote<- as.matrix(rowAnnote[rownames(mainData),])
+        colnames(rowAnnote)<-rowtitle
+        rownames(rowAnnote)<-NULL
       }
+      rowHead <- matrix(colnames(rowAnnote))
+    }
+  }
+  #----------------------------------------------------
+  ## Column annotations
+  #----------------------------------------------------
+  if (!is.null(colAnnote)) {
+    #Convert to matrix
+    if(!is.matrix(colAnnote)) {
+      colAnnote <- as.matrix(colAnnote)
+    }
+    #Check if matrix is in the correct format
+    if (dim(colAnnote)[2]==dim(mainData)[2]) {
+      colAnnote <- t(colAnnote)
+    }
+
+    #check to see if the same dimensions
+    if (dim(colAnnote)[1]!=dim(mainData)[2]) {
+      colAnnotes<-NULL
+      print("Incorrect column annotation dimensions, your annotations will not display.")
+    } else {
+      #Check it colnames exist
+      if (is.null(colnames(colAnnote))) {
+        colnames(colAnnote) = c(1:dim(colAnnote)[2])
+        coltitle <- colnames(colAnnote)
+        print("column annotations don't have title (ie. weight, height...)")
+      }
+      #If rownames do not exist, if not set rownames = to mainData rownames
+      if (is.null(rownames(colAnnote))) {
+        print("No column annotation names, so can't be matched to matrix column names
+              (default assumes user passes in annotations that matches the matrix)")
+      } else { #Make sure row annotations match the mainData
+        colAnnote<- as.matrix(colAnnote[colnames(mainData),])
+        colnames(colAnnote)<-coltitle
+        rownames(colAnnote)<-NULL
+      }
+      colHead <- matrix(colnames(colAnnote))
+    }
   }
 
-  if (!is.null(colAnnote)) {
-    if (is.null(colnames(colAnnote))) {
-      colnames(colAnnote) = c(1:dim(colAnnote)[2])
-    }
-    if (length(colAnnote[,1])==dim(mainData)[2]) {
-      #colAnnotes <- matrix(colAnnotes)
-      colHead <- matrix(colnames(colAnnote))
-    } else { ##If the length of annotations are different don't display it
-      colAnnotes <- NULL
-      print("col annotations not the same dimension")
-    }
-  }
-##Cluster_mat returns flashClusted matrix
+  #----------------------------------------------------
+  ## ROWV -> To cluster row or not to cluster row
+  #----------------------------------------------------
+  ##Cluster_mat returns hclust object
   if (Rowv) {
     rowClust <- cluster_mat(mainData, distM, ClustM, cor_method)
     mainData <- mainData[rowClust$order,]
@@ -174,6 +207,9 @@ iHeatmap <- function(x,
     rowDend <- HCtoJSON(rowClust)
   }
 
+  #----------------------------------------------------
+  ## COLV -> To cluster column or not to cluster column
+  #----------------------------------------------------
   if (Colv) {
     colClust <- cluster_mat(t(mainData), distM, ClustM, cor_method)
     mainData <- mainData[,colClust$order]
@@ -204,8 +240,10 @@ iHeatmap <- function(x,
   rowMeta <- list(data = rowAnnotes,
                   header = rowHead)
   addon <- list(data = add,
-                 header = addonHead)
-
+                header = addonHead)
+  #----------------------------------------------------
+  ## Option to not show heatmap
+  #----------------------------------------------------
   if (showHeat) {
     matrix <- list(data = as.numeric(t(mainData)),
                    dim = dim(mainData),
