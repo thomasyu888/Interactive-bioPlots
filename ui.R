@@ -4,31 +4,15 @@ require(iHeatmap)
 
 
 shinyUI(fluidPage(
-  headerPanel("Interactive Heatmap"),
-
+  headerPanel("A heatmap demo"),
   sidebarPanel(
-   selectInput(inputId = "x",
-               label = "Clustering method",
-               choices = c('complete', 'average','ward','single','mcquitty','median','centroid'),
-               selected = "complete"),
-
-   selectInput(inputId = "y",
-               label = "Cluster rows",
-               choices = c('TRUE', 'FALSE'),
-               selected = 'TRUE'),
-
-   selectInput(inputId = "z",
-               label = "Cluster columns",
-               choices = c('TRUE','FALSE'),
-                selected = 'TRUE'),
-
-    selectInput(inputId = "v",
-                label = "Distance method",
-                choices = c('correlation','euclidean','maximum','manhattan','canberra','binary','minkowski'),
-                selected = 'euclidean')
+    selectInput("palette", "Palette", c("YlOrRd", "RdYlBu", "Greens", "Blues")),
+    selectInput("cluster_method", "Clustering Method", c('complete', 'average','ward.D2','single','mcquitty','median','centroid')),
+    selectInput("cluster_row","Cluster rows",c('TRUE', 'FALSE')),
+    selectInput("cluster_col","Cluster columns",c('TRUE','FALSE')),
+    selectInput("dist","Distance method",c('euclidean','correlation','maximum','manhattan','canberra','binary','minkowski'))
   ),
-
   mainPanel(
-    iHeatmapOutput('myChart')
+    iHeatmapOutput("heatmap")
   )
 ))

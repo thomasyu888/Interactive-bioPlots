@@ -1,15 +1,15 @@
-m  <- runif(1000)
-m <- matrix(m, ncol=10)
-d <- runif(10)
-d <- matrix(d,10,1)
-f <- runif(100)
-f <- matrix(f,100,1)
-
 shinyServer(function(input, output) {
-  output$myChart <- renderIHeatmap(
-    iHeatmap(m,
-             colAnnote = round(d,1),
-             rowAnnote = round(f,1),
-             Rowv=input$y,Colv=input$z,distM = input$v,ClustM = input$x)
-  )
+  output$heatmap <- renderIHeatmap({
+    col_annot <- matrix(runif(11),1,11)
+    colnames(col_annot)<-colnames(mtcars)
+    col_annot <- col_annot[,sample.int(11)]
+
+    row_annot <- matrix(runif(32),32,1)
+    iHeatmap(
+      mtcars,colAnnote=round(col_annot,1),rowAnnote= round(row_annot,1),
+      scale="column",colors = input$palette,
+      ClustM= input$cluster_method, distM= input$dist,
+      Colv = input$cluster_col,Rowv = input$cluster_row
+    )
+  })
 })
