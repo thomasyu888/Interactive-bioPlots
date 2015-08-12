@@ -118,7 +118,7 @@ iHeatmap <- function(x,
                prepared[paste((100-as.integer(probs)),'%',sep="")])
   domain <- seq.int(rng[2], rng[1], length.out = 100)
 
-  colors <- leaflet::colorNumeric(colors, 1:100)(1:100)
+  #colors <- leaflet::colorNumeric(colors, 1:100)(1:100)
 
   #----------------------------------------------------
   ## Row annotations
@@ -226,6 +226,9 @@ iHeatmap <- function(x,
     }
     colDend <- HCtoJSON(colClust)
   }
+  #rng <- range(mainData,na.rm=TRUE)
+  colors <- scales::col_numeric(colors, rng, na.color = "transparent")
+  imgUri <- encodeAsPNG(t(mainData), colors)
 
   options <- c(options, list(
     xaxis_height = xaxis_height,
@@ -259,7 +262,7 @@ iHeatmap <- function(x,
                    cols = colnames(mainData))
   }
 
-  x <- list(rows = rowDend, cols = colDend, colMeta = colMeta,rowMeta = rowMeta, matrix = matrix,addon = addon,options = options)
+  x <- list(rows = rowDend, cols = colDend, colMeta = colMeta,rowMeta = rowMeta, image=imgUri,matrix = matrix,addon = addon,options = options)
 
   # create widget
   htmlwidgets::createWidget(
@@ -271,7 +274,14 @@ iHeatmap <- function(x,
     sizingPolicy = htmlwidgets::sizingPolicy(browser.fill = TRUE)
   )
 }
-
+#' @import png base64enc
+encodeAsPNG <- function(x, colors) {
+  colorData <- as.raw(col2rgb(colors(x), alpha = TRUE))
+  dim(colorData) <- c(4, ncol(x), nrow(x))
+  pngData <- png::writePNG(colorData)
+  encoded <- base64enc::base64encode(pngData)
+  paste0("data:image/png;base64,", encoded)
+}
 #' Wrapper functions for using d3heatmap in shiny
 #'
 #' Use \code{iHeatmapOutput} to create a UI element, and \code{renderIHeatmap}

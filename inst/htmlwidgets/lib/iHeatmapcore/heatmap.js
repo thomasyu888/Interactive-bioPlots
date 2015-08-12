@@ -193,7 +193,7 @@ function heatmapdraw(selector,data,options) {
         var cols = data.dim[1];
         var rows = data.dim[0];
 
-        var merged = data.data;
+        var merged = data.merged;
         var x = d3.scale.linear()
             .domain([0, cols])
             .range([0, width]);
@@ -255,17 +255,21 @@ function heatmapdraw(selector,data,options) {
             .property("rowIndex", function(d, i) { return Math.floor(i / cols); })
             .property("value", function(d, i) { return d; })
             .attr("fill", function(d) {
-                if (d === null) {
-                    return "transparent";
+                //if (d === null) {
+                  //  return "transparent";
                     ///If data is above or below the domain, then there is no color for those values to return, that is why they become black.
                     //We don't want that so we will just return the color at the ends of the domains
-                } else if (d>max) {
-                    return color(max)
-                } else if (d<min) {
-                    return color(min)
-                } else {
-                    return color(d);
-                }
+                //} else if (d>max) {
+              //      return color(max)
+                //} else if (d<min) {
+                //    return color(min)
+                //} else {
+                //    return color(d);
+              //  }
+              if (!d.color) {
+                return "transparent";
+              }
+              return d.color;
 
             })
 
@@ -307,7 +311,7 @@ function heatmapdraw(selector,data,options) {
                 var col = Math.floor(x.invert(d3.event.offsetX));
                 var row = Math.floor(y.invert(d3.event.offsetY));
 
-                var value = Math.round(merged[row*cols + col]*100)/100;
+                var value = Math.round(merged[row*cols + col].label*100)/100;
 
                 var output = 'Row Feature Name: '+ data.rows[row]+'<br>Column Feature Name: '+ data.cols[col] +'<br>Value: '+value+'<br>Annotations:'
                 //Get all the metadata
@@ -583,7 +587,7 @@ function heatmapdraw(selector,data,options) {
     //Legend for the annotations for annotations! width=> interactive width for heatmap legend
     function legend(svg, scales,annotations,width) {
         var leg = svg.selectAll('.legend')
-            .data(scales.domain().reverse())
+            .data(scales.domain().reverse)
             .enter()
             .append('g')
             .attr('transform', function(d,i) {
