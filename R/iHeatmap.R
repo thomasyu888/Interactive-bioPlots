@@ -114,11 +114,10 @@ iHeatmap <- function(x,
   }
   ##setting quantiles, so that the there can be more contrast in colors
   prepared <- quantile(mainData,seq(0,1,0.1))
-  rng <- range(prepared[paste(probs,'%',sep="")],
-               prepared[paste((100-as.integer(probs)),'%',sep="")])
+  rng <- range(prepared[paste((100-as.integer(probs)),'%',sep="")],prepared[paste(probs,'%',sep="")])
   domain <- seq.int(rng[2], rng[1], length.out = 100)
 
-  #colors <- leaflet::colorNumeric(colors, 1:100)(1:100)
+  hackcolors <- leaflet::colorNumeric(colors, 1:100)(100:1)
 
   #----------------------------------------------------
   ## Row annotations
@@ -255,7 +254,7 @@ iHeatmap <- function(x,
                    ##defined %||% function which does paste(..) if row.names is NULL
                    rows = row.names(mainData)%||% paste(1:nrow(mainData)),
                    cols = colnames(mainData)%||% paste(1:ncol(mainData)),
-                   colors = colors,
+                   colors = hackcolors,
                    domain = domain)
   } else {
     matrix <- list(dim = dim(mainData),
