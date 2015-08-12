@@ -225,7 +225,9 @@ iHeatmap <- function(x,
     }
     colDend <- HCtoJSON(colClust)
   }
-  #rng <- range(mainData,na.rm=TRUE)
+  #------------------------
+  #COLOR SCHEME FOR HEATMAP
+  #------------------------
   colors <- scales::col_numeric(colors, rng, na.color = "transparent")
   imgUri <- encodeAsPNG(t(mainData), colors)
 
