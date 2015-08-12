@@ -587,7 +587,7 @@ function heatmapdraw(selector,data,options) {
     //Legend for the annotations for annotations! width=> interactive width for heatmap legend
     function legend(svg, scales,annotations,width) {
         var leg = svg.selectAll('.legend')
-            .data(scales.domain().reverse)
+            .data(scales.domain().reverse())
             .enter()
             .append('g')
             .attr('transform', function(d,i) {
