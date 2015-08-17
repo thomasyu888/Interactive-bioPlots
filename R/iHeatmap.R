@@ -228,8 +228,13 @@ iHeatmap <- function(x,
   #------------------------
   #COLOR SCHEME FOR HEATMAP
   #------------------------
+  ##For quantiles, make sure the values above and below the max and min range
+  ##Gets set to the max and min
+  revised <- mainData
+  revised[mainData<min(rng)] = min(rng)
+  revised[mainData>max(rng)] = max(rng)
   colors <- scales::col_numeric(colors, rng, na.color = "transparent")
-  imgUri <- encodeAsPNG(t(mainData), colors)
+  imgUri <- encodeAsPNG(t(revised), colors)
 
   options <- c(options, list(
     xaxis_height = xaxis_height,

@@ -255,20 +255,9 @@ function heatmapdraw(selector,data,options) {
             .property("rowIndex", function(d, i) { return Math.floor(i / cols); })
             .property("value", function(d, i) { return d; })
             .attr("fill", function(d) {
-                //if (d === null) {
-                  //  return "transparent";
-                    ///If data is above or below the domain, then there is no color for those values to return, that is why they become black.
-                    //We don't want that so we will just return the color at the ends of the domains
-                //} else if (d>max) {
-              //      return color(max)
-                //} else if (d<min) {
-                //    return color(min)
-                //} else {
-                //    return color(d);
-              //  }
               if (!d.color) {
                 return "transparent";
-              }
+              } 
               return d.color;
 
             })
