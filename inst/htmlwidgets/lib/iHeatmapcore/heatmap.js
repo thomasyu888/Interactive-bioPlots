@@ -176,9 +176,6 @@ function heatmapdraw(selector,data,options) {
     var rowALegend = (rowMeta == null) ? 0 : legend(el.select('svg.rowLegend'),rowAnnots,true)
     var heatmapLegend = (mainDat.data == null) ? 0 : legend(el.select('svg.heatLegend'),heatmap,false,heatLegendBounds.width-20)
 
-
-
-
     function heatmapGrid(svg, data, width, height) {
         // Check for no data
         if (data.data == null)
@@ -302,7 +299,7 @@ function heatmapdraw(selector,data,options) {
 
                 var value = Math.round(merged[row*cols + col].label*100)/100;
 
-                var output = 'Row Feature Name: '+ data.rows[row]+'<br>Column Feature Name: '+ data.cols[col] +'<br>Value: '+value+'<br>Annotations:'
+                var output = '<strong>Row Feature Name: </strong>'+ data.rows[row]+'<br>Column Feature Name: '+ data.cols[col] +'<br>Value: '+value+'<br>Annotations:'
                 //Get all the metadata
                 if (colMeta != null) {
                     for (k=0; k<colHead.length;k++) {
@@ -376,14 +373,6 @@ function heatmapdraw(selector,data,options) {
             // Set text-anchor on the non-transitioned node to prevent jumpiness
             // in RStudio Viewer pane
             axisNodes.selectAll("text").style("text-anchor", "start");
-            //tAxisNodes.selectAll("g")
-              //  .style("opacity", function(d, i) {
-                //    if (i <= _.extent[0][dim] && i < _.extent[1][dim]) {
-                  //      return 1;
-                   // } else {
-                    //    return 0;
-                   // }
-               // });
 
             tAxisNodes
                 .selectAll("text")
@@ -408,8 +397,10 @@ function heatmapdraw(selector,data,options) {
 
         var tip = d3.tip()
             .attr('class', 'Dend-tip')
-            .html(function(d) { return d; })
-            .direction("nw")
+            .html(function(d) { 
+                return "<strong>" + (rotated ? "Column feature: " : "Row feature: ") + "</strong>" + d; 
+            })
+            .direction("sw")
             .style("position", "fixed")
 
 
@@ -607,7 +598,16 @@ function heatmapdraw(selector,data,options) {
 ////ONLY ACCEPTS CATEGORICAL ANNOTATIONS, IF VALUES SUCH AS WEIGHT
 //PUT INTO BINS FIRST SO 100 - 110 POUNDS IS ONE CATEGORY...
     function drawAnnotate(svg,datum, rotated,width,height) {
+        
+        var tip = d3.tip()
+            .attr('class', 'annote-tip')
+            .html(function(d) { 
+                return "<strong>Annotation: </strong>" + d; 
+            })
+            .direction("nw")
+            .style("position", "fixed")
 
+        var brush = d3.svg.brush()  
         svg.attr("width",width).attr("height",height)
 
         var scaling = d3.scale.category10()
@@ -629,6 +629,9 @@ function heatmapdraw(selector,data,options) {
                 return scaling(d);
             });
             annotation.exit().remove();
+            annotation.append("title")
+                .text(function(d,i) { return (d===null) ? "NA" : d + "";})
+            annotation.call(tip)
 
         function draw(selection) {
             selection
@@ -637,8 +640,10 @@ function heatmapdraw(selector,data,options) {
                     return (rotated ? x(i%length) : 5*Math.floor(i/length));
                 })
                 .attr('y', function(d,i) { return (rotated? 5*Math.floor(i/length) : y(i%length)); })
-                .attr('width' , function(d) { return (rotated ? x(1)-x(0) :  opts.annote_pad); })
-                .attr('height', function(d) { return (rotated ?  opts.annote_pad : y(1)-y(0)); })
+                .attr('width' , (rotated ? x(1)-x(0) :  opts.annote_pad) )
+                .attr('height', (rotated ?  opts.annote_pad : y(1)-y(0)) )
+                .on("mouseover",tip.show)
+                .on("mouseout",tip.hide)
         }
 
         draw(annotation);
