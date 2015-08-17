@@ -608,6 +608,7 @@ function heatmapdraw(selector,data,options) {
             .direction("nw")
             .style("position", "fixed")
 
+
         svg.attr("width",width).attr("height",height)
 
         var scaling = d3.scale.category10()
@@ -648,6 +649,7 @@ function heatmapdraw(selector,data,options) {
         draw(annotation);
         annotation.on("mouseover",tip.show)
                 .on("mouseout",tip.hide)
+
                 
         controller.on('transform.annotation-' + (rotated ? 'x' : 'y'), function(_) {
             if (rotated) {
