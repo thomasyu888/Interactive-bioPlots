@@ -9,7 +9,8 @@ shinyServer(function(input, output) {
       mtcars,colAnnote=round(col_annot,1),rowAnnote= round(row_annot,1),
       scale="column",colors = input$palette,
       ClustM= input$cluster_method, distM= input$dist,
-      Colv = input$cluster_col,Rowv = input$cluster_row
+      Colv = input$cluster_col,Rowv = input$cluster_row,
+      probs = input$probs
     )
   })
 })
