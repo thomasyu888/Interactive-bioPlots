@@ -608,7 +608,6 @@ function heatmapdraw(selector,data,options) {
             .direction("nw")
             .style("position", "fixed")
 
-        var brush = d3.svg.brush()  
         svg.attr("width",width).attr("height",height)
 
         var scaling = d3.scale.category10()
@@ -643,12 +642,13 @@ function heatmapdraw(selector,data,options) {
                 .attr('y', function(d,i) { return (rotated? 5*Math.floor(i/length) : y(i%length)); })
                 .attr('width' , (rotated ? x(1)-x(0) :  opts.annote_pad) )
                 .attr('height', (rotated ?  opts.annote_pad : y(1)-y(0)) )
-                .on("mouseover",tip.show)
-                .on("mouseout",tip.hide)
+
         }
 
         draw(annotation);
-
+        annotation.on("mouseover",tip.show)
+                .on("mouseout",tip.hide)
+                
         controller.on('transform.annotation-' + (rotated ? 'x' : 'y'), function(_) {
             if (rotated) {
                 x.range([_.translate[0], width * _.scale[0] + _.translate[0]])
