@@ -140,7 +140,7 @@ iHeatmap <- function(x,
     } else {
       #Check it colnames exist
       if (is.null(colnames(rowAnnote))) {
-        colnames(rowAnnote) = c(1:dim(rowAnnote)[2])
+        colnames(rowAnnote) = "Row Annotation"
         print("row annotations don't have title (ie. weight, height...)")
       }
       rowtitle <- colnames(rowAnnote)
@@ -177,7 +177,7 @@ iHeatmap <- function(x,
     } else {
       #Check it colnames exist
       if (is.null(colnames(colAnnote))) {
-        colnames(colAnnote) = c(1:dim(colAnnote)[2])
+        colnames(colAnnote) = "Column Annotation"
         print("column annotations don't have title (ie. weight, height...)")
       }
       coltitle <- colnames(colAnnote)

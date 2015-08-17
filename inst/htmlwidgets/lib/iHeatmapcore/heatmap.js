@@ -299,16 +299,17 @@ function heatmapdraw(selector,data,options) {
 
                 var value = Math.round(merged[row*cols + col].label*100)/100;
 
-                var output = '<strong>Row Feature Name: </strong>'+ data.rows[row]+'<br>Column Feature Name: '+ data.cols[col] +'<br>Value: '+value+'<br>Annotations:'
+                var output = '<strong>Row Feature Name: </strong>'+ data.rows[row]+'<br><strong>Column Feature Name: </strong>'+
+                             data.cols[col] +'<br><strong>Value: </strong>'+value+'<br><strong>Annotations:</strong>'
                 //Get all the metadata
                 if (colMeta != null) {
                     for (k=0; k<colHead.length;k++) {
-                        output += '<br>- ' + colHead[k] + ': ' + colMeta[col+(k*cols)]
+                        output += '<br><strong>- ' + colHead[k] + ': </strong>' + colMeta[col+(k*cols)]
                     }
                 }
                 if (rowMeta != null) {
                     for (k=0; k<rowHead.length; k++) {
-                        output += '<br>- '+rowHead[k] + ': ' + rowMeta[row+(k*rows)]
+                        output += '<br><strong>- '+rowHead[k] + ': </strong>' + rowMeta[row+(k*rows)]
                     }
                 }
                 tip.show(output)
