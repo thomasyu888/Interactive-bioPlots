@@ -165,16 +165,16 @@ function heatmapdraw(selector,data,options) {
     })();
 
     //Creates everything for the heatmap
-    var row = (data.rows ==null) ? 0 : dendrogram(el.select('svg.rowDend'), data.rows, false, rowDendBounds.width,rowDendBounds.height);
-    var col = (data.cols ==null) ? 0 : dendrogram(el.select('svg.colDend'), data.cols, true, colDendBounds.width, colDendBounds.height);
+    //var row = (data.rows ==null) ? 0 : dendrogram(el.select('svg.rowDend'), data.rows, false, rowDendBounds.width,rowDendBounds.height);
+    //var col = (data.cols ==null) ? 0 : dendrogram(el.select('svg.colDend'), data.cols, true, colDendBounds.width, colDendBounds.height);
     var heatmap = heatmapGrid(el.select('svg.colormap'), mainDat, colormapBounds.width,colormapBounds.height);
-    var colAnnots = (colMeta == null) ? 0 : drawAnnotate(el.select('svg.colAnnote'),colAnnote, true, colABounds.width,colABounds.height);
-    var rowAnnots = (rowMeta == null) ? 0: drawAnnotate(el.select('svg.rowAnnote'),rowAnnote, false,rowABounds.width,rowABounds.height);
-    var xLabel = axis(el.select('svg.xAxis'),data.matrix.cols,true,xaxisBounds.width,opts.xaxis_height)
-    var yLabel = (mainDat.data==null) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, opts.yaxis_width, yaxisBounds.height)
-    var colALegend = (colMeta == null | mainDat.data == null ) ? 0 : legend(el.select('svg.colLegend'),colAnnots,true)
-    var rowALegend = (rowMeta == null) ? 0 : legend(el.select('svg.rowLegend'),rowAnnots,true)
-    var heatmapLegend = (mainDat.data == null) ? 0 : legend(el.select('svg.heatLegend'),heatmap,false,heatLegendBounds.width-20)
+    //var colAnnots = (colMeta == null) ? 0 : drawAnnotate(el.select('svg.colAnnote'),colAnnote, true, colABounds.width,colABounds.height);
+    //var rowAnnots = (rowMeta == null) ? 0: drawAnnotate(el.select('svg.rowAnnote'),rowAnnote, false,rowABounds.width,rowABounds.height);
+    //var xLabel = axis(el.select('svg.xAxis'),data.matrix.cols,true,xaxisBounds.width,opts.xaxis_height)
+    //var yLabel = (mainDat.data==null) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, opts.yaxis_width, yaxisBounds.height)
+    //var colALegend = (colMeta == null | mainDat.data == null ) ? 0 : legend(el.select('svg.colLegend'),colAnnots,true)
+    //var rowALegend = (rowMeta == null) ? 0 : legend(el.select('svg.rowLegend'),rowAnnots,true)
+    //var heatmapLegend = (mainDat.data == null) ? 0 : legend(el.select('svg.heatLegend'),heatmap,false,heatLegendBounds.width-20)
 
     function heatmapGrid(svg, data, width, height) {
         // Check for no data
@@ -205,42 +205,42 @@ function heatmapdraw(selector,data,options) {
             .direction("nw")
             .style("position", "fixed")
 
-        var brush = d3.svg.brush()
-            .x(x)
-            .y(y)
-            .clamp([true, true])
-            .on('brush', function() {
-                var extent = brush.extent();
-                extent[0][0] = Math.round(extent[0][0]);
-                extent[0][1] = Math.round(extent[0][1]);
-                extent[1][0] = Math.round(extent[1][0]);
-                extent[1][1] = Math.round(extent[1][1]);
-                d3.select(this).call(brush.extent(extent));
-            })
-            .on('brushend', function() {
-                if (brush.empty()) {
-                    controller.transform({
-                        scale: [1,1],
-                        translate: [0,0],
-                        extent: [[0,0],[cols,rows]]
-                    });
-                } else {
-                    var tf = controller.transform();
-                    var ex = brush.extent();
-                    var scale = [
-                        cols / (ex[1][0] - ex[0][0]),
-                        rows / (ex[1][1] - ex[0][1])
-                    ];
-                    var translate = [
-                        ex[0][0] * (width / cols) * scale[0] * -1,
-                        ex[0][1] * (height / rows) * scale[1] * -1
-                    ];
-                    controller.transform({scale: scale, translate: translate, extent: ex});
-                }
-                brush.clear();
-                d3.select(this).call(brush).select(".brush .extent")
-                    .style({fill: "steelblue", stroke: "blue", opacity: 0.5});
-            });
+        // var brush = d3.svg.brush()
+        //     .x(x)
+        //     .y(y)
+        //     .clamp([true, true])
+        //     .on('brush', function() {
+        //         var extent = brush.extent();
+        //         extent[0][0] = Math.round(extent[0][0]);
+        //         extent[0][1] = Math.round(extent[0][1]);
+        //         extent[1][0] = Math.round(extent[1][0]);
+        //         extent[1][1] = Math.round(extent[1][1]);
+        //         d3.select(this).call(brush.extent(extent));
+        //     })
+        //     .on('brushend', function() {
+        //         if (brush.empty()) {
+        //             controller.transform({
+        //                 scale: [1,1],
+        //                 translate: [0,0],
+        //                 extent: [[0,0],[cols,rows]]
+        //             });
+        //         } else {
+        //             var tf = controller.transform();
+        //             var ex = brush.extent();
+        //             var scale = [
+        //                 cols / (ex[1][0] - ex[0][0]),
+        //                 rows / (ex[1][1] - ex[0][1])
+        //             ];
+        //             var translate = [
+        //                 ex[0][0] * (width / cols) * scale[0] * -1,
+        //                 ex[0][1] * (height / rows) * scale[1] * -1
+        //             ];
+        //             controller.transform({scale: scale, translate: translate, extent: ex});
+        //         }
+        //         brush.clear();
+        //         d3.select(this).call(brush).select(".brush .extent")
+        //             .style({fill: "steelblue", stroke: "blue", opacity: 0.5});
+        //     });
 
         svg = svg
             .attr("width", width)
@@ -278,54 +278,54 @@ function heatmapdraw(selector,data,options) {
 
         draw(rect);
 
-        controller.on('transform.colormap', function(_) {
-            x.range([_.translate[0], width * _.scale[0] + _.translate[0]]);
-            y.range([_.translate[1], height * _.scale[1] + _.translate[1]]);
-            draw(rect.transition().duration(opts.anim_duration).ease("linear"));
-        });
+        // controller.on('transform.colormap', function(_) {
+        //     x.range([_.translate[0], width * _.scale[0] + _.translate[0]]);
+        //     y.range([_.translate[1], height * _.scale[1] + _.translate[1]]);
+        //     draw(rect.transition().duration(opts.anim_duration).ease("linear"));
+        // });
 
-        var brushG = svg.append("g")
-            .attr('class', 'brush')
-            .call(brush)
-            .call(brush.event);
+        // var brushG = svg.append("g")
+        //     .attr('class', 'brush')
+        //     .call(brush)
+        //     .call(brush.event);
 
-        brushG.select("rect.background")
-            .on("mouseenter", function() {
-                tip.style("display", "block");
-            })
-            .on("mousemove", function() {
-                var col = Math.floor(x.invert(d3.event.offsetX));
-                var row = Math.floor(y.invert(d3.event.offsetY));
+        // brushG.select("rect.background")
+        //     .on("mouseenter", function() {
+        //         tip.style("display", "block");
+        //     })
+        //     .on("mousemove", function() {
+        //         var col = Math.floor(x.invert(d3.event.offsetX));
+        //         var row = Math.floor(y.invert(d3.event.offsetY));
 
-                var value = Math.round(merged[row*cols + col].label*100)/100;
+        //         var value = Math.round(merged[row*cols + col].label*100)/100;
 
-                var output = '<strong>Row Feature Name: </strong>'+ data.rows[row]+'<br><strong>Column Feature Name: </strong>'+
-                             data.cols[col] +'<br><strong>Value: </strong>'+value+'<br><strong>Annotations:</strong>'
-                //Get all the metadata
-                if (colMeta != null) {
-                    for (k=0; k<colHead.length;k++) {
-                        output += '<br><strong>- ' + colHead[k] + ': </strong>' + colMeta[col+(k*cols)]
-                    }
-                }
-                if (rowMeta != null) {
-                    for (k=0; k<rowHead.length; k++) {
-                        output += '<br><strong>- '+rowHead[k] + ': </strong>' + rowMeta[row+(k*rows)]
-                    }
-                }
-                tip.show(output)
-                    .style({
-                    top: d3.event.clientY  +15 + "px",
-                    left: d3.event.clientX +15+ "px",
-                    opacity: 0.9
-                })
-                //controller.datapoint_hover({col:col, row:row, value:value});
-            })
-            .on("mouseleave", function() {
-                tip.hide().style("display","none")
-                controller.datapoint_hover(null);
-            });
+        //         var output = '<strong>Row Feature Name: </strong>'+ data.rows[row]+'<br><strong>Column Feature Name: </strong>'+
+        //                      data.cols[col] +'<br><strong>Value: </strong>'+value+'<br><strong>Annotations:</strong>'
+        //         //Get all the metadata
+        //         if (colMeta != null) {
+        //             for (k=0; k<colHead.length;k++) {
+        //                 output += '<br><strong>- ' + colHead[k] + ': </strong>' + colMeta[col+(k*cols)]
+        //             }
+        //         }
+        //         if (rowMeta != null) {
+        //             for (k=0; k<rowHead.length; k++) {
+        //                 output += '<br><strong>- '+rowHead[k] + ': </strong>' + rowMeta[row+(k*rows)]
+        //             }
+        //         }
+        //         tip.show(output)
+        //             .style({
+        //             top: d3.event.clientY  +15 + "px",
+        //             left: d3.event.clientX +15+ "px",
+        //             opacity: 0.9
+        //         })
+        //         //controller.datapoint_hover({col:col, row:row, value:value});
+        //     })
+        //     .on("mouseleave", function() {
+        //         tip.hide().style("display","none")
+        //         controller.datapoint_hover(null);
+        //     });
 
-        return color;
+        // return color;
     }
 
     function axis(svg, data, rotated,width,height) {
