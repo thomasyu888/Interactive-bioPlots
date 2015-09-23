@@ -62,6 +62,24 @@ function heatmapdraw(selector,data,options) {
     opts.font_size = options.font_size;
     opts.padding = 20;
 
+
+//---------------------
+//        CANVAS
+//---------------------
+    var canvas = document.createElement('canvas');
+    canvas.id = "CursorLayer";
+    canvas.width = opts.width;
+    canvas.height = opts.height;
+    canvas.style.zIndex = 8;
+    canvas.style.position = "absolute";
+    canvas.style.border = "1px solid";
+
+    CursorLayer = document.body.appendChild(canvas);
+
+    var c = document.getElementById("CursorLayer");
+    var ctx = c.getContext("2d");
+
+
     var colormapBounds = {
         position: "absolute",
         left: opts.yclust_width+2*opts.yAnnote_height,
@@ -149,41 +167,41 @@ function heatmapdraw(selector,data,options) {
         };
     }
 
-    (function() {
-        var inner = el.append("div").classed("inner", true);
-        //colDend is xDend, rowDend is yDend, colmap is heatmap
-        var colDend = inner.append("svg").classed("colDend", true).style(cssify(colDendBounds));
-        var rowDend = inner.append("svg").classed("rowDend", true).style(cssify(rowDendBounds));
-        var colmap = inner.append("svg").classed("colormap", true).style(cssify(colormapBounds));
-        var colAnnote = inner.append("svg").classed("colAnnote",true).style(cssify(colABounds));
-        var rowAnnote = inner.append("svg").classed("rowAnnote",true).style(cssify(rowABounds));
-        var xAxis = inner.append("svg").classed("xAxis",true).style(cssify(xaxisBounds));
-        var yAxis = inner.append("svg").classed("yAxis",true).style(cssify(yaxisBounds));
-        var colLegend = (colMeta == null | mainDat.data == null ) ? 0 : inner.append("svg").classed("colLegend",true).style(cssify(colLegendBounds));
-        var rowLegend = (rowMeta == null) ? 0 : inner.append("svg").classed("rowLegend",true).style(cssify(rowLegendBounds));
-        var heatLegend = (mainDat.data == null) ? 0 : inner.append("svg").classed("heatLegend",true).style(cssify(heatLegendBounds));
-    })();
+    // (function() {
+    //     var inner = el.append("div").classed("inner", true);
+    //     //colDend is xDend, rowDend is yDend, colmap is heatmap
+    //     var colDend = inner.append("svg").classed("colDend", true).style(cssify(colDendBounds));
+    //     var rowDend = inner.append("svg").classed("rowDend", true).style(cssify(rowDendBounds));
+    //     var colmap = inner.append("svg").classed("colormap", true).style(cssify(colormapBounds));
+    //     var colAnnote = inner.append("svg").classed("colAnnote",true).style(cssify(colABounds));
+    //     var rowAnnote = inner.append("svg").classed("rowAnnote",true).style(cssify(rowABounds));
+    //     var xAxis = inner.append("svg").classed("xAxis",true).style(cssify(xaxisBounds));
+    //     var yAxis = inner.append("svg").classed("yAxis",true).style(cssify(yaxisBounds));
+    //     var colLegend = (colMeta == null | mainDat.data == null ) ? 0 : inner.append("svg").classed("colLegend",true).style(cssify(colLegendBounds));
+    //     var rowLegend = (rowMeta == null) ? 0 : inner.append("svg").classed("rowLegend",true).style(cssify(rowLegendBounds));
+    //     var heatLegend = (mainDat.data == null) ? 0 : inner.append("svg").classed("heatLegend",true).style(cssify(heatLegendBounds));
+    // })();
 
     //Creates everything for the heatmap
-    var row = (data.rows ==null) ? 0 : dendrogram(el.select('svg.rowDend'), data.rows, false, rowDendBounds.width,rowDendBounds.height);
-    var col = (data.cols ==null) ? 0 : dendrogram(el.select('svg.colDend'), data.cols, true, colDendBounds.width, colDendBounds.height);
-    var heatmap = heatmapGrid(el.select('svg.colormap'), mainDat, colormapBounds.width,colormapBounds.height);
-    var colAnnots = (colMeta == null) ? 0 : drawAnnotate(el.select('svg.colAnnote'),colAnnote, true, colABounds.width,colABounds.height);
-    var rowAnnots = (rowMeta == null) ? 0: drawAnnotate(el.select('svg.rowAnnote'),rowAnnote, false,rowABounds.width,rowABounds.height);
-    var xLabel = axis(el.select('svg.xAxis'),data.matrix.cols,true,xaxisBounds.width,opts.xaxis_height)
-    var yLabel = (mainDat.data==null) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, opts.yaxis_width, yaxisBounds.height)
-    var colALegend = (colMeta == null | mainDat.data == null ) ? 0 : legend(el.select('svg.colLegend'),colAnnots,true)
-    var rowALegend = (rowMeta == null) ? 0 : legend(el.select('svg.rowLegend'),rowAnnots,true)
-    var heatmapLegend = (mainDat.data == null) ? 0 : legend(el.select('svg.heatLegend'),heatmap,false,heatLegendBounds.width-20)
+    //var row = (data.rows ==null) ? 0 : dendrogram(el.select('svg.rowDend'), data.rows, false, rowDendBounds.width,rowDendBounds.height);
+    //var col = (data.cols ==null) ? 0 : dendrogram(el.select('svg.colDend'), data.cols, true, colDendBounds.width, colDendBounds.height);
+    var heatmap = heatmapGrid(ctx, mainDat, colormapBounds.width,colormapBounds.height);
+    //var colAnnots = (colMeta == null) ? 0 : drawAnnotate(el.select('svg.colAnnote'),colAnnote, true, colABounds.width,colABounds.height);
+    //var rowAnnots = (rowMeta == null) ? 0: drawAnnotate(el.select('svg.rowAnnote'),rowAnnote, false,rowABounds.width,rowABounds.height);
+    //var xLabel = axis(el.select('svg.xAxis'),data.matrix.cols,true,xaxisBounds.width,opts.xaxis_height)
+    //var yLabel = (mainDat.data==null) ? 0 : axis(el.select('svg.yAxis'),data.matrix.rows,false, opts.yaxis_width, yaxisBounds.height)
+    //var colALegend = (colMeta == null | mainDat.data == null ) ? 0 : legend(el.select('svg.colLegend'),colAnnots,true)
+    //var rowALegend = (rowMeta == null) ? 0 : legend(el.select('svg.rowLegend'),rowAnnots,true)
+    //var heatmapLegend = (mainDat.data == null) ? 0 : legend(el.select('svg.heatLegend'),heatmap,false,heatLegendBounds.width-20)
 
-    function heatmapGrid(svg, data, width, height) {
+    function heatmapGrid(canvas, data, width, height) {
         // Check for no data
         if (data.data == null)
             return function() {};
         //Heatmap colors
-        var color = d3.scale.linear()
-            .domain(mainDat.domain)
-            .range(mainDat.colors);
+        //var color = d3.scale.linear()
+        //    .domain(mainDat.domain)
+        //    .range(mainDat.colors);
         var min = Math.min.apply(Math, mainDat.domain)
         var max = Math.max.apply(Math, mainDat.domain)
 
@@ -204,65 +222,75 @@ function heatmapdraw(selector,data,options) {
             .html(function(d) { return d; })
             .direction("nw")
             .style("position", "fixed")
+        //context.fillRect(x,y,width,height);
 
-        var brush = d3.svg.brush()
-            .x(x)
-            .y(y)
-            .clamp([true, true])
-            .on('brush', function() {
-                var extent = brush.extent();
-                extent[0][0] = Math.round(extent[0][0]);
-                extent[0][1] = Math.round(extent[0][1]);
-                extent[1][0] = Math.round(extent[1][0]);
-                extent[1][1] = Math.round(extent[1][1]);
-                d3.select(this).call(brush.extent(extent));
-            })
-            .on('brushend', function() {
-                if (brush.empty()) {
-                    controller.transform({
-                        scale: [1,1],
-                        translate: [0,0],
-                        extent: [[0,0],[cols,rows]]
-                    });
-                } else {
-                    var tf = controller.transform();
-                    var ex = brush.extent();
-                    var scale = [
-                        cols / (ex[1][0] - ex[0][0]),
-                        rows / (ex[1][1] - ex[0][1])
-                    ];
-                    var translate = [
-                        ex[0][0] * (width / cols) * scale[0] * -1,
-                        ex[0][1] * (height / rows) * scale[1] * -1
-                    ];
-                    controller.transform({scale: scale, translate: translate, extent: ex});
-                }
-                brush.clear();
-                d3.select(this).call(brush).select(".brush .extent")
-                    .style({fill: "steelblue", stroke: "blue", opacity: 0.5});
-            });
+        //ctx.fillStyle = "#FF0000";
+        //ctx.fillRect(0,0,150,75);
+        //ctx.fillRect(150,150,150,75);
+        //console.log(data.merged)
 
-        svg = svg
-            .attr("width", width)
-            .attr("height", height);
+        for (i=0; i< data.merged.length; i++) {
+            ctx.fillStyle = data.merged[i].color
+            ctx.fillRect(x(i % cols)+100,y(Math.floor(i/cols))+100,(x(1) - x(0)),(y(1) - y(0)))
+        }
+        // var brush = d3.svg.brush()
+        //     .x(x)
+        //     .y(y)
+        //     .clamp([true, true])
+        //     .on('brush', function() {
+        //         var extent = brush.extent();
+        //         extent[0][0] = Math.round(extent[0][0]);
+        //         extent[0][1] = Math.round(extent[0][1]);
+        //         extent[1][0] = Math.round(extent[1][0]);
+        //         extent[1][1] = Math.round(extent[1][1]);
+        //         d3.select(this).call(brush.extent(extent));
+        //     })
+        //     .on('brushend', function() {
+        //         if (brush.empty()) {
+        //             controller.transform({
+        //                 scale: [1,1],
+        //                 translate: [0,0],
+        //                 extent: [[0,0],[cols,rows]]
+        //             });
+        //         } else {
+        //             var tf = controller.transform();
+        //             var ex = brush.extent();
+        //             var scale = [
+        //                 cols / (ex[1][0] - ex[0][0]),
+        //                 rows / (ex[1][1] - ex[0][1])
+        //             ];
+        //             var translate = [
+        //                 ex[0][0] * (width / cols) * scale[0] * -1,
+        //                 ex[0][1] * (height / rows) * scale[1] * -1
+        //             ];
+        //             controller.transform({scale: scale, translate: translate, extent: ex});
+        //         }
+        //         brush.clear();
+        //         d3.select(this).call(brush).select(".brush .extent")
+        //             .style({fill: "steelblue", stroke: "blue", opacity: 0.5});
+        //     });
 
-        var rect = svg.selectAll("rect").data(merged);
-            rect.enter().append("rect").classed("datapt", true)
-            .property("colIndex", function(d, i) { return i % cols; })
-            .property("rowIndex", function(d, i) { return Math.floor(i / cols); })
-            .property("value", function(d, i) { return d; })
-            .attr("fill", function(d) {
-              if (!d.color) {
-                return "transparent";
-              } 
-              return d.color;
+        // svg = svg
+        //     .attr("width", width)
+        //     .attr("height", height);
 
-            })
+        // var rect = svg.selectAll("rect").data(merged);
+        //     rect.enter().append("rect").classed("datapt", true)
+        //     .property("colIndex", function(d, i) { return i % cols; })
+        //     .property("rowIndex", function(d, i) { return Math.floor(i / cols); })
+        //     .property("value", function(d, i) { return d; })
+        //     .attr("fill", function(d) {
+        //       if (!d.color) {
+        //         return "transparent";
+        //       } 
+        //       return d.color;
 
-        rect.exit().remove();
-        rect.append("title")
-            .text(function(d, i) { return (d === null) ? "NA" : d + ""; })
-        rect.call(tip);
+        //     })
+
+        // rect.exit().remove();
+        // rect.append("title")
+        //     .text(function(d, i) { return (d === null) ? "NA" : d + ""; })
+        // rect.call(tip);
 
         function draw(selection) {
             selection
@@ -276,54 +304,54 @@ function heatmapdraw(selector,data,options) {
                 .attr("height", (y(1) - y(0)))
         }
 
-        draw(rect);
+        //draw(rect);
 
-        controller.on('transform.colormap', function(_) {
-            x.range([_.translate[0], width * _.scale[0] + _.translate[0]]);
-            y.range([_.translate[1], height * _.scale[1] + _.translate[1]]);
-            draw(rect.transition().duration(opts.anim_duration).ease("linear"));
-        });
+        // controller.on('transform.colormap', function(_) {
+        //     x.range([_.translate[0], width * _.scale[0] + _.translate[0]]);
+        //     y.range([_.translate[1], height * _.scale[1] + _.translate[1]]);
+        //     draw(rect.transition().duration(opts.anim_duration).ease("linear"));
+        // });
 
-        var brushG = svg.append("g")
-            .attr('class', 'brush')
-            .call(brush)
-            .call(brush.event);
+        // var brushG = svg.append("g")
+        //     .attr('class', 'brush')
+        //     .call(brush)
+        //     .call(brush.event);
 
-        brushG.select("rect.background")
-            .on("mouseenter", function() {
-                tip.style("display", "block");
-            })
-            .on("mousemove", function() {
-                var col = Math.floor(x.invert(d3.event.offsetX));
-                var row = Math.floor(y.invert(d3.event.offsetY));
+        // brushG.select("rect.background")
+        //     .on("mouseenter", function() {
+        //         tip.style("display", "block");
+        //     })
+        //     .on("mousemove", function() {
+        //         var col = Math.floor(x.invert(d3.event.offsetX));
+        //         var row = Math.floor(y.invert(d3.event.offsetY));
 
-                var value = Math.round(merged[row*cols + col].label*100)/100;
+        //         var value = Math.round(merged[row*cols + col].label*100)/100;
 
-                var output = '<strong>Row Feature Name: </strong>'+ data.rows[row]+'<br><strong>Column Feature Name: </strong>'+
-                             data.cols[col] +'<br><strong>Value: </strong>'+value+'<br><strong>Annotations:</strong>'
-                //Get all the metadata
-                if (colMeta != null) {
-                    for (k=0; k<colHead.length;k++) {
-                        output += '<br><strong>- ' + colHead[k] + ': </strong>' + colMeta[col+(k*cols)]
-                    }
-                }
-                if (rowMeta != null) {
-                    for (k=0; k<rowHead.length; k++) {
-                        output += '<br><strong>- '+rowHead[k] + ': </strong>' + rowMeta[row+(k*rows)]
-                    }
-                }
-                tip.show(output)
-                    .style({
-                    top: d3.event.clientY  +15 + "px",
-                    left: d3.event.clientX +15+ "px",
-                    opacity: 0.9
-                })
-                //controller.datapoint_hover({col:col, row:row, value:value});
-            })
-            .on("mouseleave", function() {
-                tip.hide().style("display","none")
-                controller.datapoint_hover(null);
-            });
+        //         var output = '<strong>Row Feature Name: </strong>'+ data.rows[row]+'<br><strong>Column Feature Name: </strong>'+
+        //                      data.cols[col] +'<br><strong>Value: </strong>'+value+'<br><strong>Annotations:</strong>'
+        //         //Get all the metadata
+        //         if (colMeta != null) {
+        //             for (k=0; k<colHead.length;k++) {
+        //                 output += '<br><strong>- ' + colHead[k] + ': </strong>' + colMeta[col+(k*cols)]
+        //             }
+        //         }
+        //         if (rowMeta != null) {
+        //             for (k=0; k<rowHead.length; k++) {
+        //                 output += '<br><strong>- '+rowHead[k] + ': </strong>' + rowMeta[row+(k*rows)]
+        //             }
+        //         }
+        //         tip.show(output)
+        //             .style({
+        //             top: d3.event.clientY  +15 + "px",
+        //             left: d3.event.clientX +15+ "px",
+        //             opacity: 0.9
+        //         })
+        //         //controller.datapoint_hover({col:col, row:row, value:value});
+        //     })
+        //     .on("mouseleave", function() {
+        //         tip.hide().style("display","none")
+        //         controller.datapoint_hover(null);
+        //     });
 
         return color;
     }
