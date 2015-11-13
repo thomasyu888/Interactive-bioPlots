@@ -63,21 +63,9 @@ function heatmapdraw(selector,data,options) {
     opts.padding = 20;
 
 
-//---------------------
-//        CANVAS
-//---------------------
-    var canvas = document.createElement('canvas');
-    canvas.id = "CursorLayer";
-    canvas.width = opts.width;
-    canvas.height = opts.height;
-    canvas.style.zIndex = 8;
-    canvas.style.position = "absolute";
-    canvas.style.border = "1px solid";
 
-    CursorLayer = document.body.appendChild(canvas);
 
-    var c = document.getElementById("CursorLayer");
-    var ctx = c.getContext("2d");
+
 
 
     var colormapBounds = {
@@ -166,6 +154,53 @@ function heatmapdraw(selector,data,options) {
             height: styles.height + "px"
         };
     }
+//-------------------------------
+//        HEATMAP CANVAS
+//-------------------------------
+    var canvas = document.createElement('canvas');
+    canvas.id = "heatmap";
+    canvas.width = opts.width;
+    canvas.height = opts.height;
+    canvas.style.width = opts.width+'px';
+    canvas.style.height = opts.height+'px';
+    canvas.style.zIndex = 8;
+    canvas.style.position = "absolute";
+    //canvas.style.border = "1px solid";
+
+    heatmap = document.body.appendChild(canvas);
+
+    var c = document.getElementById("heatmap");
+    var heat = c.getContext("2d");
+
+
+//--------------------------------
+//        SELECTION CANVAS
+//--------------------------------
+var rubberbandDiv = document.createElement("div");
+rubberbandDiv.id = "rubberbandDiv";
+rubberbandDiv.style.position = "absolute";
+rubberbandDiv.style.border = "3px solid blue";
+rubberbandDiv.style.cursor = "crosshair";
+rubberbandDiv.style.display = "none";
+
+document.body.appendChild(rubberbandDiv);
+
+    var sel = document.createElement('canvas');
+    sel.id = "select_area";
+    sel.width = colormapBounds.width;
+    sel.height = colormapBounds.height;
+    sel.style.width = colormapBounds.width+'px';
+    sel.style.height = colormapBounds.height+'px';
+    sel.style.left = colormapBounds.left+'px'
+    sel.style.top = colormapBounds.top+'px'
+
+    //sel.style.zIndex = 8;
+    //sel.style.position = "absolute";
+    //canvas.style.border = "1px solid";
+
+    select_area = document.body.appendChild(sel);
+
+    var f = document.getElementById("select_area");
 
     // (function() {
     //     var inner = el.append("div").classed("inner", true);
@@ -185,7 +220,7 @@ function heatmapdraw(selector,data,options) {
     //Creates everything for the heatmap
     //var row = (data.rows ==null) ? 0 : dendrogram(el.select('svg.rowDend'), data.rows, false, rowDendBounds.width,rowDendBounds.height);
     //var col = (data.cols ==null) ? 0 : dendrogram(el.select('svg.colDend'), data.cols, true, colDendBounds.width, colDendBounds.height);
-    var heatmap = heatmapGrid(ctx, mainDat, colormapBounds.width,colormapBounds.height);
+    var heatmap = heatmapGrid(heat,f, mainDat, colormapBounds.width,colormapBounds.height);
     //var colAnnots = (colMeta == null) ? 0 : drawAnnotate(el.select('svg.colAnnote'),colAnnote, true, colABounds.width,colABounds.height);
     //var rowAnnots = (rowMeta == null) ? 0: drawAnnotate(el.select('svg.rowAnnote'),rowAnnote, false,rowABounds.width,rowABounds.height);
     //var xLabel = axis(el.select('svg.xAxis'),data.matrix.cols,true,xaxisBounds.width,opts.xaxis_height)
@@ -194,7 +229,7 @@ function heatmapdraw(selector,data,options) {
     //var rowALegend = (rowMeta == null) ? 0 : legend(el.select('svg.rowLegend'),rowAnnots,true)
     //var heatmapLegend = (mainDat.data == null) ? 0 : legend(el.select('svg.heatLegend'),heatmap,false,heatLegendBounds.width-20)
 
-    function heatmapGrid(canvas, data, width, height) {
+    function heatmapGrid(heat, select_canvas, data, width, height) {
         // Check for no data
         if (data.data == null)
             return function() {};
@@ -223,16 +258,148 @@ function heatmapdraw(selector,data,options) {
             .direction("nw")
             .style("position", "fixed")
         //context.fillRect(x,y,width,height);
-
+//----
+//Create 2 canvas, one for the user to draw the selection box <- calculate coords and spit it back into the first canvas
+//----
         //ctx.fillStyle = "#FF0000";
         //ctx.fillRect(0,0,150,75);
         //ctx.fillRect(150,150,150,75);
         //console.log(data.merged)
 
+        //x 5-10
+        //y 5-10
+        //console.log(data.merged)
         for (i=0; i< data.merged.length; i++) {
-            ctx.fillStyle = data.merged[i].color
-            ctx.fillRect(x(i % cols)+100,y(Math.floor(i/cols))+100,(x(1) - x(0)),(y(1) - y(0)))
+            heat.fillStyle = data.merged[i].color
+            heat.fillRect(x(i % cols)+100,y(Math.floor(i/cols))+100,(x(1) - x(0)),(y(1) - y(0)))
         }
+	//----------------------------------------------------------------------
+	////Creating selection rectangle
+	//----------------------------------------------------------------------
+
+        var rect = select_canvas.getContext("2d");
+
+
+	    //contact = rect
+	    rubberbandDiv = document.getElementById('rubberbandDiv'),
+	    //resetButton = document.getElementById('resetButton'),
+	    image = new Image(),
+	    mousedown = {},
+	    rubberbandRectangle = {},
+	    dragging = false;
+
+		// Functions..........................................................
+
+		function rubberbandStart(x, y) {
+		   mousedown.x = x;
+		   mousedown.y = y;
+
+		   rubberbandRectangle.left = mousedown.x;
+		   rubberbandRectangle.top = mousedown.y;
+
+		   moveRubberbandDiv();
+		   showRubberbandDiv();
+
+		   dragging = true;
+		}
+
+		function rubberbandStretch(x, y) {
+		   rubberbandRectangle.left = x < mousedown.x ? x : mousedown.x;
+		   rubberbandRectangle.top  = y < mousedown.y ? y : mousedown.y;
+
+		   rubberbandRectangle.width  = Math.abs(x - mousedown.x),
+		   rubberbandRectangle.height = Math.abs(y - mousedown.y);
+
+		   moveRubberbandDiv();
+		   resizeRubberbandDiv();
+		}
+
+		function rubberbandEnd() {
+		   var bboxd = select_canvas.getBoundingClientRect();
+
+		   try {
+		     rect.drawImage(select_canvas,
+		                       rubberbandRectangle.left - bboxd.left,
+		                       rubberbandRectangle.top - bboxd.top,
+		                       rubberbandRectangle.width,
+		                       rubberbandRectangle.height,
+		                       0, 0, select_canvas.width, select_canvas.height);
+		   }
+		   catch (e) {
+		      // Suppress error message when mouse is released
+		      // outside the canvas
+		   }
+
+		   resetRubberbandRectangle();
+
+		   rubberbandDiv.style.width = 0;
+		   rubberbandDiv.style.height = 0;
+
+		   hideRubberbandDiv();
+
+		   dragging = false;
+		}
+
+		function moveRubberbandDiv() {
+		   rubberbandDiv.style.top  = rubberbandRectangle.top  + 'px';
+		   rubberbandDiv.style.left = rubberbandRectangle.left + 'px';
+		}
+
+		function resizeRubberbandDiv() {
+		   rubberbandDiv.style.width  = rubberbandRectangle.width  + 'px';
+		   rubberbandDiv.style.height = rubberbandRectangle.height + 'px';
+		}
+
+		function showRubberbandDiv() {
+		   rubberbandDiv.style.display = 'inline';
+		}
+
+		function hideRubberbandDiv() {
+		   rubberbandDiv.style.display = 'none';
+		}
+
+		function resetRubberbandRectangle() {
+		   rubberbandRectangle = { top: 0, left: 0, width: 0, height: 0 };
+		}
+
+		// Event handlers.....................................................
+
+		canvas.onmousedown = function (e) {
+		   var x = e.clientX,
+		       y = e.clientY;
+
+		   e.preventDefault();
+		   rubberbandStart(x, y);
+		};
+
+		window.onmousemove = function (e) {
+		   var x = e.clientX,
+		       y = e.clientY;
+
+		    e.preventDefault();
+		    if (dragging) {
+		       rubberbandStretch(x, y);
+		    }
+		};
+
+		window.onmouseup = function (e) {
+		   e.preventDefault();
+		   rubberbandEnd();
+		};
+
+		//image.onload = function () {
+		 //  context.drawImage(image, 0, 0, select_canvas.width, select_canvas.height);
+		//};
+
+		//resetButton.onclick = function(e) {
+		//   context.clearRect(0, 0, context.select_canvas.width,
+		                      //     context.select_canvas.height);
+		   //context.drawImage(image, 0, 0, select_canvas.width, select_canvas.height);
+		//};
+
+// Initialization.....................................................
+
+
         // var brush = d3.svg.brush()
         //     .x(x)
         //     .y(y)
@@ -353,7 +520,7 @@ function heatmapdraw(selector,data,options) {
         //         controller.datapoint_hover(null);
         //     });
 
-        return color;
+        //return color;
     }
 
     function axis(svg, data, rotated,width,height) {
