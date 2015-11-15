@@ -16,9 +16,9 @@ NULL
 #'
 #'@param x A numeric \code{m x n} matrix.
 #'@param colAnnote Column annotations-
-#'  Takes a \code{n x 1} matrix.
+#'  Takes a \code{n x f} matrix where f is the number of categories.
 #'@param rowAnnote Row annotations-
-#'  Takes a \code{m x 1} matrix.
+#'  Takes a \code{m x f} matrix where f is the number of categories.
 #'@param width Width in pixels (optional, defaults to automatic sizing).
 #'@param height Height in pixels (optional, defaults to automatic sizing).
 #'@param colors Either a colorbrewer2.org palette name (e.g. \code{"RdYlBu"} or
@@ -128,19 +128,15 @@ iHeatmap <- function(x,
     if(!is.matrix(rowAnnote)) {
       rowAnnote <- as.matrix(rowAnnote)
     }
-    #Check if matrix is in the correct format
-    if (dim(rowAnnote)[2]==dim(mainData)[1]) {
-      rowAnnote <- t(rowAnnote)
-    }
 
     #check to see if the same dimensions
     if (dim(rowAnnote)[1]!=dim(mainData)[1]) {
       rowAnnotes<-NULL
-      print("Incorrect row annotation dimensions, your annotations will not display.")
+      print("Incorrect row annotation dimensions: \n Details: Your row annotations must have dimensions m (rows of heatmap) x f where f is the number of categories")
     } else {
       #Check it colnames exist
       if (is.null(colnames(rowAnnote))) {
-        colnames(rowAnnote) = "Row Annotation"
+        colnames(rowAnnote) = rep("Row Annotation",dim(rowAnnote)[2])
         print("row annotations don't have title (ie. weight, height...)")
       }
       rowtitle <- colnames(rowAnnote)
@@ -165,19 +161,15 @@ iHeatmap <- function(x,
     if(!is.matrix(colAnnote)) {
       colAnnote <- as.matrix(colAnnote)
     }
-    #Check if matrix is in the correct format
-    if (dim(colAnnote)[2]==dim(mainData)[2]) {
-      colAnnote <- t(colAnnote)
-    }
 
     #check to see if the same dimensions
     if (dim(colAnnote)[1]!=dim(mainData)[2]) {
       colAnnotes<-NULL
-      print("Incorrect column annotation dimensions, your annotations will not display.")
+      print("Incorrect column annotation dimensions: \n Details: Your column annotations must have dimensions n (columns of heatmap) x f where f is the number of categories.")
     } else {
       #Check it colnames exist
       if (is.null(colnames(colAnnote))) {
-        colnames(colAnnote) = "Column Annotation"
+        colnames(colAnnote) = rep("Column Annotation",dim(colAnnote)[2])
         print("column annotations don't have title (ie. weight, height...)")
       }
       coltitle <- colnames(colAnnote)
