@@ -64,8 +64,8 @@ function heatmapdraw(selector,data,options) {
 
     var colormapBounds = {
         position: "absolute",
-        left: opts.yclust_width+2*opts.yAnnote_height,
-        top: opts.xclust_height+2*opts.xAnnote_width,
+        left: opts.yclust_width+opts.yAnnote_height+opts.annote_pad,
+        top: opts.xclust_height+opts.xAnnote_width+opts.annote_pad,
         width: (mainDat.data==null) ? 0 : opts.width - opts.yclust_width - opts.yaxis_width-(2*opts.yAnnote_height)-opts.legend_width,
         height:(mainDat.data==null) ? 0 : opts.height - opts.xclust_height - opts.xaxis_height - (2*opts.xAnnote_width)
     };
