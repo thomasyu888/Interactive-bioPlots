@@ -196,6 +196,7 @@ iHeatmap <- function(x,
     mainData <- mainData[rowClust$order,]
     if (!is.null(rowAnnotes)) {
       rowAnnotes <- rowAnnote[rowClust$order,]
+      rowAnnotes <- as.vector(rowAnnotes)
     }
     rowDend <- HCtoJSON(rowClust)
   }
@@ -208,6 +209,7 @@ iHeatmap <- function(x,
     mainData <- mainData[,colClust$order]
     if (!is.null(colAnnotes)) {
       colAnnotes <- colAnnote[colClust$order,]
+      colAnnotes <- as.vector(colAnnotes)
     }
     ##Addon Info is only the for (X) side (So patients...)
     if (!is.null(addOnInfo)) {

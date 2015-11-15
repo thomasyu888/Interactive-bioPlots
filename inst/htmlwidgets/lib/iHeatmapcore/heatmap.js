@@ -598,6 +598,9 @@ function heatmapdraw(selector,data,options) {
 
 ////ONLY ACCEPTS CATEGORICAL ANNOTATIONS, IF VALUES SUCH AS WEIGHT
 //PUT INTO BINS FIRST SO 100 - 110 POUNDS IS ONE CATEGORY...
+//var colAnnots = (colMeta == null) ? 0 : drawAnnotate(el.select('svg.colAnnote'),colAnnote, true, colABounds.width,colABounds.height);
+//var rowAnnots = (rowMeta == null) ? 0: drawAnnotate(el.select('svg.rowAnnote'),rowAnnote, false,rowABounds.width,rowABounds.height);
+
     function drawAnnotate(svg,datum, rotated,width,height) {
         
         var tip = d3.tip()
