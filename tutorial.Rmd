@@ -1,0 +1,26 @@
+---
+title: "iHeatmap_tutorial.html"
+output: html_document
+---
+
+```{r}
+#devtools::install_github("thomasyu888/Interactive-bioPlots")
+library(iHeatmap)
+```
+
+iHeatmap
+```{r}
+iHeatmap(scale(mtcars))
+```
+
+```{r}
+#Adding
+d <- round(runif(32),1)
+d <- matrix(d,32,1)
+f <- round(runif(11),1)
+f <- matrix(f,11,1)
+iHeatmap(scale(mtcars),colAnnote = f,rowAnnote = d)
+```
+
+
+
