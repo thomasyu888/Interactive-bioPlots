@@ -50,9 +50,9 @@
   z-index:1;
 }
 
-.inner {
+/*.inner {
   position: relative;
-}
+}*/
 
 .d3heatmap-tip {
   font-size: 10px;
